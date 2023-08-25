@@ -1,0 +1,14 @@
+*~
+output*
+packer_cachepacker-para*
+packer_cache
+*.box
+packer*
+.DS_Store
+.vagrant
+iso/*
+iso*
+*.iso
+vbox/*
+*.log
+secrets/proxmox.sh

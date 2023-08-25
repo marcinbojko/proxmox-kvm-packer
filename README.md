@@ -1,2 +1,150 @@
-# proxmox-kvm-packer
+
+# Proxmox/KVM Packer
+<!-- TOC -->
+
+- [Proxmox/KVM Packer](#proxmoxkvm-packer)
+  - [Proxmox](#proxmox)
+    - [Requirements](#requirements)
+    - [Usage](#usage)
+    - [Provisioning](#provisioning)
+  - [KVM](#kvm)
+  - [Cloud-init](#cloud-init)
+  - [Known Issues](#known-issues)
+    - [Windows UEFI boot and 'Press any key to boot from CD or DVD' issue](#windows-uefi-boot-and-press-any-key-to-boot-from-cd-or-dvd-issue)
+    - [To DO](#to-do)
+    - [Q & A](#q--a)
+
+<!-- /TOC -->
 Proxmox and KVM related Virtual Machines using packer
+
+## Proxmox
+
+### Requirements
+
+- [Packer](https://www.packer.io/downloads) in version >= 1.9.2
+- [Proxmox](https://www.proxmox.com/en/downloads) in version >= 8.0
+- [Ansible] in version >= 2.10.0
+- tested with `AMD Ryzen 9 5950X`, `Intel(R) Core(TM) i3-7100T`
+- at least 2GB of free RAM for virtual machines (4GB recommended)
+- at least 100GB of free disk space for virtual machines (200GB recommended) on fast storage (SSD/NVME with LVM thinpool or ZFS)
+
+### Usage
+
+- Init packer by running  `packer init config.pkr.hcl`
+
+- create and use env variables for secrets `/secrets/proxmox.sh` with content similar to:
+
+    ```bash
+    export PROXMOX_URL="https://someproxmoxserver:8006/api2/json"
+    export PROXMOX_USERNAME="someuser@pam"
+    export PROXMOX_TOKEN="sometoken"
+    ```
+
+- adjust required variables in `proxmox/variables*.pkvars.hcl` files especially datastore names in:
+
+  ```hcl
+      disks = {
+          cache_mode              = "writeback"
+          disk_size               = "50G"
+          format                  = "raw"
+          type                    = "sata"
+          storage_pool            = "zfs"
+      }
+  ```
+
+  ```ini
+  iso_file                    = "images:iso/20348.169.210806-2348.fe_release_svc_refresh_SERVER_EVAL_x64FRE_en-us.iso"
+  iso_storage_pool            = "local"
+  proxmox_node                = "proxmox5"
+  virtio_iso_file             = "images:iso/virtio-win.iso"
+  ```
+
+  ```hcl
+  network_adapters = {
+    bridge                  = "vmbr0"
+    model                   = "virtio"
+    firewall                = false
+    mac_address             = ""
+  }
+
+  ```
+
+- run proper script for dedicated OS
+
+  | OS | script | Comments|
+  |----|--------|---------|
+  | Microsoft Windows 2022 Standard | `./proxmox_windows_2022-std.sh` |Standard Edition |
+  | Microsoft Windows 2022 Datacenter | `./proxmox_windows_2022-std.sh` |Datacenter Edition |
+  | Alma Linux 8.8 | `./proxmox_almalinux_88.sh` | |
+  | Alma Linux 9.2 | `./proxmox_almalinux_92.sh` | |
+  | Oracle Linux 8.8 | `./proxmox_oraclelinux_88.sh` | |
+  | Oracle Linux 9.2 | `./proxmox_oraclelinux_92.sh` | |
+  | Rocky Linux 8.8 | `./proxmox_rockylinux_88.sh` | |
+  | Rocky Linux 9.2 | `./proxmox_rockylinux_92.sh` | |
+  | Ubuntu 22.04 LTS | `./proxmox_ubuntu_2204.sh` | |
+  | Ubuntu 23.04 | `./proxmox_ubuntu_2304.sh` | |
+
+### Provisioning
+
+- For RHEl-based machines, provisioning is done by Ansible Playbooks `extra/playbooks` using variables from `variables/` folder
+
+example:
+
+  ```yaml
+  install_epel:                  true
+  install_webmin:                false
+  install_hyperv:                false
+  install_zabbix:                false
+  install_zabbix_as_root:        false
+  install_cockpit:               true
+  install_puppet:                false
+  install_docker_workaround:     true
+  install_kubernetes_workaround: false
+  remove_puppet_ssl_keys:        false
+  install_neofetch:              true
+  install_updates:               true
+  install_extra_groups:          true
+  docker_prepare:                false
+  extra_device:                  ""
+  install_motd:                  true
+  ```
+
+- For Ubuntu-based machines provisioning is done by scripts from `extra/files/gen2-ubuntu*` folders
+
+- For Windows-based machines provisioning is done by Powershell scripts located in `extra/scripts/*`
+
+## KVM
+
+## Cloud-init
+
+## Known Issues
+
+### Windows UEFI boot and 'Press any key to boot from CD or DVD' issue
+
+When using the `proxmox` builder with `efi` firmware, the Windows installer will not boot automatically. Instead, it will display the message `Press any key to boot from CD or DVD` and wait for user input. User needs to properly adjust `boot_wait` and `boot_command` wait times to find the right balance between waiting for the installer to boot and waiting for the user to press a key.
+
+### To DO
+
+- ansible playbooks for Windows and Ubuntu machines
+- OpenSuse Leap 15.x and Tumbleweed
+- Debian 12
+
+### Q & A
+
+Q: Will you add support for other OSes?
+A: Yes, I will add support for other OSes as I need them. If you need support for a specific OS, please open an issue and I will try to add it.
+
+Q: Will you add support for other hypervisors?
+A: No, this repository is dedicated to Proxmox and KVM. If you need support for other hypervisors, please look at my other repositories
+
+Q: Will you add support for other cloud providers?
+A: Since some of cloud providers are using KVM based hypervisors, building custom image with KVM and importing them will solve the case
+
+Q: Will you add support RHEL and RedHat based OSes?
+A: No, I will not add support for RHEL and RedHat directly, due to their licensing. However, I will add support for RHEL based OSes like AlmaLinux, Oracle Linux and Rocky Linux.
+
+Q: Can I help?
+A: Yes, please open an issue or a pull request and I will try to help you. Please split PRs into separate commits for block of changes.
+
+Q: Can I use this repository for my own projects?
+A: Yes, this repository is licensed under the Apache 2 license, so you can use it for your own projects. Please note that some of the files are licensed under different licenses, so please check the licenses of the individual files before using them
