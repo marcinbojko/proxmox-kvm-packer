@@ -11,8 +11,8 @@
   - [Cloud-init](#cloud-init)
   - [Known Issues](#known-issues)
     - [Windows UEFI boot and 'Press any key to boot from CD or DVD' issue](#windows-uefi-boot-and-press-any-key-to-boot-from-cd-or-dvd-issue)
-    - [To DO](#to-do)
-    - [Q & A](#q--a)
+  - [To DO](#to-do)
+  - [Q & A](#q--a)
 
 <!-- /TOC -->
 Proxmox and KVM related Virtual Machines using packer
@@ -82,6 +82,7 @@ Proxmox and KVM related Virtual Machines using packer
   | Rocky Linux 8.8 | `./proxmox_rockylinux_88.sh` | |
   | Rocky Linux 9.2 | `./proxmox_rockylinux_92.sh` | |
   | Ubuntu 22.04 LTS | `./proxmox_ubuntu_2204.sh` | |
+  | Ubuntu 22.04 HWE LTS | `./proxmox_ubuntu_2204_hwe.sh` | HWE Kernel|
   | Ubuntu 23.04 | `./proxmox_ubuntu_2304.sh` | |
 
 ### Provisioning
@@ -123,13 +124,13 @@ example:
 
 When using the `proxmox` builder with `efi` firmware, the Windows installer will not boot automatically. Instead, it will display the message `Press any key to boot from CD or DVD` and wait for user input. User needs to properly adjust `boot_wait` and `boot_command` wait times to find the right balance between waiting for the installer to boot and waiting for the user to press a key.
 
-### To DO
+## To DO
 
 - ansible playbooks for Windows and Ubuntu machines
 - OpenSuse Leap 15.x and Tumbleweed
 - Debian 12
 
-### Q & A
+## Q & A
 
 Q: Will you add support for other OSes?
 A: Yes, I will add support for other OSes as I need them. If you need support for a specific OS, please open an issue and I will try to add it.
