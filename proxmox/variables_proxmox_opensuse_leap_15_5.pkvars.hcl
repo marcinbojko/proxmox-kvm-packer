@@ -1,10 +1,9 @@
-
-ansible_extra_args        = ["-e", "@extra/playbooks/provision_rocky9_variables.yml", "-e", "@variables/rockylinux9.yml"]
+ansible_extra_args        = ["-e", "@extra/playbooks/provision_alma8_variables.yml", "-e", "@variables/almalinux8.yml"]
 ansible_verbosity         = ["-v"]
 ballooning_minimum        = "0"
-boot_command              = "<tab> text inst.ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/rockylinux/9/ks.cfg<enter><wait10>esc<wait60><esc>"
+boot_command              = "<esc><enter><wait> linux textmode=1 autoyast=http://{{ .HTTPIP }}:{{ .HTTPPort }}/opensuse_leap/15/proxmox/autoinst.xml <wait5><enter>"
 boot_wait                 = "15s"
-cloud-init_path           = "extra/files/cloud-init/rhel/generic/cloud.cfg"
+cloud-init_path           = "extra/files/cloud-init/suse/generic/cloud.cfg"
 cores                     = "4"
 cpu_type                  = "host"
 disable_kvm               = false
@@ -16,7 +15,7 @@ disks = {
     storage_pool          = "zfs"
 }
 insecure_skip_tls_verify  = true
-iso_file                  = "images:iso/Rocky-9.2-x86_64-dvd.iso"
+iso_file                  = "images:iso/openSUSE-Leap-15.5-DVD-x86_64-Build491.1-Media.iso"
 memory                    = "4096"
 network_adapters = {
     bridge                = "vmbr0"
@@ -31,5 +30,5 @@ sockets                   = "1"
 ssh_password              = "password"
 ssh_username              = "root"
 task_timeout              = "20m"
-template                  = "rockylinux9.2"
+template                  = "opensuse-leap-15.5"
 unmount_iso               = true

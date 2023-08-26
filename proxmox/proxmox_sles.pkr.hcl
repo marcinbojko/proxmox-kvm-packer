@@ -210,15 +210,10 @@ source "proxmox-iso" "linux" {
 build {
    sources = ["source.proxmox-iso.linux"]
 
-  provisioner "shell" {
-    execute_command = "chmod +x {{ .Path }}; {{ .Vars }} sudo -E sh '{{ .Path }}'"
-    inline          = ["dnf install -y cloud-init cloud-utils-growpart", "systemctl enable cloud-init-local.service", "systemctl enable cloud-init.service", "systemctl enable cloud-config.service", "systemctl enable cloud-final.service"]
-    inline_shebang  = "/bin/sh -x"
-  }
-
   provisioner "file" {
     destination = "/etc/cloud/cloud.cfg"
     source      = "${path.cwd}/${var.cloud-init_path}"
+    pause_before = "5m" # wait for autoyast2 stage 2 to finish
   }
 
   provisioner "shell" {
@@ -226,10 +221,4 @@ build {
     inline          = ["systemctl enable qemu-guest-agent.service --now"]
     inline_shebang  = "/bin/sh -x"
   }
-
-  provisioner "ansible" {
-    extra_arguments = concat("${var.ansible_extra_args}","${var.ansible_verbosity}")
-    playbook_file   = "extra/playbooks/provision_rhel.yaml"
-  }
-
 }

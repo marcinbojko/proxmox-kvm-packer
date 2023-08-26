@@ -2,7 +2,7 @@
 ansible_extra_args        = ["-e", "@extra/playbooks/provision_rocky8_variables.yml", "-e", "@variables/rockylinux8.yml"]
 ansible_verbosity         = ["-v"]
 ballooning_minimum        = "0"
-boot_command              = "<tab> text inst.ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/gen2-rockylinux8/ks-kvm.cfg<enter><wait10>esc<wait60><esc>"
+boot_command              = "<tab> text inst.ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/rockylinux/8/ks.cfg<enter><wait10>esc<wait60><esc>"
 boot_wait                 = "15s"
 cloud-init_path           = "extra/files/cloud-init/rhel/generic/cloud.cfg"
 cores                     = "4"

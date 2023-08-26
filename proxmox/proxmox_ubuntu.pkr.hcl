@@ -223,7 +223,7 @@ build {
 
   provisioner "file" {
     destination = "/tmp/provision.sh"
-    source      = "extra/files/gen2-ubuntu2204/provision.sh"
+    source      = "extra/files/ubuntu/shared/provision.sh"
   }
 
 
@@ -245,18 +245,18 @@ build {
 
   provisioner "file" {
     destination = "/tmp/motd.sh"
-    source      = "extra/files/gen2-ubuntu2204/motd.sh"
+    source      = "extra/files/ubuntu/shared/motd.sh"
     pause_before = "60s"
   }
 
   provisioner "file" {
     destination = "/tmp/prepare_neofetch.sh"
-    source      = "extra/files/gen2-ubuntu2204/prepare_neofetch.sh"
+    source      = "extra/files/ubuntu/shared/prepare_neofetch.sh"
   }
 
   provisioner "file" {
     destination = "/tmp/zeroing.sh"
-    source      = "extra/files/gen2-ubuntu2204/zeroing.sh"
+    source      = "extra/files/ubuntu/shared/zeroing.sh"
   }
 
   provisioner "shell" {

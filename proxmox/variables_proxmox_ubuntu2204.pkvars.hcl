@@ -1,7 +1,7 @@
 ansible_extra_args        = ["-e", "@extra/playbooks/provision_alma8_variables.yml", "-e", "@variables/almalinux8.yml"]
 ansible_verbosity         = ["-v"]
 ballooning_minimum        = "0"
-boot_command              = "<wait3>c<wait3>linux /casper/vmlinuz quiet autoinstall net.ifnames=0 biosdevname=0 ip=dhcp ipv6.disable=1 ds='nocloud-net;s=http://{{ .HTTPIP }}:{{ .HTTPPort }}/gen2-ubuntu2204/' <enter><wait5>initrd /casper/initrd<wait5><enter>boot<wait5s><enter>"
+boot_command              = "<wait3>c<wait3>linux /casper/vmlinuz quiet autoinstall net.ifnames=0 biosdevname=0 ip=dhcp ipv6.disable=1 ds='nocloud-net;s=http://{{ .HTTPIP }}:{{ .HTTPPort }}/ubuntu/22.04/proxmox/' <enter><wait5>initrd /casper/initrd<wait5><enter>boot<wait5s><enter>"
 boot_wait                 = "15s"
 cloud-init_path           = "extra/files/cloud-init/ubuntu/generic/cloud.cfg"
 cores                     = "4"

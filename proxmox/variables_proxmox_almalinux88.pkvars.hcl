@@ -1,7 +1,7 @@
 ansible_extra_args        = ["-e", "@extra/playbooks/provision_alma8_variables.yml", "-e", "@variables/almalinux8.yml"]
 ansible_verbosity         = ["-v"]
 ballooning_minimum        = "0"
-boot_command              = "<tab> text inst.ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/gen2-almalinux8/ks.cfg<enter><wait10>esc<wait60><esc>"
+boot_command              = "<tab> text inst.ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/almalinux/8/proxmox/ks.cfg<enter><wait10>esc<wait60><esc>"
 boot_wait                 = "15s"
 cloud-init_path           = "extra/files/cloud-init/rhel/generic/cloud.cfg"
 cores                     = "4"

@@ -11,6 +11,7 @@
   - [Cloud-init](#cloud-init)
   - [Known Issues](#known-issues)
     - [Windows UEFI boot and 'Press any key to boot from CD or DVD' issue](#windows-uefi-boot-and-press-any-key-to-boot-from-cd-or-dvd-issue)
+    - [OpenSuse Leap stage 2 sshd fix](#opensuse-leap-stage-2-sshd-fix)
   - [To DO](#to-do)
   - [Q & A](#q--a)
 
@@ -79,6 +80,7 @@ Proxmox and KVM related Virtual Machines using packer
   | Alma Linux 9.2 | `./proxmox_almalinux_92.sh` | |
   | Oracle Linux 8.8 | `./proxmox_oraclelinux_88.sh` | |
   | Oracle Linux 9.2 | `./proxmox_oraclelinux_92.sh` | |
+  | OpenSuse Leap 15.5 | `./proxmox_opensuse_leap_15_5.sh` | |
   | Rocky Linux 8.8 | `./proxmox_rockylinux_88.sh` | |
   | Rocky Linux 9.2 | `./proxmox_rockylinux_92.sh` | |
   | Ubuntu 22.04 LTS | `./proxmox_ubuntu_2204.sh` | |
@@ -124,10 +126,15 @@ example:
 
 When using the `proxmox` builder with `efi` firmware, the Windows installer will not boot automatically. Instead, it will display the message `Press any key to boot from CD or DVD` and wait for user input. User needs to properly adjust `boot_wait` and `boot_command` wait times to find the right balance between waiting for the installer to boot and waiting for the user to press a key.
 
+### OpenSuse Leap stage 2 sshd fix
+
+When building OpenSuse Leap 15.x sshd service starts in stage 2 which breaks packer scripts. There is an artificial delay added to builder (6 minutes) to wait for sshd to start. This is not ideal solution, but it works.
+
 ## To DO
 
 - ansible playbooks for Windows and Ubuntu machines
-- OpenSuse Leap 15.x and Tumbleweed
+- OpenSuse Leap 15.x
+  - OpenSuse Leap stage 2 sshd fix
 - Debian 12
 
 ## Q & A
