@@ -285,7 +285,7 @@ build {
   provisioner "powershell" {
     elevated_password = "${var.winrm_password}"
     elevated_user     = "${var.winrm_username}"
-    script            = "./extra/scripts/phase-1.ps1"
+    script            = "./extra/scripts/windows/shared/phase-1.ps1"
   }
 
   provisioner "windows-restart" {
@@ -295,7 +295,7 @@ build {
   provisioner "powershell" {
     elevated_password = "${var.winrm_password}"
     elevated_user     = "${var.winrm_username}"
-    script            = "./extra/scripts/phase-2.ps1"
+    script            = "./extra/scripts/windows/shared/phase-2.ps1"
   }
 
   provisioner "windows-restart" {
@@ -322,19 +322,19 @@ build {
 
   provisioner "file" {
     destination = "C:\\Users\\Administrator\\Desktop\\extend-trial.cmd"
-    source      = "./extra/scripts/virtualbox/extend-trial.cmd"
+    source      = "./extra/scripts/windows/shared/extend-trial.cmd"
   }
 
   provisioner "powershell" {
     elevated_password = "${var.winrm_password}"
     elevated_user     = "${var.winrm_username}"
-    script            = "./extra/scripts/phase-5a.software.ps1"
+    script            = "./extra/scripts/windows/shared/phase-5a.software.ps1"
   }
 
   provisioner "powershell" {
     elevated_password = "${var.winrm_password}"
     elevated_user     = "${var.winrm_username}"
-    script            = "./extra/scripts/phase-5d.windows-compress.ps1"
+    script            = "./extra/scripts/windows/shared/phase-5d.windows-compress.ps1"
   }
   provisioner "windows-restart" {
     restart_timeout = "1h"

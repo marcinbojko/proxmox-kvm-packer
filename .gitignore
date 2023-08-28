@@ -12,3 +12,4 @@ iso*
 vbox/*
 *.log
 secrets/proxmox.sh
+.vscode/*

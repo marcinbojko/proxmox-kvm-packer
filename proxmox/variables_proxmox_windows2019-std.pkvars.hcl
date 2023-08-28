@@ -1,8 +1,8 @@
 ballooning_minimum          = "0"
 bios                        = "ovmf"
 boot_command                = ["<wait5s><space><wait3s>"]
-boot_wait                   = "5s"
-cd_files                    = ["./extra/files/windows/2022/proxmox/std/Autounattend.xml", "./extra/files/windows/2022/proxmox/bootstrap.ps1"]
+boot_wait                   = "4s"
+cd_files                    = ["./extra/files/windows/2019/proxmox/std/Autounattend.xml", "./extra/files/windows/2019/proxmox/bootstrap.ps1"]
 communicator                = "winrm"
 cores                       = "4"
 cpu_type                    = "host"
@@ -22,7 +22,7 @@ efi_config                  = {
 }
 
 insecure_skip_tls_verify    = true
-iso_file                    = "images:iso/20348.169.210806-2348.fe_release_svc_refresh_SERVER_EVAL_x64FRE_en-us.iso"
+iso_file                    = "images:iso/17763.3650.221105-1748.rs5_release_svc_refresh_SERVER_EVAL_x64FRE_en-us.iso"
 iso_storage_pool            = "local"
 machine                     = "pc"
 memory                      = "4096"
@@ -37,9 +37,9 @@ proxmox_node                = "proxmox-amd9"
 qemu_agent                  = true
 scsi_controller             = "virtio-scsi-single"
 sockets                     = "1"
-sysprep_unattended          = "./extra/files/windows/2022/proxmox/unattend.xml"
+sysprep_unattended          = "./extra/files/windows/2019/proxmox/unattend.xml"
 task_timeout                = "20m"
-template                    = "windows2021-std"
+template                    = "windows2019-std"
 unmount_iso                 = true
 winrm_password              = "password"
 winrm_username              = "Administrator"

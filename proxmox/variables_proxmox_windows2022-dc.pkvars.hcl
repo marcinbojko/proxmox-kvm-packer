@@ -1,8 +1,8 @@
 ballooning_minimum          = "0"
 bios                        = "ovmf"
 boot_command                = ["<wait5s><space>"]
-boot_wait                   = "15s"
-cd_files                    = ["./extra/files/kvm/2022/dc/Autounattend.xml", "./extra/files/kvm/2022/bootstrap.ps1"]
+boot_wait                   = "5s"
+cd_files                    = ["./extra/files/windows/2022/proxmox/dc/Autounattend.xml", "./extra/files/windows/2022/proxmox/bootstrap.ps1"]
 communicator                = "winrm"
 cores                       = "4"
 cpu_type                    = "host"
@@ -32,11 +32,11 @@ network_adapters = {
     mac_address             = ""
 }
 os                          = "win11"
-proxmox_node                = "proxmox5"
+proxmox_node                = "proxmox-amd9"
 qemu_agent                  = true
 scsi_controller             = "virtio-scsi-single"
 sockets                     = "1"
-sysprep_unattended          = "./extra/files/kvm/2022/unattend.xml"
+sysprep_unattended          = "./extra/files/windows/2022/proxmox/unattend.xml"
 task_timeout                = "20m"
 template                    = "windows2021-dc.microsoft.com"
 unmount_iso                 = true

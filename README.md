@@ -1,8 +1,8 @@
 
-# Proxmox/KVM Packer
+# Proxmox/KVM Packer VM Templates
 <!-- TOC -->
 
-- [Proxmox/KVM Packer](#proxmoxkvm-packer)
+- [Proxmox/KVM Packer VM Templates](#proxmoxkvm-packer-vm-templates)
   - [Proxmox](#proxmox)
     - [Requirements](#requirements)
     - [Usage](#usage)
@@ -74,18 +74,20 @@ Proxmox and KVM related Virtual Machines using packer
 
   | OS | script | Comments|
   |----|--------|---------|
-  | Microsoft Windows 2022 Standard | `./proxmox_windows_2022-std.sh` |Standard Edition |
-  | Microsoft Windows 2022 Datacenter | `./proxmox_windows_2022-std.sh` |Datacenter Edition |
-  | Alma Linux 8.8 | `./proxmox_almalinux_88.sh` | |
-  | Alma Linux 9.2 | `./proxmox_almalinux_92.sh` | |
-  | Oracle Linux 8.8 | `./proxmox_oraclelinux_88.sh` | |
-  | Oracle Linux 9.2 | `./proxmox_oraclelinux_92.sh` | |
-  | OpenSuse Leap 15.5 | `./proxmox_opensuse_leap_15_5.sh` | |
-  | Rocky Linux 8.8 | `./proxmox_rockylinux_88.sh` | |
-  | Rocky Linux 9.2 | `./proxmox_rockylinux_92.sh` | |
-  | Ubuntu 22.04 LTS | `./proxmox_ubuntu_2204.sh` | |
-  | Ubuntu 22.04 HWE LTS | `./proxmox_ubuntu_2204_hwe.sh` | HWE Kernel|
-  | Ubuntu 23.04 | `./proxmox_ubuntu_2304.sh` | |
+  | Alma Linux 8.8        | `./proxmox_almalinux_88.sh` | |
+  | Alma Linux 9.2        | `./proxmox_almalinux_92.sh` | |
+  | OpenSuse Leap 15.5    | `./proxmox_opensuse_leap_15_5.sh` | |
+  | Oracle Linux 8.8      | `./proxmox_oraclelinux_88.sh` | |
+  | Oracle Linux 9.2      | `./proxmox_oraclelinux_92.sh` | |
+  | Rocky Linux 8.8       | `./proxmox_rockylinux_88.sh` | |
+  | Rocky Linux 9.2       | `./proxmox_rockylinux_92.sh` | |
+  | Ubuntu 22.04 HWE LTS  | `./proxmox_ubuntu_2204_hwe.sh` | HWE Kernel|
+  | Ubuntu 22.04 LTS      | `./proxmox_ubuntu_2204.sh` | |
+  | Ubuntu 23.04          | `./proxmox_ubuntu_2304.sh` | |
+  | Microsoft Windows 2022 Datacenter   | `./proxmox_windows_2022-dc.sh` |Datacenter Edition |
+  | Microsoft Windows 2022 Standard     | `./proxmox_windows_2022-std.sh` |Standard Edition |
+  | Microsoft Windows 2019 Standard     | `./proxmox_windows_2019-std.sh` |Standard Edition |
+  | Microsoft Windows 2019 Datacenter   | `./proxmox_windows_2019-dc.sh` |Datacenter Edition |
 
 ### Provisioning
 

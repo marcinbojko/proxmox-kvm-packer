@@ -154,10 +154,25 @@ do {
     try {
         Write-Output "Phase 1 [INFO] - installing Chocolatey, attempt $choco_install_count of $choco_install_count_max"
         Get-ExecutionPolicy
-        Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope Process -Force -Verbose;
-        [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-        Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1')) -ErrorAction Stop
-        Write-Output "Phase 1 [INFO] - installing Chocolatey exit code is: $LASTEXITCODE"
+        if ($global:os -eq '2019') {
+            try {
+                # Install Chocolatey in version pre 2.0.0
+                Write-Output "Phase 1 [INFO] - installing Chocolatey, Windows 2019 found, locking to version 1.4.0"
+                $env:chocolateyVersion = '1.4.0';Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iwr https://community.chocolatey.org/install.ps1 -UseBasicParsing| iex
+            }
+            catch {
+                Write-Output "Phase 1 [WARN] - Chocolatey install problem, attempt $choco_install_count of $choco_install_count_max"
+                Sleep 1
+            }
+        }
+        else {
+            # Install Chocolatey in version 2.0.0 or later
+            Write-Output "Phase 1 [INFO] - installing Chocolatey, Windows later han 2019 found, enabling latest"
+            Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope Process -Force -Verbose;
+            [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+            Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1')) -ErrorAction Stop
+            Write-Output "Phase 1 [INFO] - installing Chocolatey exit code is: $LASTEXITCODE"
+        }
         if ($LASTEXITCODE -eq 0) {
             $choco_install_success=$true
             Write-Output "Phase 1 [INFO] - Chocolatey install succesful"
@@ -177,15 +192,15 @@ if (-not $choco_install_success) {
 }
 
 # Install PSWindowsUpdate
-Write-Output "Phase 1 [INFO] - Installing Nuget"
-Get-PackageProvider -Name "Nuget" -ForceBootstrap -Verbose -ErrorAction Stop
-Write-Output "Phase 1 [INFO] - Installing PSWindowsUpdate"
-Install-Module PSWindowsUpdate -Force -Confirm:$false -Verbose -ErrorAction Stop
-Import-Module PSWindowsUpdate
-Get-WUServiceManager
-if ($global:os -ne '2022') {
-  Add-WUServiceManager -ServiceID 7971f918-a847-4430-9279-4a52d1efe18d -Confirm:$false
-}
+# Write-Output "Phase 1 [INFO] - Installing Nuget"
+# Get-PackageProvider -Name "Nuget" -ForceBootstrap -Verbose -ErrorAction Stop
+# Write-Output "Phase 1 [INFO] - Installing PSWindowsUpdate"
+# Install-Module PSWindowsUpdate -Force -Confirm:$false -Verbose -ErrorAction Stop
+# Import-Module PSWindowsUpdate
+# Get-WUServiceManager
+# if ($global:os -ne '2022') {
+#   Add-WUServiceManager -ServiceID 7971f918-a847-4430-9279-4a52d1efe18d -Confirm:$false
+# }
 #Remove 260 Character Path Limit
 if (Test-Path 'HKLM:\SYSTEM\CurrentControlSet\Control\FileSystem') {
     Set-ItemProperty -Path 'HKLM:\SYSTEM\CurrentControlSet\Control\FileSystem' -name "LongPathsEnabled" -Value 1 -Verbose -Force
