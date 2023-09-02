@@ -13,3 +13,4 @@ vbox/*
 *.log
 secrets/proxmox.sh
 .vscode/*
+packer-/*

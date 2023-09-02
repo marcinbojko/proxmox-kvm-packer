@@ -1,5 +1,15 @@
 # Changelog
 
+## Version 1.0.4
+
+- KVM build are GA. Supported cloud-init configs are:
+  - `generic` for on-premises or no cloud-specific environment
+  - `oci` for Oracle Cloud Infrastructure
+  - `alicloud` for Alibaba Cloud
+- added `Rocky Linux 8.7` KVM template
+- added `Rocky Linux 8.8` KVM template
+- added `Rocky Linux 9.2` KVM template
+
 ## Version 1.0.3
 
 - added `Microsoft Windows 2019 Standard` Proxmox template

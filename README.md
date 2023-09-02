@@ -4,11 +4,17 @@
 
 - [Proxmox/KVM Packer VM Templates](#proxmoxkvm-packer-vm-templates)
   - [Proxmox](#proxmox)
-    - [Requirements](#requirements)
+    - [Proxmox requirements](#proxmox-requirements)
     - [Usage](#usage)
     - [Provisioning](#provisioning)
   - [KVM](#kvm)
-  - [Cloud-init](#cloud-init)
+    - [KVM Requirements](#kvm-requirements)
+    - [Cloud-init support](#cloud-init-support)
+      - [RHEL](#rhel)
+      - [Ubuntu](#ubuntu)
+    - [KVM scripts usage](#kvm-scripts-usage)
+      - [Parameters](#parameters)
+      - [KVM building scripts, by OS with cloud parameters](#kvm-building-scripts-by-os-with-cloud-parameters)
   - [Known Issues](#known-issues)
     - [Windows UEFI boot and 'Press any key to boot from CD or DVD' issue](#windows-uefi-boot-and-press-any-key-to-boot-from-cd-or-dvd-issue)
     - [OpenSuse Leap stage 2 sshd fix](#opensuse-leap-stage-2-sshd-fix)
@@ -20,7 +26,7 @@ Proxmox and KVM related Virtual Machines using packer
 
 ## Proxmox
 
-### Requirements
+### Proxmox requirements
 
 - [Packer](https://www.packer.io/downloads) in version >= 1.9.2
 - [Proxmox](https://www.proxmox.com/en/downloads) in version >= 8.0
@@ -120,7 +126,57 @@ example:
 
 ## KVM
 
-## Cloud-init
+### KVM Requirements
+
+- [Packer](https://www.packer.io/downloads) in version >= 1.9.2
+- [Ansible] in version >= 2.10.0
+- tested with `AMD Ryzen 9 5950X`, `Intel(R) Core(TM) i3-7100T`
+- at least 2GB of free RAM for virtual machines (4GB recommended)
+- KVM hypervisor
+
+### Cloud-init support
+
+KVM builds are separated by cloud-init groups. Currently supported groups are:
+
+#### RHEL
+
+- generic - generic cloud-init configuration
+- oci - Oracle Cloud Infrastructure cloud-init configuration
+- alicloud - Alibaba Cloud cloud-init configuration
+
+#### Ubuntu
+
+### KVM scripts usage
+
+- Init packer by running  `packer init config.pkr.hcl`
+- Scripts have `kvm_` prefix
+
+#### Parameters
+
+KVM building scripts will take 2 runtime parameters:
+
+- $1 - PACKER_LOG settings, can be 0 or 1 (can be skipped)
+- $2 - cloud-init group, can be:  `generic`, `oci` or `alicloud` (can be skipped)
+
+Example:
+
+```bash
+./kvm_rockylinux92.sh 1 generic #This will build Rocky Linux 9.2 with generic cloud-init configuration and PACKER_LOG set to verbose output
+```
+
+Example 2
+
+```bash
+./kvm_rockylinux92.sh oci #This will build Rocky Linux 9.2 with oci cloud-init configuration and PACKER_LOG set to 0 (default)
+```
+
+#### KVM building scripts, by OS with cloud parameters
+
+| OS | script | Comments|Generic|OCI|AliCloud|
+|----|--------|---------|-------|---|--------|
+| Rocky Linux 8.7        | `./kvm_rockylinux87.sh` | | generic/empty | oci | alicloud |
+| Rocky Linux 8.8        | `./kvm_rockylinux88.sh` | | generic/empty | oci | alicloud |
+| Rocky Linux 9.2        | `./kvm_rockylinux92.sh` | | generic/empty | oci | alicloud |
 
 ## Known Issues
 

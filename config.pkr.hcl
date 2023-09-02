@@ -20,6 +20,10 @@ packer {
       source  = "github.com/hashicorp/ansible"
       version = "~> 1"
     }
+    vagrant = {
+      source  = "github.com/hashicorp/vagrant"
+      version = "~> 1"
+    }
   }
 }
 
