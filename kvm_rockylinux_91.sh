@@ -60,7 +60,7 @@ esac
 export PACKER_LOG
 
 # Define other variables
-version="rockylinux-9.2"
+version="rockylinux-9.1"
 family="rhel"
 output_dir="packer-${version}-${cloud}-x86_64-qemu"
 var_file="kvm/variables_kvm_${version}.pkvars.hcl"

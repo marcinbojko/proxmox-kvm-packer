@@ -174,9 +174,18 @@ Example 2
 
 | OS | script | Comments|Generic|OCI|AliCloud|
 |----|--------|---------|-------|---|--------|
-| Rocky Linux 8.7        | `./kvm_rockylinux87.sh` | | generic/empty | oci | alicloud |
-| Rocky Linux 8.8        | `./kvm_rockylinux88.sh` | | generic/empty | oci | alicloud |
-| Rocky Linux 9.2        | `./kvm_rockylinux92.sh` | | generic/empty | oci | alicloud |
+| Oracle Linux 8.6        | `./kvm_oraclelinux86.sh`  | | generic/empty | oci | alicloud |
+| Oracle Linux 8.7        | `./kvm_oraclelinux87.sh`  | | generic/empty | oci | alicloud |
+| Oracle Linux 8.8        | `./kvm_oraclelinux88.sh`  | | generic/empty | oci | alicloud |
+| Oracle Linux 9.0        | `./kvm_oraclelinux90.sh`  | | generic/empty | oci | alicloud |
+| Oracle Linux 9.1        | `./kvm_oraclelinux91.sh`  | | generic/empty | oci | alicloud |
+| Oracle Linux 9.2        | `./kvm_oraclelinux92.sh`  | | generic/empty | oci | alicloud |
+| Rocky Linux 8.7         | `./kvm_rockylinux87.sh`   | | generic/empty | oci | alicloud |
+| Rocky Linux 8.8         | `./kvm_rockylinux88.sh`   | | generic/empty | oci | alicloud |
+| Rocky Linux 9.0         | `./kvm_rockylinux90.sh`   | | generic/empty | oci | alicloud |
+| Rocky Linux 9.1         | `./kvm_rockylinux91.sh`   | | generic/empty | oci | alicloud |
+| Rocky Linux 9.2         | `./kvm_rockylinux92.sh`   | | generic/empty | oci | alicloud |
+
 
 ## Known Issues
 

@@ -88,7 +88,7 @@ source "qemu" "rhel" {
   iso_checksum      = "${var.iso_checksum}"
   iso_url           = "${var.iso_url}"
   net_device        = "${var.net_device}"
-  output_directory  = "packer-${var.template}-qemu"
+  output_directory  = "${var.template}"
   shutdown_command  = "${var.shutdown_command}"
   ssh_password      = "${var.ssh_password}"
   ssh_port          = "${var.ssh_port}"

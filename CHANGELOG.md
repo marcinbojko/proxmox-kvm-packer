@@ -1,5 +1,16 @@
 # Changelog
 
+## Version 1.0.5
+
+- [KVM] added `Oracle Linux 8.6` KVM template
+- [KVM] added `Oracle Linux 8.7` KVM template
+- [KVM] added `Oracle Linux 8.8` KVM template
+- [KVM] added `Oracle Linux 9.0` KVM template
+- [KVM] added `Oracle Linux 9.1` KVM template
+- [KVM] added `Oracle Linux 9.2` KVM template
+- [KVM] added `Rocky Linux 9.0` KVM template
+- [KVM] added `Rocky Linux 9.1` KVM template
+
 ## Version 1.0.4
 
 - KVM build are GA. Supported cloud-init configs are:

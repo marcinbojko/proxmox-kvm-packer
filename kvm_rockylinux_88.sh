@@ -10,7 +10,7 @@ NC='\033[0m' # No Color
 # Default values
 PACKER_LOG=0
 cloud="generic"
-cloud_init_path="extra/files/cloud-init/rhel/oci/cloud.cfg"
+cloud_init_path="extra/files/cloud-init/rhel/generic/cloud.cfg"
 
 
 # Check for script parameters
