@@ -1,5 +1,25 @@
 
-# Proxmox/KVM Packer VM Templates
+<!-- TOC -->
+
+- [Proxmox](#proxmox)
+  - [Proxmox requirements](#proxmox-requirements)
+  - [Usage](#usage)
+  - [Provisioning](#provisioning)
+- [KVM](#kvm)
+  - [KVM Requirements](#kvm-requirements)
+  - [Cloud-init support](#cloud-init-support)
+    - [RHEL](#rhel)
+    - [Ubuntu](#ubuntu)
+  - [KVM scripts usage](#kvm-scripts-usage)
+    - [Parameters](#parameters)
+    - [KVM building scripts, by OS with cloud parameters](#kvm-building-scripts-by-os-with-cloud-parameters)
+- [Known Issues](#known-issues)
+  - [Windows UEFI boot and 'Press any key to boot from CD or DVD' issue](#windows-uefi-boot-and-press-any-key-to-boot-from-cd-or-dvd-issue)
+  - [OpenSuse Leap stage 2 sshd fix](#opensuse-leap-stage-2-sshd-fix)
+- [To DO](#to-do)
+- [Q & A](#q--a)
+
+<!-- /TOC -->
 <!-- TOC -->
 
 - [Proxmox/KVM Packer VM Templates](#proxmoxkvm-packer-vm-templates)
@@ -174,6 +194,11 @@ Example 2
 
 | OS | script | Comments|Generic|OCI|AliCloud|
 |----|--------|---------|-------|---|--------|
+| Alma Linux 8.7          | `./kvm_oraclelinux87.sh`  | | generic/empty | oci | alicloud |
+| Alma Linux 8.8          | `./kvm_oraclelinux88.sh`  | | generic/empty | oci | alicloud |
+| Alma Linux 9.0          | `./kvm_oraclelinux90.sh`  | | generic/empty | oci | alicloud |
+| Alma Linux 9.1          | `./kvm_oraclelinux91.sh`  | | generic/empty | oci | alicloud |
+| Alma Linux 9.2          | `./kvm_oraclelinux92.sh`  | | generic/empty | oci | alicloud |
 | Oracle Linux 8.6        | `./kvm_oraclelinux86.sh`  | | generic/empty | oci | alicloud |
 | Oracle Linux 8.7        | `./kvm_oraclelinux87.sh`  | | generic/empty | oci | alicloud |
 | Oracle Linux 8.8        | `./kvm_oraclelinux88.sh`  | | generic/empty | oci | alicloud |
@@ -185,7 +210,6 @@ Example 2
 | Rocky Linux 9.0         | `./kvm_rockylinux90.sh`   | | generic/empty | oci | alicloud |
 | Rocky Linux 9.1         | `./kvm_rockylinux91.sh`   | | generic/empty | oci | alicloud |
 | Rocky Linux 9.2         | `./kvm_rockylinux92.sh`   | | generic/empty | oci | alicloud |
-
 
 ## Known Issues
 

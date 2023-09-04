@@ -21,6 +21,9 @@ remove_packer_folders() {
 # Define the array of parameters
 params=("generic" "oci" "alicloud")
 
+# Get the search phrase from parameter $1, default to kvm_ if not provided
+search_phrase=${1:-kvm_}
+
 # Navigate to the parent directory
 cd ..
 
@@ -29,8 +32,8 @@ log 34 "Navigated to parent directory: $(pwd)" # Blue color for informational me
 # Remove subfolders starting with packer-
 remove_packer_folders "$(pwd)"
 
-# Find all .sh files starting with kvm_ and run them with each parameter from the array
-for file in kvm_*.sh; do
+# Find all .sh files starting with the search phrase and run them with each parameter from the array
+for file in ${search_phrase}*.sh; do
     if [[ -f "$file" ]]; then
         log 32 "Processing file: $file" # Green color for success messages
 
@@ -41,8 +44,8 @@ for file in kvm_*.sh; do
             start_time=$(date +%s)
 
             # Execute the script and redirect output if needed
-            if [[ -n "$1" ]]; then
-                bash "$file" "$param" >> "$1" 2>&1
+            if [[ -n "$2" ]]; then
+                bash "$file" "$param" >> "$2" 2>&1
             else
                 bash "$file" "$param"
             fi
@@ -54,8 +57,8 @@ for file in kvm_*.sh; do
             log 34 "$file executed with $param in ${duration} seconds"
         done
     else
-        log 31 "No .sh files starting with kvm_ found!" # Red color for error messages
+        log 31 "No .sh files starting with ${search_phrase} found!" # Red color for error messages
     fi
 done
 
-# Note: To redirect output to a log file, run the script as: ./script_name.sh output.log
+# Note: To redirect output to a log file, run the script as: ./script_name.sh search_phrase output.log
