@@ -1,28 +1,19 @@
+# Proxmox and KVM related Virtual Machines using Hashicorp's Packer
+
+![RockyLinux](https://img.shields.io/badge/Linux-Rocky-brightgreen)
+![OracleLinux](https://img.shields.io/badge/Linux-Oracle-brightgreen)
+![AlmaLinux](https://img.shields.io/badge/Linux-Alma-brightgreen)
+![UbuntuLinux](https://img.shields.io/badge/Linux-Ubuntu-orange)
+![Windows2019](https://img.shields.io/badge/Windows-2019-blue)
+![Windows2022](https://img.shields.io/badge/Windows-2022-blue)
+
+[!["Buy Me A Coffee"](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://www.buymeacoffee.com/marcinbojko)
+
+Consider buying me a coffee if you like my work. All donations are appreciated. All donations will be used to pay for pipeline running costs
 
 <!-- TOC -->
 
-- [Proxmox](#proxmox)
-  - [Proxmox requirements](#proxmox-requirements)
-  - [Usage](#usage)
-  - [Provisioning](#provisioning)
-- [KVM](#kvm)
-  - [KVM Requirements](#kvm-requirements)
-  - [Cloud-init support](#cloud-init-support)
-    - [RHEL](#rhel)
-    - [Ubuntu](#ubuntu)
-  - [KVM scripts usage](#kvm-scripts-usage)
-    - [Parameters](#parameters)
-    - [KVM building scripts, by OS with cloud parameters](#kvm-building-scripts-by-os-with-cloud-parameters)
-- [Known Issues](#known-issues)
-  - [Windows UEFI boot and 'Press any key to boot from CD or DVD' issue](#windows-uefi-boot-and-press-any-key-to-boot-from-cd-or-dvd-issue)
-  - [OpenSuse Leap stage 2 sshd fix](#opensuse-leap-stage-2-sshd-fix)
-- [To DO](#to-do)
-- [Q & A](#q--a)
-
-<!-- /TOC -->
-<!-- TOC -->
-
-- [Proxmox/KVM Packer VM Templates](#proxmoxkvm-packer-vm-templates)
+- [Proxmox and KVM related Virtual Machines using Hashicorp's Packer](#proxmox-and-kvm-related-virtual-machines-using-hashicorps-packer)
   - [Proxmox](#proxmox)
     - [Proxmox requirements](#proxmox-requirements)
     - [Usage](#usage)
@@ -42,8 +33,6 @@
   - [Q & A](#q--a)
 
 <!-- /TOC -->
-Proxmox and KVM related Virtual Machines using packer
-
 ## Proxmox
 
 ### Proxmox requirements

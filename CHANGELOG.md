@@ -1,5 +1,9 @@
 # Changelog
 
+## Version 1.0.7
+
+- fixes and tyding up for `extras` folder structure changes
+
 ## Version 1.0.6
 
 - [KVM] added `Alma Linux 8.7` KVM template

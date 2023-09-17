@@ -1,4 +1,4 @@
-boot_command          = "<tab> text inst.ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/rockylinux/8/ks.cfg<enter><wait10><wait10><esc>"
+boot_command          = "<tab> text inst.ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/rockylinux/8/kvm/ks.cfg<enter><wait10><wait10><esc>"
 cpus                  = "4"
 cloud_init_path       = "extra/files/cloud-init/rhel/generic/cloud.cfg"
 disk_interface        = "virtio"

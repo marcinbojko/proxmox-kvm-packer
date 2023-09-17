@@ -14,3 +14,4 @@ vbox/*
 secrets/proxmox.sh
 .vscode/*
 packer-/*
+.snippets/*

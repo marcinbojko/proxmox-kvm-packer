@@ -17,13 +17,13 @@ family="ubuntu"
 var_file="proxmox/variables_proxmox_${version}.pkvars.hcl"
 template="proxmox/proxmox_${family}.pkr.hcl"
 
-packer validate --var-file="$var_file" -var="boot_command=<wait3>c<wait3>linux /casper/hwe-vmlinuz quiet autoinstall net.ifnames=0 biosdevname=0 ip=dhcp ipv6.disable=1 ds=\"nocloud-net;s=http://{{ .HTTPIP }}:{{ .HTTPPort }}/gen2-ubuntu2204/\"<enter><wait5>initrd /casper/hwe-initrd<wait5><enter>boot<wait5s><enter>" -var "template=ubuntu22.04.hwe" "$template"
+packer validate --var-file="$var_file" -var="boot_command=<wait3>c<wait3>linux /casper/hwe-vmlinuz quiet autoinstall net.ifnames=0 biosdevname=0 ip=dhcp ipv6.disable=1 ds=\"nocloud-net;s=http://{{ .HTTPIP }}:{{ .HTTPPort }}/ubuntu/22.04/proxmox/\"<enter><wait5>initrd /casper/hwe-initrd<wait5><enter>boot<wait5s><enter>" -var "template=ubuntu22.04.hwe" "$template"
 rc=$?
  if [ $rc -ne 0 ]; then
         echo "Packer validate failed - exiting now"
         exit $rc
     else
-        packer build --force --var-file="$var_file" -var="boot_command=<wait3>c<wait3>linux /casper/hwe-vmlinuz quiet autoinstall net.ifnames=0 biosdevname=0 ip=dhcp ipv6.disable=1 ds=\"nocloud-net;s=http://{{ .HTTPIP }}:{{ .HTTPPort }}/gen2-ubuntu2204/\"<enter><wait5>initrd /casper/hwe-initrd<wait5><enter>boot<wait5s><enter>" -var "template=ubuntu22.04.hwe" "$template"
+        packer build --force --var-file="$var_file" -var="boot_command=<wait3>c<wait3>linux /casper/hwe-vmlinuz quiet autoinstall net.ifnames=0 biosdevname=0 ip=dhcp ipv6.disable=1 ds=\"nocloud-net;s=http://{{ .HTTPIP }}:{{ .HTTPPort }}/ubuntu/22.04/proxmox/\"<enter><wait5>initrd /casper/hwe-initrd<wait5><enter>boot<wait5s><enter>" -var "template=ubuntu22.04.hwe" "$template"
         rc=$?
     fi
 

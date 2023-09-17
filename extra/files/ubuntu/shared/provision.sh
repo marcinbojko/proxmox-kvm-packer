@@ -159,7 +159,7 @@ if [ "$INSTALL_HYPERV" == "true" ]; then
    systemctl enable hv-vss-daemon
   if [ -e /tmp/install ]; then
     cd /tmp||exit
-    chmod +x /tmp/installhv
+    chmod +x /tmp/install
     /tmp/install "$(ls /tmp/scvmm*.x64.tar)"
   fi
 else
