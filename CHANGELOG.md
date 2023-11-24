@@ -1,5 +1,11 @@
 # Changelog
 
+## Version 1.0.8
+
+- [PROXMOX] added `Rocky Linux 9.3`
+- [PROXMOX] added `Alma Linux 9.3`
+- [PROXMOX] added `Oracle Linux 9.3`
+
 ## Version 1.0.7
 
 - fixes and tyding up for `extras` folder structure changes
