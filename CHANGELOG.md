@@ -1,5 +1,17 @@
 # Changelog
 
+## Version 1.0.9
+
+- [KVM] added `Rocky Linux 8.9` KVM template
+- [KVM] added `Rocky Linux 9.3` KVM template
+- [KVM] added `Alma Linux 8.9` KVM template
+- [KVM] added `Alma Linux 9.3` KVM template
+- [KVM] added `Oracle Linux 8.9` KVM template
+- [KVM] added `Oracle Linux 9.3` KVM template
+- [PROXMOX] added `Rocky Linux 8.9`
+- [PROXMOX] added `Alma Linux 8.9`
+- [PROXMOX] added `Oracle Linux 8.9`
+
 ## Version 1.0.8
 
 - [PROXMOX] added `Rocky Linux 9.3`
