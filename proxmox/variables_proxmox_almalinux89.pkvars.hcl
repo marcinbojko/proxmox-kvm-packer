@@ -1,4 +1,4 @@
-ansible_extra_args        = ["-e", "@extra/playbooks/provision_alma8_variables.yml", "-e", "@variables/almalinux8.yml"]
+ansible_extra_args        = ["-e", "@extra/playbooks/provision_alma8_variables.yml", "-e", "@variables/almalinux8.yml", "--scp-extra-args", "'-O'" ]
 ansible_verbosity         = ["-v"]
 ballooning_minimum        = "0"
 boot_command              = "<tab> text inst.ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/almalinux/8/proxmox/ks.cfg<enter><wait10>esc<wait60><esc>"
