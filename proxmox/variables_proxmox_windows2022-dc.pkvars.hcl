@@ -32,7 +32,7 @@ network_adapters = {
     mac_address             = ""
 }
 os                          = "win11"
-proxmox_node                = "proxmox-amd9"
+proxmox_node                = "proxmox6"
 qemu_agent                  = true
 scsi_controller             = "virtio-scsi-single"
 sockets                     = "1"

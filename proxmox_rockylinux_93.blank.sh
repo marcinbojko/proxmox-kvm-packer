@@ -12,33 +12,25 @@ else
     echo "secrets/proxmox.sh not found"
 fi
 
-template1="./proxmox/proxmox_windows.pkr.hcl"
-var_file="./proxmox/variables_proxmox_windows2019-dc.pkvars.hcl"
-packer="packer"
 
-if [ -z "$1" ]; then
-    set -- 0
-fi
+version="rockylinux93"
+family="rhel_blank"
+var_file="proxmox/variables_proxmox_${version}.pkvars.hcl"
+template="proxmox/proxmox_${family}.pkr.hcl"
 
-if  [ "$1" -eq 1 ]; then
-    # 1 pass
-    $packer --version
-    $packer validate --var-file="$var_file" "$template1"
-    rc=$?
-    if [ $rc -ne 0 ]; then
-           echo "Packer validate failed - exiting now"
-           exit $rc
-       else
-           $packer build --force --var-file="$var_file" "$template1"
-           rc=$?
-    fi
-
-    if [ $rc -ne 0 ]; then
-        echo "Packer build failed - exiting now"
+packer validate --var-file="$var_file" "$template"
+rc=$?
+ if [ $rc -ne 0 ]; then
+        echo "Packer validate failed - exiting now"
         exit $rc
     else
-        echo "Packer build for $template1 success"
+        packer build --force --var-file="$var_file" "$template"
+        rc=$?
     fi
+
+if [ $rc -ne 0 ]; then
+        echo "Packer build failed - exiting now"
+        exit $rc
 fi
 
 # End time

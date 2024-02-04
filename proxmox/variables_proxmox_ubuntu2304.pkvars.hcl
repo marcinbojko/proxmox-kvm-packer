@@ -23,7 +23,7 @@ network_adapters = {
     firewall              = false
     mac_address           = ""
 }
-proxmox_node              = "proxmox5"
+proxmox_node              = "proxmox6"
 provision_script_options  ="-z false -h false -p false"
 qemu_agent                = true
 scsi_controller           = "virtio-scsi-pci"

@@ -1,20 +1,15 @@
-# Pass true in variables
 # ansible-galaxy collection install ansible.posix
-- name: prepare_centos_machine
+# ansible-galaxy collection install community.general
+- name: prepare_rhel_machine
   hosts: all
   vars:
     install_epel: false
     change_epel_priority: false
     install_webmin: false
     install_hyperv: false
-    install_zabbix: false
-    install_zabbix_as_root: false
     install_cockpit: false
-    install_puppet: false
-    install_docker_workaround: false
-    install_kubernetes_workaround: false
+    install_kernel_parameters: true
     install_motd: false
-    remove_puppet_ssl_keys: false
     install_neofetch: false
     install_updates: false
     install_extra_groups: false
@@ -23,6 +18,7 @@
     delay_time: 15
     retries_count: 2
     reboot_server: false
+    playbook_version: "20240130"
   become: true
   gather_facts: false
   pre_tasks:
@@ -70,18 +66,20 @@
           - "Install Hyperv                 :{{ install_hyperv | lower }}"
           - "Install MOTD                   :{{ install_motd | lower }}"
           - "Install Neofetch               :{{ install_neofetch | lower }}"
-          - "Install Puppet                 :{{ install_puppet | lower }}"
+          - "Install kernel parameters      :{{ install_kernel_parameters | lower }}"
           - "Install updates                :{{ install_updates | lower }}"
           - "Install Webmin                 :{{ install_webmin | lower }}"
-          - "Install Zabbix                 :{{ install_zabbix | lower }}"
-          - "Install Zabbix Agent as root   :{{ install_zabbix_as_root | lower }}"
           - "Reboot server                  :{{ reboot_server | lower }}"
+          - "Playbook version               :{{ playbook_version }}"
+
     # initial cleaning and refreshing metadata for packages
     - name: initial_clean
       ansible.builtin.debug:
         msg: "Starting provision"
-      notify: clean-metadata
-      changed_when: true
+      notify:
+        - clean-metadata
+        - makecache
+      changed_when: false
     - name: install_initial_packages
       ansible.builtin.package:
         name: "{{ item }}"
@@ -222,91 +220,6 @@
           delay: "{{ delay_time }}"
           until: r_start_webmin is success
 
-    # start zabbix block
-    - name: start_zabbix_block
-      when: install_zabbix
-      block:
-        - name: import_gpg_zabix_key
-          ansible.builtin.rpm_key:
-            key: "{{ item.gpgkey }}"
-            state: present
-            validate_certs: false
-          loop: "{{ zabbix.repository }}"
-          notify:
-            - clean-metadata
-            - makecache
-        - name: install_zabbix_repository
-          ansible.builtin.package:
-            name: "{{ item.url }}"
-            state: present
-          loop: "{{ zabbix.repository }}"
-          retries: "{{ retries_count }}"
-          delay: "{{ delay_time }}"
-          register: r_zabbix_repository
-          until: r_zabbix_repository is success
-          notify: makecache
-        - name: disable_zabbix_test_repos
-          community.general.ini_file:
-            path: /etc/yum.repos.d/zabbix.repo
-            section: zabbix-non-supported
-            option: enabled
-            value: "0"
-            mode: "0644"
-          when: r_zabbix_repository is success
-          retries: "{{ retries_count }}"
-          delay: "{{ delay_time }}"
-          register: r_zabbix_non_supported_disable
-          until: r_zabbix_non_supported_disable is success
-        - name: change_zabbix_priority
-          community.general.ini_file:
-            path: "{{ item.path }}"
-            section: "{{ item.name }}"
-            option: "priority"
-            value: "{{ item.priority }}"
-            mode: "0644"
-          when: r_zabbix_repository is success
-          retries: "{{ retries_count }}"
-          delay: "{{ delay_time }}"
-          register: r_change_zabbix_priority
-          loop: "{{ zabbix.priorities }}"
-          until: r_change_zabbix_priority is success
-          notify: makecache
-        - name: install_zabbix_agent_package
-          ansible.builtin.package:
-            name: "{{ item.name }}"
-            state: latest
-          retries: "{{ retries_count }}"
-          delay: "{{ delay_time }}"
-          register: r_zabbix_package
-          loop: "{{ zabbix.repository }}"
-          until: r_zabbix_package is success
-        - name: zabbix_agent_tweaks_folder
-          ansible.builtin.file:
-            path: "/etc/systemd/system/{{ zabbix.package.service }}.service.d"
-            state: directory
-            mode: '0755'
-          when: install_zabbix_as_root is defined and install_zabbix_as_root
-        - name: zabbix_agent_tweaks_content
-          ansible.builtin.copy:
-            dest: "/etc/systemd/system/{{ zabbix.package.service }}.service.d/override.conf"
-            content: |
-              [Service]
-              User=root
-              Group=root
-            mode: "0644"
-          when: install_zabbix_as_root is defined and install_zabbix_as_root
-        - name: start_zabbix
-          ansible.builtin.systemd:
-            name: "{{ zabbix.package.service }}"
-            state: restarted
-            enabled: true
-            daemon_reload: true
-          register: r_start_zabbix
-          delay: "{{ delay_time }}"
-          retries: "{{ retries_count }}"
-          until: r_start_zabbix is success
-          when: r_zabbix_package is success
-          changed_when: false
 
     - name: start_cockpit_block
       when: install_cockpit is defined and install_cockpit
@@ -324,97 +237,6 @@
           delay: "{{ delay_time }}"
           retries: "{{ retries_count }}"
           until: r_start_cockpit is success
-
-    # start puppet block
-    - name: start_puppet_block
-      when: install_puppet
-      block:
-        - name: import_gpg_puppet_key
-          ansible.builtin.rpm_key:
-            key: "{{ item.gpgkey }}"
-            state: present
-          loop: "{{ puppet.repository }}"
-          notify:
-            - clean-metadata
-            - makecache
-        - name: install_puppet_repository
-          ansible.builtin.yum:
-            name: "{{ item.url }}"
-            state: present
-          loop: "{{ puppet.repository }}"
-          retries: "{{ retries_count }}"
-          delay: "{{ delay_time }}"
-          register: r_puppet_repository
-          notify: makecache
-          until: r_puppet_repository is success
-        - name: puppet_repository_priority
-          community.general.ini_file:
-            path: "{{ item.path }}"
-            section: "{{ item.name }}"
-            option: "priority"
-            value: "{{ item.priority }}"
-            mode: "0644"
-          when: r_puppet_repository is success
-          retries: "{{ retries_count }}"
-          delay: "{{ delay_time }}"
-          register: r_puppet_repository_priority
-          loop: "{{ puppet.priorities }}"
-          until: r_puppet_repository_priority is success
-          notify: makecache
-        - name: install_puppet_package
-          ansible.builtin.yum:
-            name: "{{ puppet.package.name }}"
-            state: latest
-          retries: "{{ retries_count }}"
-          delay: "{{ delay_time }}"
-          register: r_install_puppet_package
-          until: r_install_puppet_package is success
-        - name: set_puppet_service_state
-          ansible.builtin.systemd:
-            name: "{{ item.name }}"
-            state: "{{ item.state }}"
-            enabled: "{{ item.enabled }}"
-          loop: "{{ puppet.service }}"
-          retries: "{{ retries_count }}"
-          delay: "{{ delay_time }}"
-          register: r_set_puppet_service
-          until: r_set_puppet_service is success
-          when: r_install_puppet_package is success
-        - name: remove_temp_ssl_keys
-          ansible.builtin.file:
-            path: /etc/puppetlabs/puppet/ssl
-            state: absent
-          register: r_remove_temp_ssl_keys
-          retries: "{{ retries_count }}"
-          delay: "{{ delay_time }}"
-          until: r_remove_temp_ssl_keys is success
-          when: r_install_puppet_package is success and remove_puppet_ssl_keys
-        - name: create_puppet_config
-          ansible.builtin.file:
-            path: "{{ puppet.config.location }}"
-            state: touch
-            mode: "{{ puppet.config.mode }}"
-            modification_time: preserve
-            access_time: preserve
-          retries: "{{ retries_count }}"
-          delay: "{{ delay_time }}"
-          register: r_create_puppet_config
-          until: r_create_puppet_config is success
-          when: r_install_puppet_package is success
-        - name: add_puppet_config_options
-          community.general.ini_file:
-            path: "{{ puppet.config.location }}"
-            state: present
-            section: main
-            option: "{{ item.key }}"
-            value: "{{ item.value }}"
-            mode: "0644"
-          loop: "{{ puppet.config.agent }}"
-          register: r_add_puppet_config_options
-          retries: "{{ retries_count }}"
-          delay: "{{ delay_time }}"
-          until: r_add_puppet_config_options is success
-          when: r_install_puppet_package is success
 
     # start neofetch block - requires changes from script to 'per option' settings
     - name: start_neofetch_block
@@ -680,20 +502,6 @@
           until: r_add_rich_rules is success
           notify: reload_firewalld
           when: ansible_default_ipv4.interface is defined
-        - name: add_zabbix_rich_rules
-          ansible.posix.firewalld:
-            rich_rule: "{{ item.rule }}"
-            zone: "{{ firewalld.default_zone }}"
-            immediate: true
-            state: enabled
-            permanent: true
-          loop: "{{ firewalld.zabbix_rich_rules }}"
-          retries: "{{ retries_count }}"
-          delay: "{{ delay_time }}"
-          register: r_add_zabbix_rich_rules
-          until: r_add_zabbix_rich_rules is success
-          notify: reload_firewalld
-          when: ansible_default_ipv4.interface is defined and install_zabbix
         - name: add_webmin_rich_rules
           ansible.posix.firewalld:
             rich_rule: "{{ item.rule }}"
@@ -737,6 +545,40 @@
           until: r_remove_redundand_services is success
           notify: reload_firewalld
           when: ansible_default_ipv4.interface is defined
+
+      # set kernel parameters
+    - name: set kernel parameters
+      when: (install_kernel_parameters is defined and install_kernel_parameters)
+      block:
+        # install grubby parameters
+        - name: get_info_from_grubby
+          ansible.builtin.command: grubby --info=ALL
+          register: r_grubby_info
+          any_errors_fatal: false
+          failed_when: false
+          changed_when: false
+          until: r_grubby_info is success
+          when: (install_kernel_parameters is defined and install_kernel_parameters)
+        - name: update_grub_kernel_options_for_all_machines
+          ansible.builtin.command: "grubby --args {{ item.key }}={{ item.value }} --update-kernel=ALL"
+          when: (item.key ~ "=" ~ item.value not in r_grubby_info.stdout) and (item.state is defined and item.state == "present")
+          loop: "{{ kernel_parameters }}"
+          changed_when: false
+          failed_when: false
+        - name: remove_grub_kernel_options_for_all_machines
+          ansible.builtin.command: "grubby --remove-args {{ item.key }}={{ item.value }} --update-kernel=ALL"
+          when: (item.key ~ "=" ~ item.value in r_grubby_info.stdout) and (item.state is defined and item.state == "absent")
+          loop: "{{ kernel_parameters }}"
+          changed_when: false
+          failed_when: false
+        - name: get_info_from_grubby
+          ansible.builtin.command: grubby --info=ALL
+          register: r_grubby_info
+          any_errors_fatal: false
+          failed_when: false
+          changed_when: false
+          until: r_grubby_info is success
+
     # last touch and cleaning block
     - name: last_touch_and_cleaning_block
       block:
@@ -795,14 +637,14 @@
           when: machine_type != "guest" and machine_type is defined
           changed_when: false
         - name: Enable synchronize system clock
-          ansible.builtin.shell: timedatectl set-ntp true
+          ansible.builtin.command: timedatectl set-ntp true
           retries: "{{ retries_count }}"
           delay: "{{ delay_time }}"
           register: r_set_ntp
           until: r_set_ntp is success
           failed_when: false
           changed_when: false
-        - name: Restart chronyd service
+        - name: restart_chronyd_service
           ansible.builtin.systemd:
             name: chronyd
             state: restarted
@@ -817,24 +659,7 @@
           failed_when: false
           any_errors_fatal: false
           changed_when: false
-        - name: get_info_from_grubby
-          ansible.builtin.command: grubby --info=ALL
-          register: r_grubby_info
-          any_errors_fatal: false
-          failed_when: false
-          changed_when: false
-          until: r_grubby_info is success
-          when: (install_docker_workaround is defined and install_docker_workaround) or (install_kubernetes_workaround is defined and install_kubernetes_workaround)
-        - name: update_grub_fsck_options_for_all_machines
-          ansible.builtin.command: grubby --args "fsck.repair=yes" --update-kernel=ALL
-          when: (install_docker_workaround is defined and install_docker_workaround) and ("fsck.repair=yes" not in r_grubby_info.stdout)
-          changed_when: false
-          failed_when: false
-        - name: update_grub_accounting_options_for_kubernetes
-          ansible.builtin.command: grubby --args "cgroup.memory=nokmem" --update-kernel=ALL
-          when: (install_kubernetes_workaround is defined and install_kubernetes_workaround) and (r_grubby_info is defined and "cgroup.memory=nokmem" not in r_grubby_info.stdout)
-          changed_when: false
-          failed_when: false
+
         # cleanup kernels in post 8 releases
         - name: cleanup_kernels_post_8
           ansible.builtin.shell: "dnf -y remove --oldinstallonly --setopt installonly_limit=2 kernel|| true"
@@ -846,6 +671,7 @@
           changed_when: false
           ignore_errors: true
           any_errors_fatal: false
+        # cleanup kernels in pre 8 releases
         - name: cleanup_kernels_7
           ansible.builtin.command: "package-cleanup --oldkernels --count=2 -y -v"
           register: r_cleanup_kernels_7
