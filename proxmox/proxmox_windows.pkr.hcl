@@ -148,7 +148,7 @@ variable "qemu_agent" {
 
 variable "scsi_controller" {
   type    = string
-  default = "virtio-scsi-pci"
+  default = "virtio-scsi-single"
 }
 
 variable "sockets" {

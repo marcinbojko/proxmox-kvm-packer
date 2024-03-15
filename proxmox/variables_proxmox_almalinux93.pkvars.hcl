@@ -1,5 +1,5 @@
 
-ansible_extra_args        = ["-e", "@extra/playbooks/provision_alma9_variables.yml", "-e", "@variables/almalinux9.yml"]
+ansible_extra_args        = ["-e", "@extra/playbooks/provision_alma9_variables.yml", "-e", "@variables/almalinux9.yml","--scp-extra-args", "'-O'"]
 ansible_verbosity         = ["-v"]
 ballooning_minimum        = "0"
 boot_command              = "<tab> text inst.ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/almalinux/9/proxmox/ks.cfg<enter><wait10>esc<wait60><esc>"
@@ -9,11 +9,13 @@ cores                     = "4"
 cpu_type                  = "host"
 disable_kvm               = false
 disks = {
-    cache_mode            = "writeback"
+    cache_mode            = "none"
     disk_size             = "50G"
     format                = "raw"
     type                  = "virtio"
     storage_pool          = "zfs"
+    io_thread             = true
+    discard               = true
 }
 insecure_skip_tls_verify  = true
 iso_file                  = "images:iso/AlmaLinux-9.3-x86_64-dvd.iso"
@@ -26,7 +28,7 @@ network_adapters = {
 }
 proxmox_node              = "proxmox6"
 qemu_agent                = true
-scsi_controller           = "virtio-scsi-pci"
+scsi_controller           = "virtio-scsi-single"
 sockets                   = "1"
 ssh_password              = "password"
 ssh_username              = "root"

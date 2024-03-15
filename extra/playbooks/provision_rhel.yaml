@@ -4,7 +4,6 @@
   hosts: all
   vars:
     install_epel: false
-    change_epel_priority: false
     install_webmin: false
     install_hyperv: false
     install_cockpit: false
@@ -18,7 +17,7 @@
     delay_time: 15
     retries_count: 2
     reboot_server: false
-    playbook_version: "20240130"
+    playbook_version: "20240313"
   become: true
   gather_facts: false
   pre_tasks:
@@ -61,7 +60,6 @@
           - "Extra volume prepare           :{{ docker_prepare | lower }}"
           - "Install Cockpit                :{{ install_cockpit | lower }}"
           - "Install EPEL                   :{{ install_epel | lower }}"
-          - "Change EPEL priority           :{{ change_epel_priority | lower }}"
           - "Install extra groups           :{{ install_extra_groups | lower }}"
           - "Install Hyperv                 :{{ install_hyperv | lower }}"
           - "Install MOTD                   :{{ install_motd | lower }}"
@@ -108,38 +106,21 @@
         - packages
         - base
       when: install_epel
-    - name: enable_epel
-      community.general.ini_file:
-        path: "{{ epel.path }} | default ('/etc/yum.repos.d/epel.repo')"
-        section: "{{ epel.section }} | default ('epel')"
-        option: enabled
-        value: "1"
-        mode: "0644"
-      retries: "{{ retries_count }}"
-      delay: "{{ delay_time }}"
-      when: r_install_epel is success and install_epel
-      register: r_enable_epel
-      until: r_enable_epel is success
-      tags:
-        - packages
-        - base
-    # change priority for epel repo - mandatory for other settings
-    - name: change_epel_priority
-      community.general.ini_file:
-        path: "{{ epel.path }} | default('/etc/yum.repos.d/epel.repo')"
-        section: epel
-        option: priority
-        value: "{{ epel.priority | int }}"
-        mode: "0644"
-      retries: "{{ retries_count }}"
-      delay: "{{ delay_time }}"
-      when: r_install_epel is success and r_enable_epel is success and install_epel
-      notify: makecache
-      register: r_change_epel_priority
-      until: r_change_epel_priority is success
-      tags:
-        - packages
-        - base
+    # - name: enable_epel
+    #   community.general.ini_file:
+    #     path: "{{ epel.path }} | default ('/etc/yum.repos.d/epel.repo')"
+    #     section: "{{ epel.section }} | default ('epel')"
+    #     option: enabled
+    #     value: "1"
+    #     mode: "0644"
+    #   retries: "{{ retries_count }}"
+    #   delay: "{{ delay_time }}"
+    #   when: r_install_epel is success and install_epel
+    #   register: r_enable_epel
+    #   until: r_enable_epel is success
+    #   tags:
+    #     - packages
+    #     - base
     # let's install extra yumgroups
     - name: refresh_repos
       ansible.builtin.debug:
@@ -176,7 +157,7 @@
       delay: "{{ delay_time }}"
       register: r_install_extra_packages
       until: r_install_extra_packages is success
-      when: r_install_epel is success and r_enable_epel is success and install_epel
+      when: r_install_epel is success and install_epel
     # set selinux policy
     - name: set_selinux_policy
       ansible.posix.selinux:

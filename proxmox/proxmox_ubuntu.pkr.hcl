@@ -150,7 +150,7 @@ variable "task_timeout" {
 
 variable "scsi_controller" {
   type    = string
-  default = "virtio-scsi-pci"
+  default = "virtio-scsi-single"
 }
 
 variable "qemu_agent" {
@@ -252,11 +252,6 @@ build {
   provisioner "file" {
     destination = "/tmp/prepare_neofetch.sh"
     source      = "extra/files/ubuntu/shared/prepare_neofetch.sh"
-  }
-
-  provisioner "file" {
-    destination = "/tmp/zeroing.sh"
-    source      = "extra/files/ubuntu/shared/zeroing.sh"
   }
 
   provisioner "shell" {

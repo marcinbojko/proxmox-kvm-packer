@@ -12,9 +12,9 @@ if [ ! -d $config_dir ];then
 fi
 
 if [ ! -e $config ];then
-  if [ -e /root/.config/neofetch/config.conf ];then
-  echo "Copying config from root to /etc/neofetch"
-  cp -pv /root/.config/neofetch/config.conf $config
+  if [ -e /home/ubuntu/.config/neofetch/config.conf ];then
+  echo "Copying config from ubuntu to /etc/neofetch"
+  cp -pv /home/ubuntu/.config/neofetch/config.conf $config
   fi
 fi
 

@@ -4,18 +4,19 @@
 # http://msdn.microsoft.com/en-us/library/windows/desktop/aa370750(v=vs.85).aspx
 # http://blogs.msdn.com/b/powershell/archive/2009/04/03/setting-network-location-to-private.aspx
 
-Write-Output "Bootstrap: Copy unattend.xml to C:\Windows\Panther\Unattend\"
+Write-Output "Bootstrap: Copy Autounattend.xml to C:\Windows\Panther\Unattend\"
 New-Item C:\Windows\Panther\Unattend -Type Directory
 New-Item c:\Scripts -Type Directory
-Copy-Item a:\unattend.xml C:\Windows\Panther\Unattend\ -Force
+Copy-Item f:\Autounattend.xml C:\Windows\Panther\Unattend\unattend.xml -Force
 New-Item -Path 'C:\Windows\Setup\Scripts' -ItemType Directory -Force
-Write-Output "Bootstrap: Copy certificates"
 try {
-    Copy-Item a:\vbox-sha256.cer c:\Scripts -Force
-    Copy-Item a:\vbox-sha1.cer c:\Scripts -Force
+    Write-Output "Bootstrap: Copy certificates"
+    Copy-Item f:\vbox-sha256.cer c:\Scripts -Force
+    Copy-Item f:\vbox-sha1.cer c:\Scripts -Force
     certutil -addstore -f "TrustedPublisher" c:\Scripts\vbox-sha256.cer
     certutil -addstore -f "TrustedPublisher" c:\Scripts\vbox-sha1.cer
 }
+
 catch {
     Write-Output "Bootstrap failed"
 }

@@ -56,10 +56,6 @@ yum_extra_epel_packages:
   - nmon
   - pv
   - rkhunter
-epel:
-  priority: 60
-  path: /etc/yum.repos.d/epel.repo
-  section: epel
 epel_package:
   - epel-release
 selinux:

@@ -13,7 +13,6 @@ disks = {
     format                  = "raw"
     type                    = "sata"
     storage_pool            = "zfs"
-
 }
 efi_config                  = {
     efi_storage_pool        = "zfs"

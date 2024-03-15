@@ -1,4 +1,4 @@
-ansible_extra_args        = ["-e", "@extra/playbooks/provision_alma8_variables.yml", "-e", "@variables/almalinux8.yml"]
+ansible_extra_args        = ["-e", "@extra/playbooks/provision_alma8_variables.yml", "-e", "@variables/almalinux8.yml","--scp-extra-args", "'-O'"]
 ansible_verbosity         = ["-v"]
 ballooning_minimum        = "0"
 boot_command              = "<wait3>c<wait3>linux /casper/vmlinuz quiet autoinstall net.ifnames=0 biosdevname=0 ip=dhcp ipv6.disable=1 ds='nocloud-net;s=http://{{ .HTTPIP }}:{{ .HTTPPort }}/ubuntu/22.04/proxmox/' <enter><wait5>initrd /casper/initrd<wait5><enter>boot<wait5s><enter>"
@@ -8,11 +8,13 @@ cores                     = "4"
 cpu_type                  = "host"
 disable_kvm               = false
 disks = {
-    cache_mode            = "writeback"
+    cache_mode            = "none"
     disk_size             = "50G"
     format                = "raw"
     type                  = "virtio"
     storage_pool          = "zfs"
+    io_thread             = true
+    discard               = true
 }
 insecure_skip_tls_verify  = true
 iso_file                  = "images:iso/ubuntu-22.04.3-live-server-amd64.iso"
@@ -26,7 +28,7 @@ network_adapters = {
 proxmox_node              = "proxmox6"
 provision_script_options  ="-z false -h false -p false"
 qemu_agent                = true
-scsi_controller           = "virtio-scsi-pci"
+scsi_controller           = "virtio-scsi-single"
 sockets                   = "1"
 ssh_password              = "password"
 ssh_username              = "ubuntu"

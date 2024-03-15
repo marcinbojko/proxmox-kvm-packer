@@ -1,6 +1,6 @@
 ballooning_minimum          = "0"
 bios                        = "ovmf"
-boot_command                = ["<wait5s><space><wait3s>"]
+boot_command                = ["<wait1s><space><wait1s><space>"]
 boot_wait                   = "4s"
 cd_files                    = ["./extra/files/windows/2019/proxmox/std/Autounattend.xml", "./extra/files/windows/2019/proxmox/bootstrap.ps1"]
 communicator                = "winrm"

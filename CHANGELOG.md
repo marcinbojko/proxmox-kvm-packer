@@ -1,5 +1,11 @@
 # Changelog
 
+## Version 1.1.1
+
+* [ANSIBLE] small changes for oracle 9 epel package name
+* [PACKER] added `"--scp-extra-args", "'-O'"` option to /proxmoxm/variables_*.pkvars.hcl` files
+  * [EXAMPLE] `ansible_extra_args        = ["-e", "@extra/playbooks/provision_rocky9_variables.yml", "-e", "@variables/rockylinux9.yml","--scp-extra-args", "'-O'"]`
+
 ## Version 1.1.0
 
 * [ANSIBLE] - permanent removal variables from playbook

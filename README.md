@@ -37,8 +37,8 @@ Consider buying me a coffee if you like my work. All donations are appreciated. 
 
 ### Proxmox requirements
 
-- [Packer](https://www.packer.io/downloads) in version >= 1.9.2
-- [Proxmox](https://www.proxmox.com/en/downloads) in version >= 8.0
+- [Packer](https://www.packer.io/downloads) in version >= 1.10.0
+- [Proxmox](https://www.proxmox.com/en/downloads) in version >= 8.0 with CEPH and ZFS storage
 - [Ansible] in version >= 2.10.0
 - tested with `AMD Ryzen 9 5950X`, `Intel(R) Core(TM) i3-7100T`
 - at least 2GB of free RAM for virtual machines (4GB recommended)
@@ -46,17 +46,25 @@ Consider buying me a coffee if you like my work. All donations are appreciated. 
 
 ### Usage
 
-- Init packer by running  `packer init config.pkr.hcl`
+- Init packer by running  `packer init config.pkr.hcl` or `packer init -upgrade config.pkr.hcl`
+- Init your ansible by running `ansible-galaxy collection install --upgrade -r ./extra/playbooks/requirements.yml`
+- Generate new user or token for existing user in Proxmox - `Datacenter/Pemissions/API Tokens`
+
+  Do not mark `Privilege separation` checkbox, unless you have dedicated role prepared.
+
+  Example token:
+
+  ![images/token.png](images/token.png)
 
 - create and use env variables for secrets `/secrets/proxmox.sh` with content similar to:
 
     ```bash
     export PROXMOX_URL="https://someproxmoxserver:8006/api2/json"
-    export PROXMOX_USERNAME="someuser@pam"
-    export PROXMOX_TOKEN="sometoken"
+    export PROXMOX_USERNAME="root@pam!packer"
+    export PROXMOX_TOKEN="xxxxxxxxxxxxxxxxx"
     ```
 
-- adjust required variables in `proxmox/variables*.pkvars.hcl` files especially datastore names in:
+- adjust required variables in `proxmox/variables*.pkvars.hcl` files especially datastore names (`storage_pool`, `iso_file`, `iso_storage_pool`) in:
 
   ```hcl
       disks = {
@@ -90,12 +98,18 @@ Consider buying me a coffee if you like my work. All donations are appreciated. 
   | OS | script | Comments|
   |----|--------|---------|
   | Alma Linux 8.8        | `./proxmox_almalinux_88.sh` | |
+  | Alma Linux 8.9        | `./proxmox_almalinux_89.sh` | |
   | Alma Linux 9.2        | `./proxmox_almalinux_92.sh` | |
+  | Alma Linux 9.3        | `./proxmox_almalinux_93.sh` | |
   | OpenSuse Leap 15.5    | `./proxmox_opensuse_leap_15_5.sh` | |
   | Oracle Linux 8.8      | `./proxmox_oraclelinux_88.sh` | |
+  | Oracle Linux 8.9      | `./proxmox_oraclelinux_89.sh` | |
   | Oracle Linux 9.2      | `./proxmox_oraclelinux_92.sh` | |
+  | Oracle Linux 9.3      | `./proxmox_oraclelinux_93.sh` | |
   | Rocky Linux 8.8       | `./proxmox_rockylinux_88.sh` | |
+  | Rocky Linux 8.9       | `./proxmox_rockylinux_89.sh` | |
   | Rocky Linux 9.2       | `./proxmox_rockylinux_92.sh` | |
+  | Rocky Linux 9.3       | `./proxmox_rockylinux_93.sh` | |
   | Ubuntu 22.04 HWE LTS  | `./proxmox_ubuntu_2204_hwe.sh` | HWE Kernel|
   | Ubuntu 22.04 LTS      | `./proxmox_ubuntu_2204.sh` | |
   | Ubuntu 23.04          | `./proxmox_ubuntu_2304.sh` | |
@@ -114,13 +128,7 @@ example:
   install_epel:                  true
   install_webmin:                false
   install_hyperv:                false
-  install_zabbix:                false
-  install_zabbix_as_root:        false
   install_cockpit:               true
-  install_puppet:                false
-  install_docker_workaround:     true
-  install_kubernetes_workaround: false
-  remove_puppet_ssl_keys:        false
   install_neofetch:              true
   install_updates:               true
   install_extra_groups:          true

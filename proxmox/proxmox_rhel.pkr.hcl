@@ -68,6 +68,8 @@ variable "disks" {
     format       = string
     storage_pool = string
     type         = string
+    io_thread    = bool
+    discard      = bool
   })
   default = {
     cache_mode   = "none"
@@ -75,6 +77,8 @@ variable "disks" {
     format       = "qcow2"
     storage_pool = "local"
     type         = "virtio"
+    io_thread    = true
+    discard      = true
   }
 }
 
@@ -150,7 +154,7 @@ variable "task_timeout" {
 
 variable "scsi_controller" {
   type    = string
-  default = "virtio-scsi-pci"
+  default = "virtio-scsi-single"
 }
 
 variable "qemu_agent" {
@@ -178,6 +182,8 @@ source "proxmox-iso" "linux" {
     format                  = "${var.disks.format}"
     storage_pool            = "${var.disks.storage_pool}"
     type                    = "${var.disks.type}"
+    io_thread               = "${var.disks.io_thread}"
+    discard                 = "${var.disks.discard}"
   }
   http_directory            = "${path.cwd}/extra/files"
   insecure_skip_tls_verify  = true

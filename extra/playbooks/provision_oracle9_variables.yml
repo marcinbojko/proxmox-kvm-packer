@@ -1,5 +1,5 @@
 initial_packages:
-  - oracle-release-el9
+  - oracle-epel-release-el9
   - curl
   - mc
   - wget
@@ -59,10 +59,6 @@ yum_extra_epel_packages:
   - nmon
   - pv
   - rkhunter
-epel:
-  priority: 60
-  path: /etc/yum.repos.d/oracle-epel-ol9.repo
-  section: ol9_developer_EPEL
 epel_package:
   - oracle-epel-release-el9
 selinux:
