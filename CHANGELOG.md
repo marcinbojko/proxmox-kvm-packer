@@ -1,5 +1,19 @@
 # Changelog
 
+## Version 1.1.2
+
+* [ANSIBLE] - change playbook version to 202400404
+* [ANSIBLE] - removed `systemd.unified_cgroup_hierarchy` for RHEL anc clones above 8 as this is set by default in OS
+* [EXTRA]   - fixed wrong version in unnatended file for Windows 219
+* [PROXMOX] - fixed versions in template files for Windows 2022
+* [PROXMOX] - added support for AlmaLinux 9.4
+* [PROXMOX] - added support for Oracle Linux 9.4
+* [PROXMOX] - added support for Rocky Linux 9.4
+* [KVM]     - added support for AlmaLinux 9.4
+* [KVM]     - added support for Oracle Linux 9.4
+* [KVM]     - added support for Rocky Linux 9.4
+* [README]  - added information about default credentials used
+
 ## Version 1.1.1
 
 * [ANSIBLE] small changes for oracle 9 epel package name

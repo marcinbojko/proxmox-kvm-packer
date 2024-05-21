@@ -17,7 +17,7 @@
     delay_time: 15
     retries_count: 2
     reboot_server: false
-    playbook_version: "20240313"
+    playbook_version: "20240404"
   become: true
   gather_facts: false
   pre_tasks:

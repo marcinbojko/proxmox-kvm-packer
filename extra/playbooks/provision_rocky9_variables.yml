@@ -131,6 +131,3 @@ kernel_parameters:
   - key: "fsck.repair"
     value: "yes"
     state: present
-  - key: "systemd.unified_cgroup_hierarchy"
-    value: "1"
-    state: present

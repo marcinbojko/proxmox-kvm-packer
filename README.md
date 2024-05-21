@@ -4,13 +4,13 @@
 ![OracleLinux](https://img.shields.io/badge/Linux-Oracle-brightgreen)
 ![AlmaLinux](https://img.shields.io/badge/Linux-Alma-brightgreen)
 ![UbuntuLinux](https://img.shields.io/badge/Linux-Ubuntu-orange)
+![OpenSuse](https://img.shields.io/badge/Linux-OpenSuse-darkorange)
 ![Windows2019](https://img.shields.io/badge/Windows-2019-blue)
 ![Windows2022](https://img.shields.io/badge/Windows-2022-blue)
 
 [!["Buy Me A Coffee"](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://www.buymeacoffee.com/marcinbojko)
 
 Consider buying me a coffee if you like my work. All donations are appreciated. All donations will be used to pay for pipeline running costs
-
 <!-- TOC -->
 
 - [Proxmox and KVM related Virtual Machines using Hashicorp's Packer](#proxmox-and-kvm-related-virtual-machines-using-hashicorps-packer)
@@ -26,12 +26,14 @@ Consider buying me a coffee if you like my work. All donations are appreciated. 
     - [KVM scripts usage](#kvm-scripts-usage)
       - [Parameters](#parameters)
       - [KVM building scripts, by OS with cloud parameters](#kvm-building-scripts-by-os-with-cloud-parameters)
+  - [Default credentials](#default-credentials)
   - [Known Issues](#known-issues)
     - [Windows UEFI boot and 'Press any key to boot from CD or DVD' issue](#windows-uefi-boot-and-press-any-key-to-boot-from-cd-or-dvd-issue)
     - [OpenSuse Leap stage 2 sshd fix](#opensuse-leap-stage-2-sshd-fix)
   - [To DO](#to-do)
   - [Q & A](#q--a)
 
+<!-- /TOC -->
 <!-- /TOC -->
 ## Proxmox
 
@@ -101,15 +103,18 @@ Consider buying me a coffee if you like my work. All donations are appreciated. 
   | Alma Linux 8.9        | `./proxmox_almalinux_89.sh` | |
   | Alma Linux 9.2        | `./proxmox_almalinux_92.sh` | |
   | Alma Linux 9.3        | `./proxmox_almalinux_93.sh` | |
+  | Alma Linux 9.4        | `./proxmox_almalinux_94.sh` | |
   | OpenSuse Leap 15.5    | `./proxmox_opensuse_leap_15_5.sh` | |
   | Oracle Linux 8.8      | `./proxmox_oraclelinux_88.sh` | |
   | Oracle Linux 8.9      | `./proxmox_oraclelinux_89.sh` | |
   | Oracle Linux 9.2      | `./proxmox_oraclelinux_92.sh` | |
   | Oracle Linux 9.3      | `./proxmox_oraclelinux_93.sh` | |
+  | Oracle Linux 9.4      | `./proxmox_oraclelinux_94.sh` | |
   | Rocky Linux 8.8       | `./proxmox_rockylinux_88.sh` | |
   | Rocky Linux 8.9       | `./proxmox_rockylinux_89.sh` | |
   | Rocky Linux 9.2       | `./proxmox_rockylinux_92.sh` | |
   | Rocky Linux 9.3       | `./proxmox_rockylinux_93.sh` | |
+  | Rocky Linux 9.4       | `./proxmox_rockylinux_94.sh` | |
   | Ubuntu 22.04 HWE LTS  | `./proxmox_ubuntu_2204_hwe.sh` | HWE Kernel|
   | Ubuntu 22.04 LTS      | `./proxmox_ubuntu_2204.sh` | |
   | Ubuntu 23.04          | `./proxmox_ubuntu_2304.sh` | |
@@ -193,20 +198,38 @@ Example 2
 |----|--------|---------|-------|---|--------|
 | Alma Linux 8.7          | `./kvm_oraclelinux87.sh`  | | generic/empty | oci | alicloud |
 | Alma Linux 8.8          | `./kvm_oraclelinux88.sh`  | | generic/empty | oci | alicloud |
+| Alma Linux 8.9          | `./kvm_oraclelinux89.sh`  | | generic/empty | oci | alicloud |
 | Alma Linux 9.0          | `./kvm_oraclelinux90.sh`  | | generic/empty | oci | alicloud |
 | Alma Linux 9.1          | `./kvm_oraclelinux91.sh`  | | generic/empty | oci | alicloud |
 | Alma Linux 9.2          | `./kvm_oraclelinux92.sh`  | | generic/empty | oci | alicloud |
+| Alma Linux 9.3          | `./kvm_oraclelinux93.sh`  | | generic/empty | oci | alicloud |
+| Alma Linux 9.4          | `./kvm_oraclelinux94.sh`  | | generic/empty | oci | alicloud |
 | Oracle Linux 8.6        | `./kvm_oraclelinux86.sh`  | | generic/empty | oci | alicloud |
 | Oracle Linux 8.7        | `./kvm_oraclelinux87.sh`  | | generic/empty | oci | alicloud |
 | Oracle Linux 8.8        | `./kvm_oraclelinux88.sh`  | | generic/empty | oci | alicloud |
+| Oracle Linux 8.9        | `./kvm_oraclelinux89.sh`  | | generic/empty | oci | alicloud |
 | Oracle Linux 9.0        | `./kvm_oraclelinux90.sh`  | | generic/empty | oci | alicloud |
 | Oracle Linux 9.1        | `./kvm_oraclelinux91.sh`  | | generic/empty | oci | alicloud |
 | Oracle Linux 9.2        | `./kvm_oraclelinux92.sh`  | | generic/empty | oci | alicloud |
+| Oracle Linux 9.3        | `./kvm_oraclelinux93.sh`  | | generic/empty | oci | alicloud |
+| Oracle Linux 9.4        | `./kvm_oraclelinux94.sh`  | | generic/empty | oci | alicloud |
 | Rocky Linux 8.7         | `./kvm_rockylinux87.sh`   | | generic/empty | oci | alicloud |
 | Rocky Linux 8.8         | `./kvm_rockylinux88.sh`   | | generic/empty | oci | alicloud |
+| Rocky Linux 8.9         | `./kvm_rockylinux89.sh`   | | generic/empty | oci | alicloud |
 | Rocky Linux 9.0         | `./kvm_rockylinux90.sh`   | | generic/empty | oci | alicloud |
 | Rocky Linux 9.1         | `./kvm_rockylinux91.sh`   | | generic/empty | oci | alicloud |
 | Rocky Linux 9.2         | `./kvm_rockylinux92.sh`   | | generic/empty | oci | alicloud |
+| Rocky Linux 9.3         | `./kvm_rockylinux93.sh`   | | generic/empty | oci | alicloud |
+| Rocky Linux 9.4         | `./kvm_rockylinux94.sh`   | | generic/empty | oci | alicloud |
+
+## Default credentials
+
+|OS|username|password|
+|--|--------|--------|
+|Windows|Administrator|password|
+|Alma/Rocky/Oracle|root|password|
+|OpenSuse|root|password|
+|Ubuntu|ubuntu|password|
 
 ## Known Issues
 
