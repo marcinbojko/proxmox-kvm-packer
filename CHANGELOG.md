@@ -1,5 +1,9 @@
 # Changelog
 
+## Version 1.1.3
+
+* [PROXMOX] - added support for Ubuntu 24.04
+
 ## Version 1.1.2
 
 * [ANSIBLE] - change playbook version to 202400404
