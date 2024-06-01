@@ -1,5 +1,14 @@
 # Changelog
 
+## Version 1.1.4
+
+* [PROXMOX] - added support `Oracle Linux 8.10`
+* [PROXMOX] - added support `Rocky Linux 8.10`
+* [PROXMOX] - added support `Alma Linux 8.10`
+* [KVM]     - added support `Oracle Linux 8.10`
+* [KVM]     - added support `Rocky Linux 8.10`
+* [KVM]     - added support `Alma Linux 8.10`
+
 ## Version 1.1.3
 
 * [PROXMOX] - added support for Ubuntu 24.04
@@ -10,12 +19,12 @@
 * [ANSIBLE] - removed `systemd.unified_cgroup_hierarchy` for RHEL anc clones above 8 as this is set by default in OS
 * [EXTRA]   - fixed wrong version in unnatended file for Windows 219
 * [PROXMOX] - fixed versions in template files for Windows 2022
-* [PROXMOX] - added support for AlmaLinux 9.4
-* [PROXMOX] - added support for Oracle Linux 9.4
-* [PROXMOX] - added support for Rocky Linux 9.4
-* [KVM]     - added support for AlmaLinux 9.4
-* [KVM]     - added support for Oracle Linux 9.4
-* [KVM]     - added support for Rocky Linux 9.4
+* [PROXMOX] - added support for `AlmaLinux 9.4`
+* [PROXMOX] - added support for `Oracle Linux 9.4`
+* [PROXMOX] - added support for `Rocky Linux 9.4`
+* [KVM]     - added support for `AlmaLinux 9.4`
+* [KVM]     - added support for `Oracle Linux 9.4`
+* [KVM]     - added support for `Rocky Linux 9.4`
 * [README]  - added information about default credentials used
 
 ## Version 1.1.1

@@ -1,0 +1,10 @@
+extends: relaxed
+
+rules:
+  comments-indentation: disable
+  line-length:
+    max: 160
+    level: warning
+indentation:
+  spaces: consistent
+  indent-sequences: consistent

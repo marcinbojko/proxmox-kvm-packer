@@ -34,7 +34,6 @@ Consider buying me a coffee if you like my work. All donations are appreciated. 
   - [Q & A](#q--a)
 
 <!-- /TOC -->
-<!-- /TOC -->
 ## Proxmox
 
 ### Proxmox requirements
@@ -78,12 +77,16 @@ Consider buying me a coffee if you like my work. All donations are appreciated. 
       }
   ```
 
+  Replace `storage_pool` variable with your storage pool name.
+
   ```ini
   iso_file                    = "images:iso/20348.169.210806-2348.fe_release_svc_refresh_SERVER_EVAL_x64FRE_en-us.iso"
   iso_storage_pool            = "local"
   proxmox_node                = "proxmox5"
   virtio_iso_file             = "images:iso/virtio-win.iso"
   ```
+
+  Replace `iso_file` and `virtio_iso_file` with your ISO files and `iso_storage_pool` with your storage pool name. If you are using CEPH storage, you can use `ceph` as storage pool name. If you are using ZFS storage, you can use `zfs` as storage pool name. If you are using LVM storage, you can use `local` as storage pool name.
 
   ```hcl
   network_adapters = {
@@ -92,8 +95,9 @@ Consider buying me a coffee if you like my work. All donations are appreciated. 
     firewall                = false
     mac_address             = ""
   }
-
   ```
+
+  Replace `bridge` with your bridge name.
 
 - run proper script for dedicated OS
 
@@ -101,12 +105,14 @@ Consider buying me a coffee if you like my work. All donations are appreciated. 
   |----|--------|---------|
   | Alma Linux 8.8        | `./proxmox_almalinux_88.sh` | |
   | Alma Linux 8.9        | `./proxmox_almalinux_89.sh` | |
+  | Alma Linux 8.10       | `./proxmox_almalinux_810.sh` | |
   | Alma Linux 9.2        | `./proxmox_almalinux_92.sh` | |
   | Alma Linux 9.3        | `./proxmox_almalinux_93.sh` | |
   | Alma Linux 9.4        | `./proxmox_almalinux_94.sh` | |
   | OpenSuse Leap 15.5    | `./proxmox_opensuse_leap_15_5.sh` | |
   | Oracle Linux 8.8      | `./proxmox_oraclelinux_88.sh` | |
   | Oracle Linux 8.9      | `./proxmox_oraclelinux_89.sh` | |
+  | Oracle Linux 8.10     | `./proxmox_oraclelinux_810.sh` | |
   | Oracle Linux 9.2      | `./proxmox_oraclelinux_92.sh` | |
   | Oracle Linux 9.3      | `./proxmox_oraclelinux_93.sh` | |
   | Oracle Linux 9.4      | `./proxmox_oraclelinux_94.sh` | |
@@ -118,6 +124,7 @@ Consider buying me a coffee if you like my work. All donations are appreciated. 
   | Ubuntu 22.04 HWE LTS  | `./proxmox_ubuntu_2204_hwe.sh` | HWE Kernel|
   | Ubuntu 22.04 LTS      | `./proxmox_ubuntu_2204.sh` | |
   | Ubuntu 23.04          | `./proxmox_ubuntu_2304.sh` | |
+  | Ubuntu 24.04          | `./proxmox_ubuntu_2404.sh` | |
   | Microsoft Windows 2022 Datacenter   | `./proxmox_windows_2022-dc.sh` |Datacenter Edition |
   | Microsoft Windows 2022 Standard     | `./proxmox_windows_2022-std.sh` |Standard Edition |
   | Microsoft Windows 2019 Standard     | `./proxmox_windows_2019-std.sh` |Standard Edition |
@@ -142,15 +149,15 @@ example:
   install_motd:                  true
   ```
 
-- For Ubuntu-based machines provisioning is done by scripts from `extra/files/gen2-ubuntu*` folders
+- For Ubuntu-based machines provisioning is done by scripts from `extra/files/ubuntu*` folders
 
-- For Windows-based machines provisioning is done by Powershell scripts located in `extra/scripts/*`
+- For Windows-based machines provisioning is done by Powershell scripts located in `extra/scripts/windows/*`
 
 ## KVM
 
 ### KVM Requirements
 
-- [Packer](https://www.packer.io/downloads) in version >= 1.9.2
+- [Packer](https://www.packer.io/downloads) in version >= 1.10
 - [Ansible] in version >= 2.10.0
 - tested with `AMD Ryzen 9 5950X`, `Intel(R) Core(TM) i3-7100T`
 - at least 2GB of free RAM for virtual machines (4GB recommended)
@@ -196,18 +203,20 @@ Example 2
 
 | OS | script | Comments|Generic|OCI|AliCloud|
 |----|--------|---------|-------|---|--------|
-| Alma Linux 8.7          | `./kvm_oraclelinux87.sh`  | | generic/empty | oci | alicloud |
-| Alma Linux 8.8          | `./kvm_oraclelinux88.sh`  | | generic/empty | oci | alicloud |
-| Alma Linux 8.9          | `./kvm_oraclelinux89.sh`  | | generic/empty | oci | alicloud |
-| Alma Linux 9.0          | `./kvm_oraclelinux90.sh`  | | generic/empty | oci | alicloud |
-| Alma Linux 9.1          | `./kvm_oraclelinux91.sh`  | | generic/empty | oci | alicloud |
-| Alma Linux 9.2          | `./kvm_oraclelinux92.sh`  | | generic/empty | oci | alicloud |
-| Alma Linux 9.3          | `./kvm_oraclelinux93.sh`  | | generic/empty | oci | alicloud |
-| Alma Linux 9.4          | `./kvm_oraclelinux94.sh`  | | generic/empty | oci | alicloud |
+| Alma Linux 8.7          | `./kvm_almalinux87.sh`  | | generic/empty | oci | alicloud |
+| Alma Linux 8.8          | `./kvm_almalinux88.sh`  | | generic/empty | oci | alicloud |
+| Alma Linux 8.9          | `./kvm_almalinux89.sh`  | | generic/empty | oci | alicloud |
+| Alma Linux 8.10         | `./kvm_almalinux810.sh` | | generic/empty | oci | alicloud |
+| Alma Linux 9.0          | `./kvm_almalinux90.sh`  | | generic/empty | oci | alicloud |
+| Alma Linux 9.1          | `./kvm_almalinux91.sh`  | | generic/empty | oci | alicloud |
+| Alma Linux 9.2          | `./kvm_almalinux92.sh`  | | generic/empty | oci | alicloud |
+| Alma Linux 9.3          | `./kvm_almalinux93.sh`  | | generic/empty | oci | alicloud |
+| Alma Linux 9.4          | `./kvm_almalinux94.sh`  | | generic/empty | oci | alicloud |
 | Oracle Linux 8.6        | `./kvm_oraclelinux86.sh`  | | generic/empty | oci | alicloud |
 | Oracle Linux 8.7        | `./kvm_oraclelinux87.sh`  | | generic/empty | oci | alicloud |
 | Oracle Linux 8.8        | `./kvm_oraclelinux88.sh`  | | generic/empty | oci | alicloud |
 | Oracle Linux 8.9        | `./kvm_oraclelinux89.sh`  | | generic/empty | oci | alicloud |
+| Oracle Linux 8.10       | `./kvm_oraclelinux810.sh` | | generic/empty | oci | alicloud |
 | Oracle Linux 9.0        | `./kvm_oraclelinux90.sh`  | | generic/empty | oci | alicloud |
 | Oracle Linux 9.1        | `./kvm_oraclelinux91.sh`  | | generic/empty | oci | alicloud |
 | Oracle Linux 9.2        | `./kvm_oraclelinux92.sh`  | | generic/empty | oci | alicloud |
