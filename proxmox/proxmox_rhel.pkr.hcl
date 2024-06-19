@@ -162,8 +162,40 @@ variable "qemu_agent" {
   default = true
 }
 
+variable "efi_storage_pool" {
+  type    = string
+  default = "local"
+}
 
+variable "pre_enrolled_keys" {
+  type = bool
+  default = false
+}
 
+variable "efi_type" {
+  type    = string
+  default = "4m"
+}
+
+variable "bios" {
+  type    = string
+  default = "seabios"
+}
+
+variable "use_efi" {
+  type    = bool
+  default = false
+}
+
+variable "machine" {
+  type    = string
+  default = "pc"
+}
+
+variable "tags" {
+  type = string
+  default = "bios;template"
+}
 
 locals {
   packer_timestamp = formatdate("YYYYMMDD-hhmm", timestamp())
@@ -173,6 +205,7 @@ source "proxmox-iso" "linux" {
   ballooning_minimum        = "${var.ballooning_minimum}"
   boot_command              = ["${var.boot_command}"]
   boot_wait                 = "${var.boot_wait}"
+  bios                      = "${var.bios}"
   cores                     = "${var.cores}"
   cpu_type                  = "${var.cpu_type}"
   disable_kvm               = "${var.disable_kvm}"
@@ -188,6 +221,7 @@ source "proxmox-iso" "linux" {
   http_directory            = "${path.cwd}/extra/files"
   insecure_skip_tls_verify  = true
   iso_file                  = "${var.iso_file}"
+  machine                   = "${var.machine}"
   memory                    = "${var.memory}"
   network_adapters {
     bridge                  = "${var.network_adapters.bridge}"
@@ -205,27 +239,69 @@ source "proxmox-iso" "linux" {
   ssh_port                  = "${var.ssh_port}"
   ssh_timeout               = "10000s"
   ssh_username              = "${var.ssh_username}"
+  tags                      = "${var.tags}"
   task_timeout              = "${var.task_timeout}"
   template_name             = "${var.template}.${local.packer_timestamp}"
   token                     = "${var.proxmox_token}"
   unmount_iso               = true
   username                  = "${var.proxmox_username}"
+}
 
+source "proxmox-iso" "linux-efi" {
+  ballooning_minimum        = "${var.ballooning_minimum}"
+  boot_command              = ["${var.boot_command}"]
+  boot_wait                 = "${var.boot_wait}"
+  bios                      = "${var.bios}"
+  cores                     = "${var.cores}"
+  cpu_type                  = "${var.cpu_type}"
+  disable_kvm               = "${var.disable_kvm}"
+  disks {
+    cache_mode              = "${var.disks.cache_mode}"
+    disk_size               = "${var.disks.disk_size}"
+    format                  = "${var.disks.format}"
+    storage_pool            = "${var.disks.storage_pool}"
+    type                    = "${var.disks.type}"
+    io_thread               = "${var.disks.io_thread}"
+    discard                 = "${var.disks.discard}"
+  }
+  efi_config {
+    efi_storage_pool          = "${var.efi_storage_pool}"
+    efi_type                  = "${var.efi_type}"
+    pre_enrolled_keys         = "${var.pre_enrolled_keys}"
+  }
+  http_directory            = "${path.cwd}/extra/files"
+  insecure_skip_tls_verify  = true
+  iso_file                  = "${var.iso_file}"
+  machine                   = "${var.machine}"
+  memory                    = "${var.memory}"
+  network_adapters {
+    bridge                  = "${var.network_adapters.bridge}"
+    model                   = "${var.network_adapters.model}"
+    firewall                = "${var.network_adapters.firewall}"
+    mac_address             = "${var.network_adapters.mac_address}"
+  }
+  node                      = "${var.proxmox_node}"
+  os                        = "${var.os}"
+  proxmox_url               = "${var.proxmox_url}"
+  qemu_agent                = "${var.qemu_agent}"
+  scsi_controller           = "${var.scsi_controller}"
+  sockets                   = "${var.sockets}"
+  ssh_password              = "${var.ssh_password}"
+  ssh_port                  = "${var.ssh_port}"
+  ssh_timeout               = "10000s"
+  ssh_username              = "${var.ssh_username}"
+  tags                      = "${var.tags}"
+  task_timeout              = "${var.task_timeout}"
+  template_name             = "${var.template}.${local.packer_timestamp}"
+  token                     = "${var.proxmox_token}"
+  unmount_iso               = true
+  username                  = "${var.proxmox_username}"
 }
 
 build {
-   sources = ["source.proxmox-iso.linux"]
-
-  provisioner "shell" {
-    execute_command = "chmod +x {{ .Path }}; {{ .Vars }} sudo -E sh '{{ .Path }}'"
-    inline          = ["dnf install -y cloud-init cloud-utils-growpart", "systemctl enable cloud-init-local.service", "systemctl enable cloud-init.service", "systemctl enable cloud-config.service", "systemctl enable cloud-final.service"]
-    inline_shebang  = "/bin/sh -x"
-  }
-
-  provisioner "file" {
-    destination = "/etc/cloud/cloud.cfg"
-    source      = "${path.cwd}/${var.cloud-init_path}"
-  }
+  sources = [
+    var.use_efi ? "source.proxmox-iso.linux-efi" : "source.proxmox-iso.linux"
+  ]
 
   provisioner "shell" {
     execute_command = "chmod +x {{ .Path }}; {{ .Vars }} sudo -E sh '{{ .Path }}'"
@@ -236,6 +312,17 @@ build {
   provisioner "ansible" {
     extra_arguments = concat("${var.ansible_extra_args}","${var.ansible_verbosity}")
     playbook_file   = "extra/playbooks/provision_rhel.yaml"
+  }
+
+  provisioner "shell" {
+    execute_command = "chmod +x {{ .Path }}; {{ .Vars }} sudo -E sh '{{ .Path }}'"
+    inline          = ["dnf install -y cloud-init cloud-utils-growpart", "systemctl enable cloud-init-local.service", "systemctl enable cloud-init.service", "systemctl enable cloud-config.service", "systemctl enable cloud-final.service"]
+    inline_shebang  = "/bin/sh -x"
+  }
+
+  provisioner "file" {
+    destination = "/etc/cloud/cloud.cfg"
+    source      = "${path.cwd}/${var.cloud-init_path}"
   }
 
 }

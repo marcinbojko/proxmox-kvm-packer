@@ -1,5 +1,28 @@
 # Changelog
 
+## Version 1.1.5
+
+* [BREAKING_CHANGE] - Removed indivudial `.sh` files in favor of `proxmox_generic.sh` script. This script is now used for all Proxmox templates. Detailed usage with all options can be found in the `README.md` file.
+* [FEATURE] - added EFI boot support for Proxmox. Every variable pack now has a new variable `use_efi` that can be set to `true` or `false`. If set to `true`, the template will be created with EFI boot support. If set to `false`, the template will be created with BIOS boot support. The default value is `false`.
+  * [PROXMOX] - added support for EFI boot for `RockyLinux`
+  * [PROXMOX] - added support for EFI boot for `AlmaLinux`
+  * [PROXMOX] - added support for EFI boot for `OracleLinux`
+  * [PROXMOX] - added support for EFI boot for `OpenSuse Leap`
+  * [PROXMOX] - added support for EFI boot for `Ubuntu`
+  * [PROXMOX] - added support for EFI boot for `Windows 2019`
+  * [PROXMOX] - added support for EFI boot for `Windows 2022`
+* [ANSIBLE] - added added section `gpgkey` to playbook, for easy GPG key installation before any repository operations are initiated. This is useful for systems that changed their GPG keys. The format is as follows:
+
+  ```yaml
+  gpgkey:
+    - url: "https://example.com/key.gpg"
+      state: present|absent
+  ```
+
+* [ANSIBLE] - changed playbook version to 20240612
+* [ORACLE] - fixed `ks.cfg` for version 8 using LVM instead of plain disks.
+* [PROXMOX] - added support for `OpenSuse Leap 15.6`
+
 ## Version 1.1.4
 
 * [PROXMOX] - added support `Oracle Linux 8.10`
@@ -20,7 +43,7 @@
 * [EXTRA]   - fixed wrong version in unnatended file for Windows 219
 * [PROXMOX] - fixed versions in template files for Windows 2022
 * [PROXMOX] - added support for `AlmaLinux 9.4`
-* [PROXMOX] - added support for `Oracle Linux 9.4`
+* [PROXMOX] - added support for `Oracle Linux 9.4`\
 * [PROXMOX] - added support for `Rocky Linux 9.4`
 * [KVM]     - added support for `AlmaLinux 9.4`
 * [KVM]     - added support for `Oracle Linux 9.4`

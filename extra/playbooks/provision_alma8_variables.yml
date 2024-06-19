@@ -136,3 +136,9 @@ kernel_parameters:
   - key: "systemd.unified_cgroup_hierarchy"
     value: "1"
     state: present
+gpgkey:
+  - url: https://repo.almalinux.org/almalinux/RPM-GPG-KEY-AlmaLinux
+    state: present
+  - url: https://repo.almalinux.org/almalinux/RPM-GPG-KEY-AlmaLinux-8
+    state: present
+

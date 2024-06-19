@@ -1,0 +1,9 @@
+boot_command              = ["<wait5s><space><wait3s><space><wait3s><space><wait3s><space><wait3s>"]
+efi_storage_pool          = "zfs"
+efi_type                  = "4m"
+pre_enrolled_keys         = "true"
+bios                      = "ovmf"
+machine                   = "q35"
+use_efi                   = "true"
+template                  = "windows2022-std.uefi"
+tags                      = "uefi;template"

@@ -17,7 +17,7 @@
     delay_time: 15
     retries_count: 2
     reboot_server: false
-    playbook_version: "20240404"
+    playbook_version: "20240612"
   become: true
   gather_facts: false
   pre_tasks:
@@ -69,8 +69,18 @@
           - "Install Webmin                 :{{ install_webmin | lower }}"
           - "Reboot server                  :{{ reboot_server | lower }}"
           - "Playbook version               :{{ playbook_version }}"
-
     # initial cleaning and refreshing metadata for packages
+    - name: Initial GPG Keys update
+      ansible.builtin.rpm_key:
+        key: "{{ item.url }}"
+        state: "{{ item.state | default('present') }}"
+      loop: "{{ gpgkey }}"
+      retries: "{{ retries_count }}"
+      delay: "{{ delay_time }}"
+      register: r_initial_gpg_keys
+      until: r_initial_gpg_keys is success
+      when: gpgkey is defined and gpgkey | length > 0
+      failed_when: false
     - name: initial_clean
       ansible.builtin.debug:
         msg: "Starting provision"
@@ -78,6 +88,8 @@
         - clean-metadata
         - makecache
       changed_when: false
+    - name: Flush handlers
+      ansible.builtin.meta: flush_handlers
     - name: install_initial_packages
       ansible.builtin.package:
         name: "{{ item }}"
@@ -703,7 +715,7 @@
         warn: false
       changed_when: false
     - name: clean-metadata
-      ansible.builtin.command: "{{ ansible_pkg_mgr }} clean metadata all -y"
+      ansible.builtin.command: "{{ ansible_pkg_mgr }} clean all -y"
       args:
         warn: false
       changed_when: false

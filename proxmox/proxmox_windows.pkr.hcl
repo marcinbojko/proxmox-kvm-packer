@@ -208,6 +208,31 @@ variable "virtio_iso_file" {
   default = "virtio-win.iso"
 }
 
+variable "use_efi" {
+  type    = bool
+  default = false
+}
+
+variable "tags" {
+  type = string
+  default = "uefi;template"
+}
+
+variable "pre_enrolled_keys" {
+  type = bool
+  default = false
+}
+
+variable "efi_type" {
+  type    = string
+  default = "4m"
+}
+
+variable "efi_storage_pool" {
+  type    = string
+  default = "local"
+}
+
 locals {
   packer_timestamp = formatdate("YYYYMMDD-hhmm", timestamp())
 }
@@ -272,6 +297,7 @@ source "proxmox-iso" "windows" {
   winrm_password            = "${var.winrm_password}"
   winrm_timeout             = "8h"
   winrm_username            = "${var.winrm_username}"
+  tags                      = "${var.tags}"
   task_timeout              = "${var.task_timeout}"
   qemu_agent                = "${var.qemu_agent}"
   vga {

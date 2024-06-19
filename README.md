@@ -10,7 +10,6 @@
 
 [!["Buy Me A Coffee"](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://www.buymeacoffee.com/marcinbojko)
 
-Consider buying me a coffee if you like my work. All donations are appreciated. All donations will be used to pay for pipeline running costs
 <!-- TOC -->
 
 - [Proxmox and KVM related Virtual Machines using Hashicorp's Packer](#proxmox-and-kvm-related-virtual-machines-using-hashicorps-packer)
@@ -18,6 +17,7 @@ Consider buying me a coffee if you like my work. All donations are appreciated. 
     - [Proxmox requirements](#proxmox-requirements)
     - [Usage](#usage)
     - [Provisioning](#provisioning)
+    - [Updates](#updates)
   - [KVM](#kvm)
     - [KVM Requirements](#kvm-requirements)
     - [Cloud-init support](#cloud-init-support)
@@ -34,16 +34,19 @@ Consider buying me a coffee if you like my work. All donations are appreciated. 
   - [Q & A](#q--a)
 
 <!-- /TOC -->
+
+Consider buying me a coffee if you like my work. All donations are appreciated. All donations will be used to pay for pipeline running costs
+
 ## Proxmox
 
 ### Proxmox requirements
 
 - [Packer](https://www.packer.io/downloads) in version >= 1.10.0
-- [Proxmox](https://www.proxmox.com/en/downloads) in version >= 8.0 with CEPH and ZFS storage
+- [Proxmox](https://www.proxmox.com/en/downloads) in version >= 8.0 with any storage (tested with CEPH and ZFS)
 - [Ansible] in version >= 2.10.0
 - tested with `AMD Ryzen 9 5950X`, `Intel(R) Core(TM) i3-7100T`
 - at least 2GB of free RAM for virtual machines (4GB recommended)
-- at least 100GB of free disk space for virtual machines (200GB recommended) on fast storage (SSD/NVME with LVM thinpool or ZFS)
+- at least 100GB of free disk space for virtual machines (200GB recommended) on fast storage (SSD/NVME with LVM thinpool, Ceph or ZFS)
 
 ### Usage
 
@@ -99,7 +102,65 @@ Consider buying me a coffee if you like my work. All donations are appreciated. 
 
   Replace `bridge` with your bridge name.
 
-- run proper script for dedicated OS
+- run `proxmox_generic` script with proper parameters for dedicated OS
+
+| Command                                                        | OS FullName and Version        | Boot Type |
+|----------------------------------------------------------------|--------------------------------|-----------|
+| ./proxmox_generic.sh -V almalinux88 -F rhel -U true            | AlmaLinux 8.8                  | UEFI      |
+| ./proxmox_generic.sh -V almalinux88 -F rhel -U false           | AlmaLinux 8.8                  | BIOS      |
+| ./proxmox_generic.sh -V almalinux89 -F rhel -U true            | AlmaLinux 8.9                  | UEFI      |
+| ./proxmox_generic.sh -V almalinux89 -F rhel -U false           | AlmaLinux 8.9                  | BIOS      |
+| ./proxmox_generic.sh -V almalinux810 -F rhel -U true           | AlmaLinux 8.10                 | UEFI      |
+| ./proxmox_generic.sh -V almalinux810 -F rhel -U false          | AlmaLinux 8.10                 | BIOS      |
+| ./proxmox_generic.sh -V almalinux92 -F rhel -U true            | AlmaLinux 9.2                  | UEFI      |
+| ./proxmox_generic.sh -V almalinux92 -F rhel -U false           | AlmaLinux 9.2                  | BIOS      |
+| ./proxmox_generic.sh -V almalinux93 -F rhel -U true            | AlmaLinux 9.3                  | UEFI      |
+| ./proxmox_generic.sh -V almalinux93 -F rhel -U false           | AlmaLinux 9.3                  | BIOS      |
+| ./proxmox_generic.sh -V almalinux94 -F rhel -U true            | AlmaLinux 9.4                  | UEFI      |
+| ./proxmox_generic.sh -V almalinux94 -F rhel -U false           | AlmaLinux 9.4                  | BIOS      |
+| ./proxmox_generic.sh -V opensuse_leap_15_5 -F sles -U true     | openSUSE Leap 15.5             | UEFI      |
+| ./proxmox_generic.sh -V opensuse_leap_15_5 -F sles -U false    | openSUSE Leap 15.5             | BIOS      |
+| ./proxmox_generic.sh -V opensuse_leap_15_6 -F sles -U true     | openSUSE Leap 15.6             | UEFI      |
+| ./proxmox_generic.sh -V opensuse_leap_15_6 -F sles -U false    | openSUSE Leap 15.6             | BIOS      |
+| ./proxmox_generic.sh -V oraclelinux810 -F rhel -U true         | Oracle Linux 8.10              | UEFI      |
+| ./proxmox_generic.sh -V oraclelinux810 -F rhel -U false        | Oracle Linux 8.10              | BIOS      |
+| ./proxmox_generic.sh -V oraclelinux88 -F rhel -U true          | Oracle Linux 8.8               | UEFI      |
+| ./proxmox_generic.sh -V oraclelinux88 -F rhel -U false         | Oracle Linux 8.8               | BIOS      |
+| ./proxmox_generic.sh -V oraclelinux89 -F rhel -U true          | Oracle Linux 8.9               | UEFI      |
+| ./proxmox_generic.sh -V oraclelinux89 -F rhel -U false         | Oracle Linux 8.9               | BIOS      |
+| ./proxmox_generic.sh -V oraclelinux92 -F rhel -U true          | Oracle Linux 9.2               | UEFI      |
+| ./proxmox_generic.sh -V oraclelinux92 -F rhel -U false         | Oracle Linux 9.2               | BIOS      |
+| ./proxmox_generic.sh -V oraclelinux93 -F rhel -U true          | Oracle Linux 9.3               | UEFI      |
+| ./proxmox_generic.sh -V oraclelinux93 -F rhel -U false         | Oracle Linux 9.3               | BIOS      |
+| ./proxmox_generic.sh -V oraclelinux94 -F rhel -U true          | Oracle Linux 9.4               | UEFI      |
+| ./proxmox_generic.sh -V oraclelinux94 -F rhel -U false         | Oracle Linux 9.4               | BIOS      |
+| ./proxmox_generic.sh -V rockylinux810 -F rhel -U true          | Rocky Linux 8.10               | UEFI      |
+| ./proxmox_generic.sh -V rockylinux810 -F rhel -U false         | Rocky Linux 8.10               | BIOS      |
+| ./proxmox_generic.sh -V rockylinux88 -F rhel -U true           | Rocky Linux 8.8                | UEFI      |
+| ./proxmox_generic.sh -V rockylinux88 -F rhel -U false          | Rocky Linux 8.8                | BIOS      |
+| ./proxmox_generic.sh -V rockylinux89 -F rhel -U true           | Rocky Linux 8.9                | UEFI      |
+| ./proxmox_generic.sh -V rockylinux89 -F rhel -U false          | Rocky Linux 8.9                | BIOS      |
+| ./proxmox_generic.sh -V rockylinux92 -F rhel -U true           | Rocky Linux 9.2                | UEFI      |
+| ./proxmox_generic.sh -V rockylinux92 -F rhel -U false          | Rocky Linux 9.2                | BIOS      |
+| ./proxmox_generic.sh -V rockylinux93 -F rhel -U true           | Rocky Linux 9.3                | UEFI      |
+| ./proxmox_generic.sh -V rockylinux93 -F rhel -U false          | Rocky Linux 9.3                | BIOS      |
+| ./proxmox_generic.sh -V rockylinux94 -F rhel -U true           | Rocky Linux 9.4                | UEFI      |
+| ./proxmox_generic.sh -V rockylinux94 -F rhel -U false          | Rocky Linux 9.4                | BIOS      |
+| ./proxmox_generic.sh -V ubuntu2204 -F ubuntu -U true           | Ubuntu 22.04                   | UEFI      |
+| ./proxmox_generic.sh -V ubuntu2204 -F ubuntu -U false          | Ubuntu 22.04                   | BIOS      |
+| ./proxmox_generic.sh -V ubuntu2304 -F ubuntu -U true           | Ubuntu 23.04                   | UEFI      |
+| ./proxmox_generic.sh -V ubuntu2304 -F ubuntu -U false          | Ubuntu 23.04                   | BIOS      |
+| ./proxmox_generic.sh -V ubuntu2404 -F ubuntu -U true           | Ubuntu 24.04                   | UEFI      |
+| ./proxmox_generic.sh -V ubuntu2404 -F ubuntu -U false          | Ubuntu 24.04                   | BIOS      |
+| ./proxmox_generic.sh -V windows2019-dc -F windows -U true      | Windows Server 2019 Datacenter | UEFI      |
+| ./proxmox_generic.sh -V windows2019-dc -F windows -U false     | Windows Server 2019 Datacenter | BIOS      |
+| ./proxmox_generic.sh -V windows2019-std -F windows -U true     | Windows Server 2019 Standard   | UEFI      |
+| ./proxmox_generic.sh -V windows2019-std -F windows -U false    | Windows Server 2019 Standard   | BIOS      |
+| ./proxmox_generic.sh -V windows2022-dc -F windows -U true      | Windows Server 2022 Datacenter | UEFI      |
+| ./proxmox_generic.sh -V windows2022-dc -F windows -U false     | Windows Server 2022 Datacenter | BIOS      |
+| ./proxmox_generic.sh -V windows2022-std -F windows -U true     | Windows Server 2022 Standard   | UEFI      |
+| ./proxmox_generic.sh -V windows2022-std -F windows -U false    | Windows Server 2022 Standard   | BIOS      |
+
 
   | OS | script | Comments|
   |----|--------|---------|
@@ -152,6 +213,16 @@ example:
 - For Ubuntu-based machines provisioning is done by scripts from `extra/files/ubuntu*` folders
 
 - For Windows-based machines provisioning is done by Powershell scripts located in `extra/scripts/windows/*`
+
+### Updates
+
+In case of RHEL clones, only current release is allowed to do updates, as updating for example Alma Linux 8.8 will always end in current release (8.10). This is due to the way how RHEL clones are built. To avoid that, all updates in NON current releases are disabled by setting extra variable for ansible playbook `install_updates: false`
+
+```ini
+ansible_extra_args        = ["-e", "@extra/playbooks/provision_rocky8_variables.yml", "-e", "@variables/rockylinux8.yml", "-e", "{\"install_updates\": false}","--scp-extra-args", "'-O'"]
+```
+
+if you really want to start from historical release and update it to current release, remove `"-e","{\"install_updates\": false}"` from `ansible_extra_args` variable
 
 ## KVM
 
