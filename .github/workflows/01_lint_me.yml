@@ -6,6 +6,7 @@ on:
   push:
   pull_request:
     branches: [master, main, develop]
+  workflow_dispatch:
 
 permissions:
   actions: read
