@@ -24,6 +24,7 @@ network_adapters = {
     model                 = "virtio"
     firewall              = false
     mac_address           = ""
+    vlan_tag              = ""
 }
 proxmox_node              = "proxmox6"
 provision_script_options  ="-z false -h false -p false"

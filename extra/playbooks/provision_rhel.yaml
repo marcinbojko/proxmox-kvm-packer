@@ -10,7 +10,7 @@
     install_kernel_parameters: true
     install_motd: false
     install_neofetch: false
-    install_updates: false
+    install_updates: true
     install_extra_groups: false
     docker_prepare: false
     extra_device: ""
@@ -38,9 +38,10 @@
       changed_when: false
       tags:
         - assert
-    - name: assert_root_partition_has_16_GB_of_free_space
-      ansible.builtin.assert: {that: item.mount == '/' or item.size_available > 17179869184}
-      loop: '{{ ansible_mounts }}'
+    - name: assert_root_partition_has_16_GB_of_free_spacee
+      ansible.builtin.assert:
+        { that: item.mount == '/' or item.size_available > 17179869184 }
+      loop: "{{ ansible_mounts }}"
       ignore_errors: false
       when: item.mount == '/'
       register: freespace
@@ -99,6 +100,7 @@
       delay: "{{ delay_time }}"
       register: r_initial_packages
       until: r_initial_packages is success
+      when: install_updates or not (item | regex_search('.*release.*'))
       any_errors_fatal: true
       tags:
         - packages
@@ -141,7 +143,7 @@
       changed_when: true
     - name: install_extra_groups
       ansible.builtin.package:
-        name: '{{ item }}'
+        name: "{{ item }}"
         state: present
       loop: "{{ yum_extra_groups }}"
       retries: "{{ retries_count }}"
@@ -152,7 +154,7 @@
     # let's install extra packages
     - name: install_extra_packages
       ansible.builtin.package:
-        name: '{{ item }}'
+        name: "{{ item }}"
         state: present
       loop: "{{ yum_extra_packages }}"
       retries: "{{ retries_count }}"
@@ -162,7 +164,7 @@
     # let's install extra_epel_packages
     - name: install_extra_epel_packages
       ansible.builtin.package:
-        name: '{{ item }}'
+        name: "{{ item }}"
         state: present
       loop: "{{ yum_extra_epel_packages }}"
       retries: "{{ retries_count }}"
@@ -212,7 +214,17 @@
           retries: "{{ retries_count }}"
           delay: "{{ delay_time }}"
           until: r_start_webmin is success
-
+      rescue:
+        - name: log_webmin_installation_failure
+          ansible.builtin.debug:
+            msg: "Failed to install or start Webmin: {{ ansible_failed_result.msg | default('Unknown error') }}"
+        - name: set_webmin_installation_failed
+          ansible.builtin.set_fact:
+            webmin_installation_failed: true
+        - name: fail_webmin_installation
+          ansible.builtin.fail:
+            msg: "Webmin installation failed after retries. Check logs for details."
+          when: set_webmin_installation_failed | default(true)
 
     - name: start_cockpit_block
       when: install_cockpit is defined and install_cockpit
@@ -221,6 +233,10 @@
           ansible.builtin.package:
             name: cockpit
             state: latest
+          register: r_install_cockpit_package
+          retries: "{{ retries_count }}"
+          delay: "{{ delay_time }}"
+          until: r_install_cockpit_package is success|default(false)
         - name: set_cockpit_service_to_start
           ansible.builtin.systemd:
             name: cockpit.socket
@@ -230,7 +246,17 @@
           delay: "{{ delay_time }}"
           retries: "{{ retries_count }}"
           until: r_start_cockpit is success
-
+      rescue:
+        - name: log_cockpit_installation_failure
+          ansible.builtin.debug:
+            msg: "Failed to install or start Cockpit: {{ ansible_failed_result.msg | default('Unknown error') }}"
+        - name: set_cockpit_installation_failed
+          ansible.builtin.set_fact:
+            cockpit_installation_failed: true
+        - name: fail_cockpit_installation
+          ansible.builtin.fail:
+            msg: "Cockpit installation failed after retries. Check logs for details."
+          when: cockpit_installation_failed | default(true)
     # start neofetch block - requires changes from script to 'per option' settings
     - name: start_neofetch_block
       when: install_neofetch
@@ -239,7 +265,7 @@
           ansible.builtin.get_url:
             url: "{{ item.url }}"
             dest: "{{ item.dest }}"
-            mode: '0644'
+            mode: "0644"
           register: r_neofetch_repository
           retries: "{{ retries_count }}"
           delay: "{{ delay_time }}"
@@ -260,7 +286,7 @@
           ansible.builtin.command: neofetch
           when: r_neofetch_repository is success
           changed_when: false
-#          ignore_errors: true
+          #          ignore_errors: true
           any_errors_fatal: false
           failed_when: false
         - name: create_config_folder
@@ -306,6 +332,17 @@
           ansible.builtin.shell: chmod +x /tmp/prepare_neofetch.sh; sh /tmp/prepare_neofetch.sh
           when: install_neofetch and (r_install_neofetch_package is success and r_install_neofetch_package is defined)
           changed_when: false
+      rescue:
+        - name: log_neofetch_installation_failure
+          ansible.builtin.debug:
+            msg: "Failed to install or configure Neofetch: {{ ansible_failed_result.msg | default('Unknown error') }}"
+        - name: set_neofetch_installation_failed
+          ansible.builtin.set_fact:
+            neofetch_installation_failed: true
+        - name: fail_neofetch_installation
+          ansible.builtin.fail:
+            msg: "Neofetch installation failed after retries. Check logs for details."
+          when: set_neofetch_installation_failed | default(true)
     - name: start_hyperv_block
       when: install_hyperv
       block:
@@ -331,6 +368,17 @@
             content: |
               SUBSYSTEM=="memory", ACTION=="add", ATTR{state}="online"
           when: (r_install_hyperv_package is success and r_install_hyperv_package is defined) and (r_enable_hyperv_services is success and r_enable_hyperv_services is defined)
+      rescue:
+        - name: log_hyperv_installation_failure
+          ansible.builtin.debug:
+            msg: "Failed to install or configure Hyper-V daemons: {{ ansible_failed_result.msg | default('Unknown error') }}"
+        - name: set_hyperv_installation_failed
+          ansible.builtin.set_fact:
+            hyperv_installation_failed: true
+        - name: fail_hyperv_installation
+          ansible.builtin.fail:
+            msg: "Hyper-V installation failed after retries. Check logs for details."
+          when: hyperv_installation_failed | default(true)
     - name: start_extra_device_block
       when: docker_prepare
       block:
@@ -382,7 +430,14 @@
             state: mounted
             boot: true
           when: (ansible_devices[extra_device].partitions[extra_device + '1'].uuid | length > 5) and (r_partition_docker_volume is success and r_partition_docker_volume is defined)
-
+      rescue:
+        - name: log_docker_device_preparation_failure
+          ansible.builtin.debug:
+            msg: "Failed to prepare Docker device {{ extra_device }}: {{ ansible_failed_result.msg | default('Unknown error') }}"
+        - name: fail_docker_device_preparation
+          ansible.builtin.fail:
+            msg: "Docker device preparation failed after retries. Device {{ extra_device }} may be in an inconsistent state. Manual cleanup may be required."
+          when: fail_on_docker_device_error | default(true)
     # os related block
     - name: start_os_related_block
       block:
@@ -426,6 +481,14 @@
           notify:
             - clean-metadata
             - makecache
+      rescue:
+        - name: log_os_preparation_failure
+          ansible.builtin.debug:
+            msg: "Failed to prepare OS {{ ansible_failed_result.msg | default('Unknown error') }}"
+        - name: fail_os_preparation
+          ansible.builtin.fail:
+            msg: "OS preparation failed after retries."
+          when: fail_on_os_error | default(true)
 
     # start firewalld block - danger Will Robinson, quite unstable in case of multiple interfaces
     - name: start_firewalld_block
@@ -538,6 +601,14 @@
           until: r_remove_redundand_services is success
           notify: reload_firewalld
           when: ansible_default_ipv4.interface is defined
+      rescue:
+        - name: log_firewalld_preparation_failure
+          ansible.builtin.debug:
+            msg: "Failed to prepare Firewalld {{ ansible_failed_result.msg | default('Unknown error') }}"
+        - name: fail_firewalld_preparation
+          ansible.builtin.fail:
+            msg: "Firewalld preparation failed after retries."
+          when: fail_on_firewalld_error | default(true)
 
       # set kernel parameters
     - name: set kernel parameters
@@ -571,6 +642,14 @@
           failed_when: false
           changed_when: false
           until: r_grubby_info is success
+      rescue:
+        - name: log_kernel_preparation_failure
+          ansible.builtin.debug:
+            msg: "Failed to prepare kernel {{ ansible_failed_result.msg | default('Unknown error') }}"
+        - name: fail_kernel_preparation
+          ansible.builtin.fail:
+            msg: "Kernel preparation failed after retries."
+          when: fail_on_kernel_error | default(true)
 
     # last touch and cleaning block
     - name: last_touch_and_cleaning_block
@@ -594,8 +673,8 @@
         - name: change_sshd_dns_settings
           ansible.builtin.lineinfile:
             path: /etc/ssh/sshd_config
-            regexp: 'UseDNS'
-            line: 'UseDNS no'
+            regexp: "UseDNS"
+            line: "UseDNS no"
             backrefs: true
             state: present
         # required sysctl entries
@@ -620,7 +699,7 @@
             msg: "Machine type is: {{ machine_type }}"
           when: ansible_virtualization_role is defined
         - name: set_tuned_for_baremetal
-          ansible.builtin.command: tuned-adm profile {{ tuned_profile }}
+          ansible.builtin.shell: tuned-adm profile {{ tuned_profile }}
           args:
             warn: false
           retries: "{{ retries_count }}"
@@ -685,20 +764,29 @@
         # let's clean logs and leftovers
         - name: cleaning_stuff
           ansible.builtin.shell: |
-             truncate -s 0 /var/log/*
-             truncate -s 0 -c /var/log/**/*
-             find /var/log -type f -name \"*.[0-99].gz\" -exec rm {} +
-             rm -rfv /etc/ansible/*
-             rm -rfv /var/log/anaconda/*
-             rm -rfv /var/cache/libvirt/*
-             rm -rfv /var/cache/powertop/*
-             rm -rfv /var/crash/*
-             rm -rfv /var/tmp/*
+            truncate -s 0 /var/log/*
+            truncate -s 0 -c /var/log/**/*
+            find /var/log -type f -name \"*.[0-99].gz\" -exec rm {} +
+            rm -rfv /etc/ansible/*
+            rm -rfv /var/log/anaconda/*
+            rm -rfv /var/cache/libvirt/*
+            rm -rfv /var/cache/powertop/*
+            rm -rfv /var/crash/*
+            rm -rfv /var/tmp/*
           any_errors_fatal: false
           failed_when: false
           changed_when: false
           notify:
             - clean-metadata
+      rescue:
+        - name: log_misc_failure
+          ansible.builtin.debug:
+            msg: "Failed to prepare misc {{ ansible_failed_result.msg | default('Unknown error') }}"
+        - name: fail_misc_preparation
+          ansible.builtin.fail:
+            msg: "Misc preparation failed after retries."
+          when: fail_on_misc_error | default(true)
+
     - name: reboot_server
       ansible.builtin.reboot:
         pre_reboot_delay: 20
@@ -710,23 +798,23 @@
       ansible.builtin.meta: end_host
   handlers:
     - name: makecache
-      ansible.builtin.command: "{{ ansible_pkg_mgr }} makecache -y"
+      ansible.builtin.shell: "{{ ansible_pkg_mgr }} makecache -y"
       args:
         warn: false
       changed_when: false
     - name: clean-metadata
-      ansible.builtin.command: "{{ ansible_pkg_mgr }} clean all -y"
+      ansible.builtin.shell: "{{ ansible_pkg_mgr }} clean all -y"
       args:
         warn: false
       changed_when: false
     - name: switch_default_firewalld_zone
-      ansible.builtin.command: "firewall-cmd --set-default-zone={{ firewalld.default_zone }}"
+      ansible.builtin.shell: "firewall-cmd --set-default-zone={{ firewalld.default_zone }}"
       args:
         warn: false
       changed_when: false
       when: (firewalld.default_zone is defined) and (firewalld.default_zone | length > 0)
     - name: reload_firewalld
-      ansible.builtin.command: "firewall-cmd --reload"
+      ansible.builtin.shell: "firewall-cmd --reload"
       args:
         warn: false
       changed_when: false

@@ -118,12 +118,14 @@ variable "network_adapters" {
     model       = string
     firewall    = bool
     mac_address = string
+    vlan_tag    = string
   })
   default = {
     bridge      = "vmbr0"
     model       = "virtio"
     firewall    = false
     mac_address = ""
+    vlan_tag    = ""
   }
 }
 
@@ -205,6 +207,12 @@ source "proxmox-iso" "linux" {
   ballooning_minimum        = "${var.ballooning_minimum}"
   boot_command              = ["${var.boot_command}"]
   boot_wait                 = "${var.boot_wait}"
+  boot_iso {
+    type = "scsi"
+    iso_file = "${var.iso_file}"
+    unmount = true
+    iso_checksum = "none"
+  }
   bios                      = "${var.bios}"
   cores                     = "${var.cores}"
   cpu_type                  = "${var.cpu_type}"
@@ -220,7 +228,6 @@ source "proxmox-iso" "linux" {
   }
   http_directory            = "${path.cwd}/extra/files"
   insecure_skip_tls_verify  = true
-  iso_file                  = "${var.iso_file}"
   machine                   = "${var.machine}"
   memory                    = "${var.memory}"
   network_adapters {
@@ -228,6 +235,7 @@ source "proxmox-iso" "linux" {
     model                   = "${var.network_adapters.model}"
     firewall                = "${var.network_adapters.firewall}"
     mac_address             = "${var.network_adapters.mac_address}"
+    vlan_tag                = "${var.network_adapters.vlan_tag}"
   }
   node                      = "${var.proxmox_node}"
   os                        = "${var.os}"
@@ -243,13 +251,18 @@ source "proxmox-iso" "linux" {
   task_timeout              = "${var.task_timeout}"
   template_name             = "${var.template}.${local.packer_timestamp}"
   token                     = "${var.proxmox_token}"
-  unmount_iso               = true
   username                  = "${var.proxmox_username}"
 }
 
 source "proxmox-iso" "linux-efi" {
   ballooning_minimum        = "${var.ballooning_minimum}"
   boot_command              = ["${var.boot_command}"]
+  boot_iso {
+    type = "scsi"
+    iso_file = "${var.iso_file}"
+    unmount = true
+    iso_checksum = "none"
+  }
   boot_wait                 = "${var.boot_wait}"
   bios                      = "${var.bios}"
   cores                     = "${var.cores}"
@@ -271,7 +284,6 @@ source "proxmox-iso" "linux-efi" {
   }
   http_directory            = "${path.cwd}/extra/files"
   insecure_skip_tls_verify  = true
-  iso_file                  = "${var.iso_file}"
   machine                   = "${var.machine}"
   memory                    = "${var.memory}"
   network_adapters {
@@ -279,6 +291,7 @@ source "proxmox-iso" "linux-efi" {
     model                   = "${var.network_adapters.model}"
     firewall                = "${var.network_adapters.firewall}"
     mac_address             = "${var.network_adapters.mac_address}"
+    vlan_tag                = "${var.network_adapters.vlan_tag}"
   }
   node                      = "${var.proxmox_node}"
   os                        = "${var.os}"
@@ -294,7 +307,6 @@ source "proxmox-iso" "linux-efi" {
   task_timeout              = "${var.task_timeout}"
   template_name             = "${var.template}.${local.packer_timestamp}"
   token                     = "${var.proxmox_token}"
-  unmount_iso               = true
   username                  = "${var.proxmox_username}"
 }
 
@@ -324,5 +336,4 @@ build {
     destination = "/etc/cloud/cloud.cfg"
     source      = "${path.cwd}/${var.cloud-init_path}"
   }
-
 }

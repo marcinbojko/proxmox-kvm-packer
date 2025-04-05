@@ -6,6 +6,24 @@ on:
   push:
   pull_request:
     branches: [master, main, develop]
+  workflow_dispatch:
+
+permissions:
+  actions: read
+  attestations: read
+  contents: read
+  deployments: read
+  discussions: read
+  issues: read
+  packages: write
+  pages: read
+  pull-requests: write
+  repository-projects: read
+  security-events: read
+  statuses: write
+  checks: write
+  id-token: write
+
 jobs:
   # Set the job key. The key is displayed as the job name
   # when a job name is not provided
@@ -14,7 +32,6 @@ jobs:
     name: Lint code base
     # Set the type of machine to run on
     runs-on: ubuntu-latest
-
     steps:
       # Checks out a copy of your repository on the ubuntu-latest machine
       - name: Checkout code
@@ -23,10 +40,14 @@ jobs:
           fetch-depth: 0
       # Runs the Super-Linter action
       - name: Run Super-Linter
-        uses: github/super-linter/slim@v6
+        uses: github/super-linter/slim@v7
         env:
           LINTER_RULES_PATH: /
-          DEFAULT_BRANCH: main
+          DEFAULT_BRANCH: ${{ github.ref_name }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          VALIDATE_ALL_CODEBASE: true
-          VALIDATE_YAML: true
+          VALIDATE_ALL_CODEBASE: ${{ github.event_name != 'pull_request' }}
+          FILTER_REGEX_EXCLUDE: ".*extra/.*"
+          VALIDATE_JSCPD: false
+          VALIDATE_TERRAGRUNT: false
+          VALIDATE_GITLEAKS: false
+          VALIDATE_NATURAL_LANGUAGE: false

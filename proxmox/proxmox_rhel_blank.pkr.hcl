@@ -168,6 +168,12 @@ locals {
 source "proxmox-iso" "linux" {
   ballooning_minimum        = "${var.ballooning_minimum}"
   boot_command              = ["${var.boot_command}"]
+  boot_iso {
+    iso_file = "${var.iso_file},
+    iso_checksum = "none",
+    umount = true
+  }
+
   boot_wait                 = "${var.boot_wait}"
   cores                     = "${var.cores}"
   cpu_type                  = "${var.cpu_type}"
@@ -181,7 +187,6 @@ source "proxmox-iso" "linux" {
   }
   http_directory            = "${path.cwd}/extra/files"
   insecure_skip_tls_verify  = true
-  iso_file                  = "${var.iso_file}"
   memory                    = "${var.memory}"
   network_adapters {
     bridge                  = "${var.network_adapters.bridge}"
@@ -202,7 +207,6 @@ source "proxmox-iso" "linux" {
   task_timeout              = "${var.task_timeout}"
   template_name             = "${var.template}.${local.packer_timestamp}"
   token                     = "${var.proxmox_token}"
-  unmount_iso               = true
   username                  = "${var.proxmox_username}"
 
 }

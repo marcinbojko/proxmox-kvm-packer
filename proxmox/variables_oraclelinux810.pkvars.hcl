@@ -25,6 +25,7 @@ network_adapters = {
     model                 = "virtio"
     firewall              = false
     mac_address           = ""
+    vlan_tag              = ""
 }
 proxmox_node              = "proxmox6"
 qemu_agent                = true

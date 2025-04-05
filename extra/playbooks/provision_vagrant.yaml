@@ -79,8 +79,8 @@
         dest: /etc/sudoers.d/vagrant
         mode: 0440
         content: |
-            {{ vagrant_username }}        ALL=(ALL)       NOPASSWD: ALL
-            Defaults:{{ vagrant_username }} !requiretty
+          {{ vagrant_username }}        ALL=(ALL)       NOPASSWD: ALL
+          Defaults:{{ vagrant_username }} !requiretty
         validate: /usr/sbin/visudo -csf %s
       register: r_vagrant_sudoers_file
       until: r_vagrant_sudoers_file is success
@@ -89,9 +89,9 @@
       ansible.builtin.lineinfile:
         dest: /etc/sudoers
         regexp: '^(Defaults\s+requiretty)$'
-        line: '#Defaults requiretty'
+        line: "#Defaults requiretty"
         insertafter: EOF
         state: present
       register: r_disable_requiretty
       until: r_disable_requiretty is success
-      when:  (r_create_vagrant_user is defined and r_create_vagrant_user is success) and (r_vagrant_sudoers_file is success and r_vagrant_sudoers_file is defined)
+      when: (r_create_vagrant_user is defined and r_create_vagrant_user is success) and (r_vagrant_sudoers_file is success and r_vagrant_sudoers_file is defined)

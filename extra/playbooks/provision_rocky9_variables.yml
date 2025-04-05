@@ -16,7 +16,6 @@ initial_packages:
   - ca-certificates
   - yum-utils
   - sendmail
-  - cockpit-pcp
 yum_extra_groups:
   - "@base"
   - "@core"

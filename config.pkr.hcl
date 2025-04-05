@@ -13,7 +13,7 @@ packer {
       source  = "github.com/hashicorp/alicloud"
     }
     proxmox = {
-      version = ">= 1.1.3"
+      version = "= 1.2.1"
       source  = "github.com/hashicorp/proxmox"
     }
     ansible = {
@@ -26,4 +26,3 @@ packer {
     }
   }
 }
-

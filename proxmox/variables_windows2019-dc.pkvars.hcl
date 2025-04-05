@@ -30,6 +30,7 @@ network_adapters = {
     model                   = "virtio"
     firewall                = false
     mac_address             = ""
+    vlan_tag                = 0
 }
 os                          = "win11"
 proxmox_node                = "proxmox6"
