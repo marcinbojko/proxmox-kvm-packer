@@ -23,7 +23,7 @@ jobs:
           fetch-depth: 0
       # Runs the Super-Linter action
       - name: Run Super-Linter
-        uses: github/super-linter/slim@v6
+        uses: github/super-linter/slim@v7
         env:
           LINTER_RULES_PATH: /
           DEFAULT_BRANCH: main
