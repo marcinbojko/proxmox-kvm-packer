@@ -1,5 +1,11 @@
 # Changelog
 
+## Version 1.1.7
+
+- [PROXMOX] fixed provider change for Windows machines, now default VLAN is set to be empty if not specified
+- [PROXMOX] added support for `Windows Server 2025 Standard`
+- [PROXMOX] added support for `Windows Server 2025 Datacenter`
+
 ## Version 1.1.6
 
 - [BREAKING_CHANGE] - Removed individual `.sh` files in favor of `kvm_generic.sh` script. This script is now used for all Proxmox templates. Detailed usage with all options can be found in the `README.md` file.

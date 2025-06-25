@@ -36,7 +36,7 @@ Write-Output "Phase 2 [START] - Start of Phase 2"
     do {
       try {
         Write-Output "Phase 2 [INFO] - Chocolatey installing $package attempt nr. $packages_attempt of $packages_attempt_max"
-        choco upgrade $package -y --no-progress --limit-output
+        choco upgrade $package -y --no-progress --limit-output --ignore-checksums
         Write-Output "Phase 2 [INFO] - Chocolatey installing $package attempt nr. $packages_attempt exit code: $LASTEXITCODE"
         if ($packages_exit_codes.Contains($LASTEXITCODE)) {
             $packages_success=$true

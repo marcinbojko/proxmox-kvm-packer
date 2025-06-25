@@ -284,7 +284,7 @@ source "proxmox-iso" "windows" {
     model                   = "${var.network_adapters.model}"
     firewall                = "${var.network_adapters.firewall}"
     mac_address             = "${var.network_adapters.mac_address}"
-    vlan_tag                = "${var.network_adapters.vlan_tag}"
+    vlan_tag                = var.network_adapters.vlan_tag != "" && var.network_adapters.vlan_tag != "0" ? var.network_adapters.vlan_tag : null
   }
 
   machine                   = "${var.machine}"

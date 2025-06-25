@@ -23,6 +23,10 @@ $version=(Get-WMIObject win32_operatingsystem).name
             $global:os="2022"
             printWindowsVersion
         }
+        '(Server 2025)' {
+                $global:os = "2025"
+                printWindowsVersion
+        }
         '(Microsoft Windows Server Standard|Microsoft Windows Server Datacenter)'{
             $ws_version=(Get-WmiObject win32_operatingsystem).buildnumber
                 switch -Regex ($ws_version) {
@@ -64,6 +68,11 @@ $version=(Get-WMIObject win32_operatingsystem).name
         default {
             Write-Output "unknown"
             printWindowsVersion
+        }
+        '(Windows 11)' {
+        Write-Output 'Phase 1 [INFO] - Windows 11 found'
+                $global:os = "11"
+                printWindowsVersion
         }
     }
  }
@@ -158,7 +167,7 @@ do {
             try {
                 # Install Chocolatey in version pre 2.0.0
                 Write-Output "Phase 1 [INFO] - installing Chocolatey, Windows 2019 found, locking to version 1.4.0"
-                $env:chocolateyVersion = '1.4.0';Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iwr https://community.chocolatey.org/install.ps1 -UseBasicParsing| iex
+                $env:chocolateyVersion = '1.4.0';Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; Invoke-WebRequest https://community.chocolatey.org/install.ps1 -UseBasicParsing| Invoke-Expression
             }
             catch {
                 Write-Output "Phase 1 [WARN] - Chocolatey install problem, attempt $choco_install_count of $choco_install_count_max"

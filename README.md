@@ -54,6 +54,7 @@ Consider buying me a coffee if you like my work. All donations are appreciated. 
 - tested with `AMD Ryzen 9 5950X`, `Intel(R) Core(TM) i3-7100T`
 - at least 2GB of free RAM for virtual machines (4GB recommended)
 - at least 100GB of free disk space for virtual machines (200GB recommended) on fast storage (SSD/NVME with LVM thinpool, Ceph or ZFS)
+- virtio iso file in at least 1.271 version [https://fedorapeople.org/groups/virt/virtio-win/direct-downloads/archive-virtio/virtio-win-0.1.271-1/virtio-win.iso](https://fedorapeople.org/groups/virt/virtio-win/direct-downloads/archive-virtio/virtio-win-0.1.271-1/virtio-win.iso)
 
 ### Usage
 
@@ -179,6 +180,10 @@ Consider buying me a coffee if you like my work. All donations are appreciated. 
 | ./proxmox_generic.sh -V windows2022-dc -F windows -U false  | Windows Server 2022 Datacenter | BIOS      |
 | ./proxmox_generic.sh -V windows2022-std -F windows -U true  | Windows Server 2022 Standard   | UEFI      |
 | ./proxmox_generic.sh -V windows2022-std -F windows -U false | Windows Server 2022 Standard   | BIOS      |
+| ./proxmox_generic.sh -V windows2025-dc -F windows -U true   | Windows Server 2025 Datacenter | UEFI      |
+| ./proxmox_generic.sh -V windows2025-dc -F windows -U false  | Windows Server 2025 Datacenter | BIOS      |
+| ./proxmox_generic.sh -V windows2025-std -F windows -U true  | Windows Server 2025 Standard   | UEFI      |
+| ./proxmox_generic.sh -V windows2025-std -F windows -U false | Windows Server 2025 Standard   | BIOS      |
 
 ### Provisioning
 
@@ -378,6 +383,9 @@ When building OpenSuse Leap 15.x sshd service starts in stage 2 which breaks pac
 
 Q: Will you add support for other OSes?
 A: Yes, I will add support for other OSes as I need them. If you need support for a specific OS, please open an issue and I will try to add it.
+
+Q: My windows machine hangs at 'Waiting for WinRM to become available' step
+A: Update virtio drivers to the latest version. This issue is caused by old virtio drivers that are not compatible with Windows 10 and later versions.
 
 Q: Will you add support for other hypervisors?
 A: No, this repository is dedicated to Proxmox and KVM. If you need support for other hypervisors, please look at my other repositories
