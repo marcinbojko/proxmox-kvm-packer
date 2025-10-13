@@ -1,0 +1,9 @@
+boot_command              = ["<wait2s><space><wait1s><space><wait1s><space><wait1s><space><wait1s>"]
+efi_storage_pool          = "zfs"
+efi_type                  = "4m"
+pre_enrolled_keys         = "true"
+bios                      = "ovmf"
+machine                   = "q35"
+use_efi                   = "true"
+template                  = "windows11-pro.uefi"
+tags                      = "uefi;template;windows_desktop"
