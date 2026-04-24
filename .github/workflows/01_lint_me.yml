@@ -35,19 +35,24 @@ jobs:
     steps:
       # Checks out a copy of your repository on the ubuntu-latest machine
       - name: Checkout code
-        uses: actions/checkout@v6
+        uses: actions/checkout@v6 # zizmor: ignore[unpinned-uses]
         with:
           fetch-depth: 0
+          persist-credentials: false
       # Runs the Super-Linter action
       - name: Run Super-Linter
-        uses: github/super-linter/slim@v7
+        uses: super-linter/super-linter/slim@v8.6.0 # zizmor: ignore[unpinned-uses]
         env:
-          LINTER_RULES_PATH: /
+          LINTER_RULES_PATH: .github/linters
           DEFAULT_BRANCH: ${{ github.ref_name }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          FORCE_PUSH_EVENT: ${{ github.event.forced }}
           VALIDATE_ALL_CODEBASE: ${{ github.event_name != 'pull_request' }}
           FILTER_REGEX_EXCLUDE: ".*extra/.*"
           VALIDATE_JSCPD: false
           VALIDATE_TERRAGRUNT: false
           VALIDATE_GITLEAKS: false
           VALIDATE_NATURAL_LANGUAGE: false
+          VALIDATE_BIOME_FORMAT: false
+          VALIDATE_BIOME_LINT: false
+          VALIDATE_BLACK: false

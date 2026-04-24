@@ -49,14 +49,14 @@ yum_extra_packages:
 yum_extra_epel_packages:
   #- atop
   - bmon
- # - gparted
+  # - gparted
   - htop
   - iftop
   - jq
   - ncdu
- # - nmon
+  # - nmon
   - pv
- # - rkhunter
+  # - rkhunter
 epel_package:
   - epel-release
 selinux:

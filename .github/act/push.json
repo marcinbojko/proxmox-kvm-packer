@@ -1,0 +1,13 @@
+{
+  "forced": false,
+  "ref": "refs/heads/main",
+  "before": "0000000000000000000000000000000000000000",
+  "after": "0000000000000000000000000000000000000000",
+  "repository": {
+    "default_branch": "main",
+    "full_name": "marcinbojko/proxmox-kvm-packer"
+  },
+  "pusher": {
+    "name": "marcinbojko"
+  }
+}

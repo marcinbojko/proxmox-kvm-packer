@@ -1,0 +1,6 @@
+{
+  "proseWrap": "never",
+  "printWidth": 160,
+  "tabWidth": 2,
+  "useTabs": false
+}
