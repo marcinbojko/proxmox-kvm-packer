@@ -223,7 +223,7 @@ source "proxmox-iso" "linux" {
   boot_iso {
     type                    = "scsi"
     iso_file                = "${var.iso_file}"
-    unmount                 = true
+    unmount                 = "${var.unmount_iso}"
     iso_checksum            = "none"
   }
   http_directory            = "${path.cwd}/extra/files"
@@ -235,6 +235,7 @@ source "proxmox-iso" "linux" {
     model                   = "${var.network_adapters.model}"
     firewall                = "${var.network_adapters.firewall}"
     mac_address             = "${var.network_adapters.mac_address}"
+    vlan_tag                = "${var.network_adapters.vlan_tag}"
   }
   node                      = "${var.proxmox_node}"
   os                        = "${var.os}"
@@ -278,7 +279,7 @@ source "proxmox-iso" "linux-efi" {
   boot_iso {
     type                    = "scsi"
     iso_file                = "${var.iso_file}"
-    unmount                 = true
+    unmount                 = "${var.unmount_iso}"
     iso_checksum            = "none"
   }
   http_directory            = "${path.cwd}/extra/files"

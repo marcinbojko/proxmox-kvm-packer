@@ -216,11 +216,11 @@ source "proxmox-iso" "linux" {
   boot_iso {
     type                    = "scsi"
     iso_file                = "${var.iso_file}"
-    unmount                 = true
+    unmount                 = "${var.unmount_iso}"
     iso_checksum            = "none"
   }
   http_directory            = "${path.cwd}/extra/files"
-  insecure_skip_tls_verify  = true
+  insecure_skip_tls_verify  = "${var.insecure_skip_tls_verify}"
   machine                   = "${var.machine}"
   memory                    = "${var.memory}"
   network_adapters {
@@ -272,11 +272,11 @@ source "proxmox-iso" "linux-efi" {
   boot_iso {
     type                    = "scsi"
     iso_file                = "${var.iso_file}"
-    unmount                 = true
+    unmount                 = "${var.unmount_iso}"
     iso_checksum            = "none"
   }
   http_directory            = "${path.cwd}/extra/files"
-  insecure_skip_tls_verify  = true
+  insecure_skip_tls_verify  = "${var.insecure_skip_tls_verify}"
   machine                   = "${var.machine}"
   memory                    = "${var.memory}"
   network_adapters {

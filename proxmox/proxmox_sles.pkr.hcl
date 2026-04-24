@@ -223,7 +223,7 @@ source "proxmox-iso" "linux" {
   boot_iso {
     type                    = "scsi"
     iso_file                = "${var.iso_file}"
-    unmount                 = true
+    unmount                 = "${var.unmount_iso}"
     iso_checksum            = "none"
   }
   http_directory            = "${path.cwd}/extra/files"
@@ -279,7 +279,7 @@ source "proxmox-iso" "linux-efi" {
   boot_iso {
     type                    = "scsi"
     iso_file                = "${var.iso_file}"
-    unmount                 = true
+    unmount                 = "${var.unmount_iso}"
     iso_checksum            = "none"
   }
   http_directory            = "${path.cwd}/extra/files"
