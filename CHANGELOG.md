@@ -1,5 +1,25 @@
 # Changelog
 
+## Version 1.1.8
+
+- [EXTRA] Debian 13 - Added preseed.cfg for BIOS (`extra/files/debian/13/proxmox/`) and UEFI (`extra/files/debian/13/proxmox-uefi/`) with full network mirror setup in late_command
+- [EXTRA] Debian 13 - Added cloud-init `cloud.cfg` (`extra/files/cloud-init/debian/generic/`)
+- [EXTRA] Fixed stale `#version=RHEL8` header in `oraclelinux/9/proxmox/ks-lvm.cfg` - updated to `RHEL9`
+- [EXTRA] Consolidated multiple `services --enabled` directives into single directive in `oraclelinux/9/proxmox/ks-lvm.cfg` and `rockylinux/10/proxmox/ks.cfg`
+- [EXTRA] Simplified Debian preseed sshd_config sed commands to single idempotent regex per directive
+- [PROXMOX] Debian 13 (Trixie) Support - Added raw Packer template (`proxmox_debian.pkr.hcl`) with preseed-based automated install for BIOS and UEFI
+- [PROXMOX] Debian 13 - Added variable packs `variables_debian13.pkvars.hcl` and `variables_debian13_uefi.pkvars.hcl`
+- [PROXMOX] AlmaLinux, Oracle Linux and Rocky Linux 9.7 Support - Added variable packs for new minor releases (BIOS and UEFI)
+- [PROXMOX] Fixed deprecated `iso_file` and `unmount_iso` fields in `proxmox_ubuntu.pkr.hcl` and `proxmox_sles.pkr.hcl` - replaced with `boot_iso` block
+- [PROXMOX] Fixed unbracketed `esc` token in `boot_command` across all BIOS pkvars (AlmaLinux, Oracle Linux, Rocky Linux 8.x/9.x)
+- [PROXMOX] Fixed `pre_enrolled_keys` and `use_efi` string literals to proper booleans in all UEFI pkvars files
+- [PROXMOX] Wired `unmount_iso` through `boot_iso` blocks in `proxmox_debian.pkr.hcl`, `proxmox_sles.pkr.hcl`, and `proxmox_ubuntu.pkr.hcl`
+- [PROXMOX] Wired `insecure_skip_tls_verify` through source blocks in `proxmox_debian.pkr.hcl`
+- [PROXMOX] Added missing `vlan_tag` to BIOS `network_adapters` block in `proxmox_ubuntu.pkr.hcl`
+- [README] Added Debian 13 entries to Proxmox command table
+- [README] Added 9.7 entries for AlmaLinux, Oracle Linux and Rocky Linux in Proxmox and KVM tables
+- [README] Fixed Rocky Linux 9.5 and 9.6 version identifier typos in KVM table
+
 ## Version 1.1.7
 
 - [PROXMOX] fixed provider change for Windows machines, now default VLAN is set to be empty if not specified
@@ -61,11 +81,11 @@
 ## Version 1.1.2
 
 - [ANSIBLE] - change playbook version to 202400404
-- [ANSIBLE] - removed `systemd.unified_cgroup_hierarchy` for RHEL anc clones above 8 as this is set by default in OS
+- [ANSIBLE] - removed `systemd.unified_cgroup_hierarchy` for RHEL and clones above 8 as this is set by default in OS
 - [EXTRA] - fixed wrong version in unnatended file for Windows 219
 - [PROXMOX] - fixed versions in template files for Windows 2022
 - [PROXMOX] - added support for `AlmaLinux 9.4`
-- [PROXMOX] - added support for `Oracle Linux 9.4`\
+- [PROXMOX] - added support for `Oracle Linux 9.4`
 - [PROXMOX] - added support for `Rocky Linux 9.4`
 - [KVM] - added support for `AlmaLinux 9.4`
 - [KVM] - added support for `Oracle Linux 9.4`

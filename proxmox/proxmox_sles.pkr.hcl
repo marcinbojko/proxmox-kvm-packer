@@ -220,9 +220,14 @@ source "proxmox-iso" "linux" {
     io_thread               = "${var.disks.io_thread}"
     discard                 = "${var.disks.discard}"
   }
+  boot_iso {
+    type                    = "scsi"
+    iso_file                = "${var.iso_file}"
+    unmount                 = "${var.unmount_iso}"
+    iso_checksum            = "none"
+  }
   http_directory            = "${path.cwd}/extra/files"
   insecure_skip_tls_verify  = true
-  iso_file                  = "${var.iso_file}"
   machine                   = "${var.machine}"
   memory                    = "${var.memory}"
   network_adapters {
@@ -246,7 +251,6 @@ source "proxmox-iso" "linux" {
   task_timeout              = "${var.task_timeout}"
   template_name             = "${var.template}.${local.packer_timestamp}"
   token                     = "${var.proxmox_token}"
-  unmount_iso               = true
   username                  = "${var.proxmox_username}"
 }
 
@@ -268,13 +272,18 @@ source "proxmox-iso" "linux-efi" {
     discard                 = "${var.disks.discard}"
   }
   efi_config {
-  efi_storage_pool          = "${var.efi_storage_pool}"
-  efi_type                  = "${var.efi_type}"
-  pre_enrolled_keys         = "${var.pre_enrolled_keys}"
+    efi_storage_pool        = "${var.efi_storage_pool}"
+    efi_type                = "${var.efi_type}"
+    pre_enrolled_keys       = "${var.pre_enrolled_keys}"
+  }
+  boot_iso {
+    type                    = "scsi"
+    iso_file                = "${var.iso_file}"
+    unmount                 = "${var.unmount_iso}"
+    iso_checksum            = "none"
   }
   http_directory            = "${path.cwd}/extra/files"
   insecure_skip_tls_verify  = true
-  iso_file                  = "${var.iso_file}"
   machine                   = "${var.machine}"
   memory                    = "${var.memory}"
   network_adapters {
@@ -297,7 +306,6 @@ source "proxmox-iso" "linux-efi" {
   task_timeout              = "${var.task_timeout}"
   template_name             = "${var.template}.${local.packer_timestamp}"
   token                     = "${var.proxmox_token}"
-  unmount_iso               = true
   username                  = "${var.proxmox_username}"
 }
 

@@ -3,10 +3,12 @@
 ![RockyLinux](https://img.shields.io/badge/Linux-Rocky-brightgreen)
 ![OracleLinux](https://img.shields.io/badge/Linux-Oracle-brightgreen)
 ![AlmaLinux](https://img.shields.io/badge/Linux-Alma-brightgreen)
+![Debian](https://img.shields.io/badge/Linux-Debian-red)
 ![UbuntuLinux](https://img.shields.io/badge/Linux-Ubuntu-orange)
 ![OpenSuse](https://img.shields.io/badge/Linux-OpenSuse-darkorange)
 ![Windows2019](https://img.shields.io/badge/Windows-2019-blue)
 ![Windows2022](https://img.shields.io/badge/Windows-2022-blue)
+![Windows2025](https://img.shields.io/badge/Windows-2025-blue)
 
 [!["Buy Me A Coffee"](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://www.buymeacoffee.com/marcinbojko)
 
@@ -130,6 +132,10 @@ Consider buying me a coffee if you like my work. All donations are appreciated. 
 | ./proxmox_generic.sh -V almalinux95 -F rhel -U false        | AlmaLinux 9.5                  | BIOS      |
 | ./proxmox_generic.sh -V almalinux96 -F rhel -U true         | AlmaLinux 9.6                  | UEFI      |
 | ./proxmox_generic.sh -V almalinux96 -F rhel -U false        | AlmaLinux 9.6                  | BIOS      |
+| ./proxmox_generic.sh -V almalinux97 -F rhel -U true         | AlmaLinux 9.7                  | UEFI      |
+| ./proxmox_generic.sh -V almalinux97 -F rhel -U false        | AlmaLinux 9.7                  | BIOS      |
+| ./proxmox_generic.sh -V debian13 -F debian -U true          | Debian 13                      | UEFI      |
+| ./proxmox_generic.sh -V debian13 -F debian -U false         | Debian 13                      | BIOS      |
 | ./proxmox_generic.sh -V opensuse_leap_15_5 -F sles -U true  | openSUSE Leap 15.5             | UEFI      |
 | ./proxmox_generic.sh -V opensuse_leap_15_5 -F sles -U false | openSUSE Leap 15.5             | BIOS      |
 | ./proxmox_generic.sh -V opensuse_leap_15_6 -F sles -U true  | openSUSE Leap 15.6             | UEFI      |
@@ -150,6 +156,8 @@ Consider buying me a coffee if you like my work. All donations are appreciated. 
 | ./proxmox_generic.sh -V oraclelinux95 -F rhel -U false      | Oracle Linux 9.5               | BIOS      |
 | ./proxmox_generic.sh -V oraclelinux96 -F rhel -U true       | Oracle Linux 9.6               | UEFI      |
 | ./proxmox_generic.sh -V oraclelinux96 -F rhel -U false      | Oracle Linux 9.6               | BIOS      |
+| ./proxmox_generic.sh -V oraclelinux97 -F rhel -U true       | Oracle Linux 9.7               | UEFI      |
+| ./proxmox_generic.sh -V oraclelinux97 -F rhel -U false      | Oracle Linux 9.7               | BIOS      |
 | ./proxmox_generic.sh -V rockylinux810 -F rhel -U true       | Rocky Linux 8.10               | UEFI      |
 | ./proxmox_generic.sh -V rockylinux810 -F rhel -U false      | Rocky Linux 8.10               | BIOS      |
 | ./proxmox_generic.sh -V rockylinux88 -F rhel -U true        | Rocky Linux 8.8                | UEFI      |
@@ -166,6 +174,8 @@ Consider buying me a coffee if you like my work. All donations are appreciated. 
 | ./proxmox_generic.sh -V rockylinux95 -F rhel -U false       | Rocky Linux 9.5                | BIOS      |
 | ./proxmox_generic.sh -V rockylinux96 -F rhel -U true        | Rocky Linux 9.6                | UEFI      |
 | ./proxmox_generic.sh -V rockylinux96 -F rhel -U false       | Rocky Linux 9.6                | BIOS      |
+| ./proxmox_generic.sh -V rockylinux97 -F rhel -U true        | Rocky Linux 9.7                | UEFI      |
+| ./proxmox_generic.sh -V rockylinux97 -F rhel -U false       | Rocky Linux 9.7                | BIOS      |
 | ./proxmox_generic.sh -V ubuntu2204 -F ubuntu -U true        | Ubuntu 22.04                   | UEFI      |
 | ./proxmox_generic.sh -V ubuntu2204 -F ubuntu -U false       | Ubuntu 22.04                   | BIOS      |
 | ./proxmox_generic.sh -V ubuntu2304 -F ubuntu -U true        | Ubuntu 23.04                   | UEFI      |
@@ -205,6 +215,8 @@ install_motd: true
 ```
 
 - For Ubuntu-based machines provisioning is done by scripts from `extra/files/ubuntu*` folders
+
+- For Debian-based machines provisioning is done by preseed (`extra/files/debian/`) with Ansible playbook support planned
 
 - For Windows-based machines provisioning is done by Powershell scripts located in `extra/scripts/windows/*`
 
@@ -266,16 +278,16 @@ packer init config.pkr.hcl
 
 #### Basic usage
 
-- Build Rocky Linux 9.6 with generic cloud-init configuration
+- Build Rocky Linux 9.7 with generic cloud-init configuration
 
 ```bash
-./kvm_generic.sh -V rockylinux-9.6
+./kvm_generic.sh -V rockylinux-9.7
 ```
 
-- Build Rocky Linux 9.6 for OCI with UEFI support
+- Build Rocky Linux 9.7 for OCI with UEFI support
 
 ```bash
-./kvm_generic.sh -V rockylinux-9.6 -C oci -U true
+./kvm_generic.sh -V rockylinux-9.7 -C oci -U true
 ```
 
 - Build Oracle Linux 8.9 for AliCloud
@@ -307,6 +319,7 @@ packer init config.pkr.hcl
 | 9.4     | `almalinux-9.4`    | ✓       | ✓   | ✓        |
 | 9.5     | `almalinux-9.5`    | ✓       | ✓   | ✓        |
 | 9.6     | `almalinux-9.6`    | ✓       | ✓   | ✓        |
+| 9.7     | `almalinux-9.7`    | ✓       | ✓   | ✓        |
 
 #### Oracle Linux
 
@@ -324,6 +337,7 @@ packer init config.pkr.hcl
 | 9.4     | `oraclelinux-9.4`  | ✓       | ✓   | ✓        |
 | 9.5     | `oraclelinux-9.5`  | ✓       | ✓   | ✓        |
 | 9.6     | `oraclelinux-9.6`  | ✓       | ✓   | ✓        |
+| 9.7     | `oraclelinux-9.7`  | ✓       | ✓   | ✓        |
 
 #### Rocky Linux
 
@@ -337,8 +351,9 @@ packer init config.pkr.hcl
 | 9.2     | `rockylinux-9.2`   | ✓       | ✓   | ✓        |
 | 9.3     | `rockylinux-9.3`   | ✓       | ✓   | ✓        |
 | 9.4     | `rockylinux-9.4`   | ✓       | ✓   | ✓        |
-| 9.5     | `rockylinux-9.4`   | ✓       | ✓   | ✓        |
-| 9.4     | `rockylinux-9.6`   | ✓       | ✓   | ✓        |
+| 9.5     | `rockylinux-9.5`   | ✓       | ✓   | ✓        |
+| 9.6     | `rockylinux-9.6`   | ✓       | ✓   | ✓        |
+| 9.7     | `rockylinux-9.7`   | ✓       | ✓   | ✓        |
 
 #### Migration from Legacy Scripts
 
@@ -359,6 +374,7 @@ The old individual scripts can be replaced with the generic script as follows:
 | ----------------- | ------------- | -------- |
 | Windows           | Administrator | password |
 | Alma/Rocky/Oracle | root          | password |
+| Debian            | root          | password |
 | OpenSuse          | root          | password |
 | Ubuntu            | ubuntu        | password |
 
@@ -375,9 +391,9 @@ When building OpenSuse Leap 15.x sshd service starts in stage 2 which breaks pac
 ## To DO
 
 - ansible playbooks for Windows and Ubuntu machines
+- ansible playbooks for Debian
 - OpenSuse Leap 15.x
   - OpenSuse Leap stage 2 sshd fix
-- Debian 12
 
 ## Q & A
 
