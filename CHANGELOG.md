@@ -1,5 +1,18 @@
 # Changelog
 
+## Version 1.1.8
+
+- [PROXMOX] Debian 13 (Trixie) Support - Added raw Packer template (`proxmox_debian.pkr.hcl`) with preseed-based automated install for BIOS and UEFI
+- [PROXMOX] Debian 13 - Added variable packs `variables_debian13.pkvars.hcl` and `variables_debian13_uefi.pkvars.hcl`
+- [EXTRA] Debian 13 - Added preseed.cfg for BIOS (`extra/files/debian/13/proxmox/`) and UEFI (`extra/files/debian/13/proxmox-uefi/`) with full network mirror setup in late_command
+- [EXTRA] Debian 13 - Added cloud-init `cloud.cfg` (`extra/files/cloud-init/debian/generic/`)
+- [PROXMOX] Fixed deprecated `iso_file` and `unmount_iso` fields in `proxmox_ubuntu.pkr.hcl` and `proxmox_sles.pkr.hcl` - replaced with `boot_iso` block
+- [README] Added Debian 13 entries to Proxmox command table
+- [PROXMOX] AlmaLinux, Oracle Linux and Rocky Linux 9.7 Support - Added variable packs for new minor releases (BIOS and UEFI)
+- [KVM] AlmaLinux, Oracle Linux and Rocky Linux 9.7 Support - Added version entries for new minor releases
+- [README] Added 9.7 entries for AlmaLinux, Oracle Linux and Rocky Linux in Proxmox and KVM tables
+- [README] Fixed Rocky Linux 9.5 and 9.6 version identifier typos in KVM table
+
 ## Version 1.1.7
 
 - [PROXMOX] fixed provider change for Windows machines, now default VLAN is set to be empty if not specified
