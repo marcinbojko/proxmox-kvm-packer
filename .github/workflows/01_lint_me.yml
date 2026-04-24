@@ -44,7 +44,7 @@ jobs:
         uses: super-linter/super-linter/slim@v8.6.0 # zizmor: ignore[unpinned-uses]
         env:
           LINTER_RULES_PATH: .github/linters
-          DEFAULT_BRANCH: ${{ github.ref_name }}
+          DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           FORCE_PUSH_EVENT: ${{ github.event.forced }}
           VALIDATE_ALL_CODEBASE: ${{ github.event_name != 'pull_request' }}
