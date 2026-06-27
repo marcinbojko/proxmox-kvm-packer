@@ -41,7 +41,7 @@ jobs:
           persist-credentials: false
       # Runs the Super-Linter action
       - name: Run Super-Linter
-        uses: super-linter/super-linter/slim@v8.6.0 # zizmor: ignore[unpinned-uses]
+        uses: super-linter/super-linter/slim@v8.7.0 # zizmor: ignore[unpinned-uses]
         env:
           LINTER_RULES_PATH: .github/linters
           DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
