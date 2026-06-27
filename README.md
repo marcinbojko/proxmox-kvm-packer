@@ -160,6 +160,8 @@ Consider buying me a coffee if you like my work. All donations are appreciated. 
 | ./proxmox_generic.sh -V oraclelinux96 -F rhel -U false      | Oracle Linux 9.6               | BIOS      |
 | ./proxmox_generic.sh -V oraclelinux97 -F rhel -U true       | Oracle Linux 9.7               | UEFI      |
 | ./proxmox_generic.sh -V oraclelinux97 -F rhel -U false      | Oracle Linux 9.7               | BIOS      |
+| ./proxmox_generic.sh -V oraclelinux98 -F rhel -U true       | Oracle Linux 9.8               | UEFI      |
+| ./proxmox_generic.sh -V oraclelinux98 -F rhel -U false      | Oracle Linux 9.8               | BIOS      |
 | ./proxmox_generic.sh -V rockylinux810 -F rhel -U true       | Rocky Linux 8.10               | UEFI      |
 | ./proxmox_generic.sh -V rockylinux810 -F rhel -U false      | Rocky Linux 8.10               | BIOS      |
 | ./proxmox_generic.sh -V rockylinux88 -F rhel -U true        | Rocky Linux 8.8                | UEFI      |
