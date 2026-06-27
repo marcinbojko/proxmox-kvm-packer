@@ -134,6 +134,8 @@ Consider buying me a coffee if you like my work. All donations are appreciated. 
 | ./proxmox_generic.sh -V almalinux96 -F rhel -U false        | AlmaLinux 9.6                  | BIOS      |
 | ./proxmox_generic.sh -V almalinux97 -F rhel -U true         | AlmaLinux 9.7                  | UEFI      |
 | ./proxmox_generic.sh -V almalinux97 -F rhel -U false        | AlmaLinux 9.7                  | BIOS      |
+| ./proxmox_generic.sh -V debian12 -F debian -U true          | Debian 12                      | UEFI      |
+| ./proxmox_generic.sh -V debian12 -F debian -U false         | Debian 12                      | BIOS      |
 | ./proxmox_generic.sh -V debian13 -F debian -U true          | Debian 13                      | UEFI      |
 | ./proxmox_generic.sh -V debian13 -F debian -U false         | Debian 13                      | BIOS      |
 | ./proxmox_generic.sh -V opensuse_leap_15_5 -F sles -U true  | openSUSE Leap 15.5             | UEFI      |

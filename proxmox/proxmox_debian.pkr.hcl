@@ -318,9 +318,11 @@ build {
     execute_command = "chmod +x {{ .Path }}; sh '{{ .Path }}'"
     inline = [
       "systemctl enable qemu-guest-agent.service --now",
+      "systemctl enable cloud-init.service cloud-init-local.service cloud-config.service cloud-final.service",
       "/bin/rm -f /etc/ssh/ssh_host_*",
       "/usr/bin/ssh-keygen -A",
-      "/bin/rm -rf /tmp/*"
+      "/bin/rm -rf /tmp/*",
+      "/usr/bin/cloud-init clean --logs --seed"
     ]
     inline_shebang = "/bin/sh -x"
   }
