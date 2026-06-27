@@ -35,7 +35,7 @@ jobs:
     steps:
       # Checks out a copy of your repository on the ubuntu-latest machine
       - name: Checkout code
-        uses: actions/checkout@v6 # zizmor: ignore[unpinned-uses]
+        uses: actions/checkout@v7 # zizmor: ignore[unpinned-uses]
         with:
           fetch-depth: 0
           persist-credentials: false
