@@ -136,6 +136,12 @@ Consider buying me a coffee if you like my work. All donations are appreciated. 
 | ./proxmox_generic.sh -V almalinux97 -F rhel -U false        | AlmaLinux 9.7                  | BIOS      |
 | ./proxmox_generic.sh -V almalinux98 -F rhel -U true         | AlmaLinux 9.8                  | UEFI      |
 | ./proxmox_generic.sh -V almalinux98 -F rhel -U false        | AlmaLinux 9.8                  | BIOS      |
+| ./proxmox_generic.sh -V almalinux10         -F rhel -U true        | AlmaLinux 10                  | UEFI      |
+| ./proxmox_generic.sh -V almalinux10         -F rhel -U false       | AlmaLinux 10                  | BIOS      |
+| ./proxmox_generic.sh -V almalinux101        -F rhel -U true        | AlmaLinux 10.1                | UEFI      |
+| ./proxmox_generic.sh -V almalinux101        -F rhel -U false       | AlmaLinux 10.1                | BIOS      |
+| ./proxmox_generic.sh -V almalinux102        -F rhel -U true        | AlmaLinux 10.2                | UEFI      |
+| ./proxmox_generic.sh -V almalinux102        -F rhel -U false       | AlmaLinux 10.2                | BIOS      |
 | ./proxmox_generic.sh -V debian12 -F debian -U true          | Debian 12                      | UEFI      |
 | ./proxmox_generic.sh -V debian12 -F debian -U false         | Debian 12                      | BIOS      |
 | ./proxmox_generic.sh -V debian13 -F debian -U true          | Debian 13                      | UEFI      |
@@ -164,6 +170,10 @@ Consider buying me a coffee if you like my work. All donations are appreciated. 
 | ./proxmox_generic.sh -V oraclelinux97 -F rhel -U false      | Oracle Linux 9.7               | BIOS      |
 | ./proxmox_generic.sh -V oraclelinux98 -F rhel -U true       | Oracle Linux 9.8               | UEFI      |
 | ./proxmox_generic.sh -V oraclelinux98 -F rhel -U false      | Oracle Linux 9.8               | BIOS      |
+| ./proxmox_generic.sh -V oraclelinux10       -F rhel -U true        | Oracle Linux 10               | UEFI      |
+| ./proxmox_generic.sh -V oraclelinux10       -F rhel -U false       | Oracle Linux 10               | BIOS      |
+| ./proxmox_generic.sh -V oraclelinux101      -F rhel -U true        | Oracle Linux 10.1             | UEFI      |
+| ./proxmox_generic.sh -V oraclelinux101      -F rhel -U false       | Oracle Linux 10.1             | BIOS      |
 | ./proxmox_generic.sh -V rockylinux810 -F rhel -U true       | Rocky Linux 8.10               | UEFI      |
 | ./proxmox_generic.sh -V rockylinux810 -F rhel -U false      | Rocky Linux 8.10               | BIOS      |
 | ./proxmox_generic.sh -V rockylinux88 -F rhel -U true        | Rocky Linux 8.8                | UEFI      |
@@ -182,6 +192,14 @@ Consider buying me a coffee if you like my work. All donations are appreciated. 
 | ./proxmox_generic.sh -V rockylinux96 -F rhel -U false       | Rocky Linux 9.6                | BIOS      |
 | ./proxmox_generic.sh -V rockylinux97 -F rhel -U true        | Rocky Linux 9.7                | UEFI      |
 | ./proxmox_generic.sh -V rockylinux97 -F rhel -U false       | Rocky Linux 9.7                | BIOS      |
+| ./proxmox_generic.sh -V rockylinux98 -F rhel -U true        | Rocky Linux 9.8                | UEFI      |
+| ./proxmox_generic.sh -V rockylinux98 -F rhel -U false       | Rocky Linux 9.8                | BIOS      |
+| ./proxmox_generic.sh -V rockylinux10        -F rhel -U true        | Rocky Linux 10                | UEFI      |
+| ./proxmox_generic.sh -V rockylinux10        -F rhel -U false       | Rocky Linux 10                | BIOS      |
+| ./proxmox_generic.sh -V rockylinux101       -F rhel -U true        | Rocky Linux 10.1              | UEFI      |
+| ./proxmox_generic.sh -V rockylinux101       -F rhel -U false       | Rocky Linux 10.1              | BIOS      |
+| ./proxmox_generic.sh -V rockylinux102       -F rhel -U true        | Rocky Linux 10.2              | UEFI      |
+| ./proxmox_generic.sh -V rockylinux102       -F rhel -U false       | Rocky Linux 10.2              | BIOS      |
 | ./proxmox_generic.sh -V ubuntu2204 -F ubuntu -U true        | Ubuntu 22.04                   | UEFI      |
 | ./proxmox_generic.sh -V ubuntu2204 -F ubuntu -U false       | Ubuntu 22.04                   | BIOS      |
 | ./proxmox_generic.sh -V ubuntu2304 -F ubuntu -U true        | Ubuntu 23.04                   | UEFI      |
