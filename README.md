@@ -1,6 +1,14 @@
 # Proxmox and KVM related Virtual Machines using Hashicorp's Packer
 
-![RockyLinux](https://img.shields.io/badge/Linux-Rocky-brightgreen) ![OracleLinux](https://img.shields.io/badge/Linux-Oracle-brightgreen) ![AlmaLinux](https://img.shields.io/badge/Linux-Alma-brightgreen) ![Debian](https://img.shields.io/badge/Linux-Debian-red) ![UbuntuLinux](https://img.shields.io/badge/Linux-Ubuntu-orange) ![OpenSuse](https://img.shields.io/badge/Linux-OpenSuse-darkorange) ![Windows2019](https://img.shields.io/badge/Windows-2019-blue) ![Windows2022](https://img.shields.io/badge/Windows-2022-blue) ![Windows2025](https://img.shields.io/badge/Windows-2025-blue)
+![RockyLinux](https://img.shields.io/badge/Linux-Rocky-brightgreen)
+![OracleLinux](https://img.shields.io/badge/Linux-Oracle-brightgreen)
+![AlmaLinux](https://img.shields.io/badge/Linux-Alma-brightgreen)
+![Debian](https://img.shields.io/badge/Linux-Debian-red)
+![UbuntuLinux](https://img.shields.io/badge/Linux-Ubuntu-orange)
+![OpenSuse](https://img.shields.io/badge/Linux-OpenSuse-darkorange)
+![Windows2019](https://img.shields.io/badge/Windows-2019-blue)
+![Windows2022](https://img.shields.io/badge/Windows-2022-blue)
+![Windows2025](https://img.shields.io/badge/Windows-2025-blue)
 
 [!["Buy Me A Coffee"](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://www.buymeacoffee.com/marcinbojko)
 
