@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-neofetch --config /etc/neofetch/config.conf
+fastfetch --config /etc/fastfetch.jsonc
 if [ -f ~/.Xauthority ]; then
   xauth merge ~/.Xauthority
 fi
