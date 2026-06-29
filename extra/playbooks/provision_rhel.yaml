@@ -377,7 +377,7 @@
             mode: "0755"
             content: "{{ motd }}"
             force: false
-          when: install_motd and (r_install_fastfetch_package is success and r_install_fastfetch_package is defined)
+          when: install_motd and (r_install_fastfetch_package is defined and r_install_fastfetch_package is success)
         - name: update_all_packages
           ansible.builtin.package:
             name: "*"

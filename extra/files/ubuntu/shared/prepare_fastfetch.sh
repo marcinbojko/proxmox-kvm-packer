@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 # Install and configure fastfetch (replaces neofetch).
+set -e
 
 config="/etc/fastfetch.jsonc"
 src_config="/tmp/fastfetch.jsonc"
@@ -27,7 +28,7 @@ if ! command -v fastfetch >/dev/null 2>&1; then
   else
     wget -O "$deb" "$url"
   fi
-  apt-get -y install "$deb" || dpkg -i "$deb" || true
+  apt-get -y install "$deb" || dpkg -i "$deb"
 fi
 
 # Place the shared config
@@ -40,5 +41,6 @@ if command -v fastfetch >/dev/null 2>&1; then
   fastfetch --config "$config" || true
   echo "Finished fastfetch configuration"
 else
-  echo "fastfetch could not be installed"
+  echo "fastfetch could not be installed" >&2
+  exit 1
 fi

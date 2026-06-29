@@ -86,7 +86,9 @@ hyperv:
   - name: hypervvssd
 motd: |
   #!/bin/bash
-  fastfetch --config /etc/fastfetch.jsonc
+  if command -v fastfetch >/dev/null 2>&1; then
+    fastfetch --config /etc/fastfetch.jsonc
+  fi
   if [ -f ~/.Xauthority ]; then
     xauth merge ~/.Xauthority
   fi
