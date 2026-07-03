@@ -1,5 +1,32 @@
 # Changelog
 
+## Version 1.2.0
+
+- [BREAKING_CHANGE] Removed `Webmin` from all Linux provisioning - installation block, repository, package, service, and firewall rich-rules are gone; provisioned images no longer ship Webmin
+- [ANSIBLE] Replaced `neofetch` with `fastfetch` for system information in the MOTD across all RHEL-family and Ubuntu provisioning
+- [ANSIBLE] Disabled `Cockpit` by default and removed its associated service configuration and package dependencies
+- [ANSIBLE] Cleaned up unneeded packages from base OS installations across distributions
+- [ANSIBLE] Reordered the `create_motd` condition so `r_install_fastfetch_package is defined` is checked before `is success`, preventing failures when fastfetch installation is skipped
+- [EXTRA] Added `fastfetch.jsonc` configs for Ubuntu (`extra/files/ubuntu/shared/`) and gen2-linux (`extra/files/gen2-linux/`)
+- [EXTRA] Added `prepare_fastfetch.sh` bootstrap (repo install with a pinned upstream `.deb` fallback for older releases); removed legacy `prepare_neofetch.sh`
+- [EXTRA] Made fastfetch optional in `motd.sh` - guarded the invocation with binary and config existence checks so logins no longer emit command-not-found errors
+- [EXTRA] `prepare_fastfetch.sh` now fails the build (exit 1 to stderr) when fastfetch cannot be installed instead of silently continuing with a broken MOTD
+- [EXTRA] Fixed the Ubuntu fastfetch logo source to `ubuntu_small` (was using a RHEL variant)
+- [PROXMOX] Reworked `proxmox_ubuntu.pkr.hcl` provisioning to align with the fastfetch/streamlined base image changes
+- [README] Split status badges onto separate lines for readability and to satisfy line-length linting
+
+## Version 1.1.9
+
+- [PROXMOX] AlmaLinux, Oracle Linux and Rocky Linux 9.8 Support - Added variable packs for the new minor releases (BIOS and UEFI)
+- [PROXMOX] RHEL 10 family Support - Added variable packs (BIOS and UEFI) for:
+  - AlmaLinux 10, 10.1, 10.2
+  - Oracle Linux 10, 10.1
+  - Rocky Linux 10, 10.1, 10.2
+- [EXTRA] Added kickstart configs for AlmaLinux 10 (`extra/files/almalinux/10/proxmox/ks.cfg`) and Oracle Linux 10 (`extra/files/oraclelinux/10/proxmox/ks.cfg`)
+- [ANSIBLE] Added variable files (`variables/{almalinux,oraclelinux,rockylinux}10.yml`) and provisioning playbooks (`provision_alma10_variables.yml`, `provision_oracle10_variables.yml`) for the RHEL 10 family
+- [EXTRA] Fixed the `services --enabled` directive to use comma-separated values instead of spaces in AlmaLinux 10, Oracle Linux 10, and Rocky Linux 10 kickstarts - space-separated values are invalid and prevented `chronyd`, `sshd`, and `NetworkManager` from being enabled during install
+- [README] Added AlmaLinux, Oracle Linux and Rocky Linux 9.8 and RHEL 10 family usage examples to the Proxmox command table
+
 ## Version 1.1.8
 
 - [EXTRA] Debian 13 - Added preseed.cfg for BIOS (`extra/files/debian/13/proxmox/`) and UEFI (`extra/files/debian/13/proxmox-uefi/`) with full network mirror setup in late_command
