@@ -126,14 +126,14 @@ else
 fi
 echo "Provisioning phase 2 - Done"
 
-echo "Provisioning phase 3 - Starting: Extra packages, timezones, neofetch, firewalld, settings"
+echo "Provisioning phase 3 - Starting: Extra packages, timezones, fastfetch, firewalld, settings"
 # misc
 echo "Provisioning phase 3 - Timezone"
 timedatectl set-timezone UTC --no-ask-password
 echo "Provisioning phase 3 - Extra Packages or groups"
 export DEBIAN_FRONTEND=noninteractive
 apt-get -y update
-apt-get -y install htop atop iftop iotop nmap nmon jq parted pv neofetch screen telnet ncdu multitail smartmontools zsh httpie
+apt-get -y install htop atop iftop iotop nmap nmon jq parted pv screen telnet ncdu multitail smartmontools zsh httpie
 apt-get install -y linux-cloud-tools-virtual||true #may fail on arm64, add check for arm64
 # we don't need sssd
 # systemctl disable sssd.service||true
@@ -210,7 +210,7 @@ if [ -e $STAMP_FILE ]; then
   rm -rf $STAMP_FILE
   touch $STAMP_FILE
 fi
-#neofetch || true
+#fastfetch || true
 echo "creationDate: $(date +%Y-%m-%d_%H:%M)" >>$STAMP_FILE
 echo "Provisioning phase 4 - Done"
 echo "Provisioning done - all phases"

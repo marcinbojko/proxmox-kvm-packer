@@ -1,5 +1,5 @@
 initial_packages:
-  - rocky-release
+  - almalinux-release
   - curl
   - mc
   - wget
@@ -15,7 +15,6 @@ initial_packages:
   - glibc-all-langpacks
   - ca-certificates
   - yum-utils
-  - sendmail
 yum_extra_groups:
   - "@base"
   - "@core"
@@ -38,15 +37,15 @@ yum_extra_packages:
   - tuned
   - tuned-profiles-atomic
 yum_extra_epel_packages:
-  - atop
+  #- atop
   - bmon
   - htop
   - iftop
   - jq
   - ncdu
-  - nmon
+  # - nmon
   - pv
-  - rkhunter
+  # - rkhunter
 epel_package:
   - epel-release
 selinux:
@@ -87,7 +86,9 @@ hyperv:
   - name: hypervvssd
 motd: |
   #!/bin/bash
-  fastfetch --config /etc/fastfetch.jsonc
+  if command -v fastfetch >/dev/null 2>&1; then
+    fastfetch --config /etc/fastfetch.jsonc
+  fi
   if [ -f ~/.Xauthority ]; then
     xauth merge ~/.Xauthority
   fi

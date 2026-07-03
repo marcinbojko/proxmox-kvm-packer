@@ -134,6 +134,14 @@ Consider buying me a coffee if you like my work. All donations are appreciated. 
 | ./proxmox_generic.sh -V almalinux96 -F rhel -U false        | AlmaLinux 9.6                  | BIOS      |
 | ./proxmox_generic.sh -V almalinux97 -F rhel -U true         | AlmaLinux 9.7                  | UEFI      |
 | ./proxmox_generic.sh -V almalinux97 -F rhel -U false        | AlmaLinux 9.7                  | BIOS      |
+| ./proxmox_generic.sh -V almalinux98 -F rhel -U true         | AlmaLinux 9.8                  | UEFI      |
+| ./proxmox_generic.sh -V almalinux98 -F rhel -U false        | AlmaLinux 9.8                  | BIOS      |
+| ./proxmox_generic.sh -V almalinux10 -F rhel -U true         | AlmaLinux 10                   | UEFI      |
+| ./proxmox_generic.sh -V almalinux10 -F rhel -U false        | AlmaLinux 10                   | BIOS      |
+| ./proxmox_generic.sh -V almalinux101 -F rhel -U true        | AlmaLinux 10.1                 | UEFI      |
+| ./proxmox_generic.sh -V almalinux101 -F rhel -U false       | AlmaLinux 10.1                 | BIOS      |
+| ./proxmox_generic.sh -V almalinux102 -F rhel -U true        | AlmaLinux 10.2                 | UEFI      |
+| ./proxmox_generic.sh -V almalinux102 -F rhel -U false       | AlmaLinux 10.2                 | BIOS      |
 | ./proxmox_generic.sh -V debian12 -F debian -U true          | Debian 12                      | UEFI      |
 | ./proxmox_generic.sh -V debian12 -F debian -U false         | Debian 12                      | BIOS      |
 | ./proxmox_generic.sh -V debian13 -F debian -U true          | Debian 13                      | UEFI      |
@@ -160,6 +168,12 @@ Consider buying me a coffee if you like my work. All donations are appreciated. 
 | ./proxmox_generic.sh -V oraclelinux96 -F rhel -U false      | Oracle Linux 9.6               | BIOS      |
 | ./proxmox_generic.sh -V oraclelinux97 -F rhel -U true       | Oracle Linux 9.7               | UEFI      |
 | ./proxmox_generic.sh -V oraclelinux97 -F rhel -U false      | Oracle Linux 9.7               | BIOS      |
+| ./proxmox_generic.sh -V oraclelinux98 -F rhel -U true       | Oracle Linux 9.8               | UEFI      |
+| ./proxmox_generic.sh -V oraclelinux98 -F rhel -U false      | Oracle Linux 9.8               | BIOS      |
+| ./proxmox_generic.sh -V oraclelinux10 -F rhel -U true       | Oracle Linux 10                | UEFI      |
+| ./proxmox_generic.sh -V oraclelinux10 -F rhel -U false      | Oracle Linux 10                | BIOS      |
+| ./proxmox_generic.sh -V oraclelinux101 -F rhel -U true      | Oracle Linux 10.1              | UEFI      |
+| ./proxmox_generic.sh -V oraclelinux101 -F rhel -U false     | Oracle Linux 10.1              | BIOS      |
 | ./proxmox_generic.sh -V rockylinux810 -F rhel -U true       | Rocky Linux 8.10               | UEFI      |
 | ./proxmox_generic.sh -V rockylinux810 -F rhel -U false      | Rocky Linux 8.10               | BIOS      |
 | ./proxmox_generic.sh -V rockylinux88 -F rhel -U true        | Rocky Linux 8.8                | UEFI      |
@@ -178,6 +192,14 @@ Consider buying me a coffee if you like my work. All donations are appreciated. 
 | ./proxmox_generic.sh -V rockylinux96 -F rhel -U false       | Rocky Linux 9.6                | BIOS      |
 | ./proxmox_generic.sh -V rockylinux97 -F rhel -U true        | Rocky Linux 9.7                | UEFI      |
 | ./proxmox_generic.sh -V rockylinux97 -F rhel -U false       | Rocky Linux 9.7                | BIOS      |
+| ./proxmox_generic.sh -V rockylinux98 -F rhel -U true        | Rocky Linux 9.8                | UEFI      |
+| ./proxmox_generic.sh -V rockylinux98 -F rhel -U false       | Rocky Linux 9.8                | BIOS      |
+| ./proxmox_generic.sh -V rockylinux10 -F rhel -U true        | Rocky Linux 10                 | UEFI      |
+| ./proxmox_generic.sh -V rockylinux10 -F rhel -U false       | Rocky Linux 10                 | BIOS      |
+| ./proxmox_generic.sh -V rockylinux101 -F rhel -U true       | Rocky Linux 10.1               | UEFI      |
+| ./proxmox_generic.sh -V rockylinux101 -F rhel -U false      | Rocky Linux 10.1               | BIOS      |
+| ./proxmox_generic.sh -V rockylinux102 -F rhel -U true       | Rocky Linux 10.2               | UEFI      |
+| ./proxmox_generic.sh -V rockylinux102 -F rhel -U false      | Rocky Linux 10.2               | BIOS      |
 | ./proxmox_generic.sh -V ubuntu2204 -F ubuntu -U true        | Ubuntu 22.04                   | UEFI      |
 | ./proxmox_generic.sh -V ubuntu2204 -F ubuntu -U false       | Ubuntu 22.04                   | BIOS      |
 | ./proxmox_generic.sh -V ubuntu2304 -F ubuntu -U true        | Ubuntu 23.04                   | UEFI      |
@@ -205,10 +227,9 @@ example:
 
 ```yaml
 install_epel: true
-install_webmin: false
 install_hyperv: false
-install_cockpit: true
-install_neofetch: true
+install_cockpit: false
+install_fastfetch: true
 install_updates: true
 install_extra_groups: true
 docker_prepare: false
@@ -399,23 +420,16 @@ When building OpenSuse Leap 15.x sshd service starts in stage 2 which breaks pac
 
 ## Q & A
 
-Q: Will you add support for other OSes?
-A: Yes, I will add support for other OSes as I need them. If you need support for a specific OS, please open an issue and I will try to add it.
+Q: Will you add support for other OSes? A: Yes, I will add support for other OSes as I need them. If you need support for a specific OS, please open an issue and I will try to add it.
 
-Q: My windows machine hangs at 'Waiting for WinRM to become available' step
-A: Update virtio drivers to the latest version. This issue is caused by old virtio drivers that are not compatible with Windows 10 and later versions.
+Q: My windows machine hangs at 'Waiting for WinRM to become available' step A: Update virtio drivers to the latest version. This issue is caused by old virtio drivers that are not compatible with Windows 10 and later versions.
 
-Q: Will you add support for other hypervisors?
-A: No, this repository is dedicated to Proxmox and KVM. If you need support for other hypervisors, please look at my other repositories
+Q: Will you add support for other hypervisors? A: No, this repository is dedicated to Proxmox and KVM. If you need support for other hypervisors, please look at my other repositories
 
-Q: Will you add support for other cloud providers?
-A: Since some of cloud providers are using KVM based hypervisors, building custom image with KVM and importing them will solve the case
+Q: Will you add support for other cloud providers? A: Since some of cloud providers are using KVM based hypervisors, building custom image with KVM and importing them will solve the case
 
-Q: Will you add support RHEL and RedHat based OSes?
-A: No, I will not add support for RHEL and RedHat directly, due to their licensing. However, I will add support for RHEL based OSes like AlmaLinux, Oracle Linux and Rocky Linux.
+Q: Will you add support RHEL and RedHat based OSes? A: No, I will not add support for RHEL and RedHat directly, due to their licensing. However, I will add support for RHEL based OSes like AlmaLinux, Oracle Linux and Rocky Linux.
 
-Q: Can I help?
-A: Yes, please open an issue or a pull request and I will try to help you. Please split PRs into separate commits for block of changes.
+Q: Can I help? A: Yes, please open an issue or a pull request and I will try to help you. Please split PRs into separate commits for block of changes.
 
-Q: Can I use this repository for my own projects?
-A: Yes, this repository is licensed under the Apache 2 license, so you can use it for your own projects. Please note that some of the files are licensed under different licenses, so please check the licenses of the individual files before using them
+Q: Can I use this repository for my own projects? A: Yes, this repository is licensed under the Apache 2 license, so you can use it for your own projects. Please note that some of the files are licensed under different licenses, so please check the licenses of the individual files before using them

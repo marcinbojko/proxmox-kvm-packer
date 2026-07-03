@@ -4,12 +4,11 @@
   hosts: all
   vars:
     install_epel: false
-    install_webmin: false
     install_hyperv: false
     install_cockpit: false
     install_kernel_parameters: true
     install_motd: false
-    install_neofetch: false
+    install_fastfetch: false
     install_updates: true
     install_extra_groups: false
     docker_prepare: false
@@ -17,7 +16,7 @@
     delay_time: 15
     retries_count: 2
     reboot_server: false
-    playbook_version: "20240612"
+    playbook_version: "20260628"
   become: true
   gather_facts: false
   pre_tasks:
@@ -64,10 +63,9 @@
           - "Install extra groups           :{{ install_extra_groups | lower }}"
           - "Install Hyperv                 :{{ install_hyperv | lower }}"
           - "Install MOTD                   :{{ install_motd | lower }}"
-          - "Install Neofetch               :{{ install_neofetch | lower }}"
+          - "Install Fastfetch              :{{ install_fastfetch | lower }}"
           - "Install kernel parameters      :{{ install_kernel_parameters | lower }}"
           - "Install updates                :{{ install_updates | lower }}"
-          - "Install Webmin                 :{{ install_webmin | lower }}"
           - "Reboot server                  :{{ reboot_server | lower }}"
           - "Playbook version               :{{ playbook_version }}"
     # initial cleaning and refreshing metadata for packages
@@ -180,52 +178,6 @@
       delay: "{{ delay_time }}"
       register: r_set_linux_policy
       when: selinux.state is defined
-    # start webmin block
-    - name: start_webmin_block
-      when: install_webmin
-      block:
-        - name: add_webmin_repository
-          ansible.builtin.yum_repository:
-            name: Webmin
-            description: "{{ item.name }}"
-            mirrorlist: "{{ item.mirrorlist }}"
-            enabled: "{{ item.enabled }} "
-            file: "{{ item.file }}"
-            gpgkey: "{{ item.gpgkey }}"
-          register: r_webmin_repository
-          retries: "{{ retries_count }}"
-          delay: "{{ delay_time }}"
-          loop: "{{ webmin }}"
-          until: r_webmin_repository is success
-          notify: makecache
-        - name: add_webmin_package
-          ansible.builtin.package:
-            name: webmin
-            state: latest
-          register: r_webmin_package
-          retries: "{{ retries_count }}"
-          delay: "{{ delay_time }}"
-          until: r_webmin_package is success
-        - name: start_webmin
-          ansible.builtin.systemd:
-            name: webmin
-            enabled: true
-          register: r_start_webmin
-          retries: "{{ retries_count }}"
-          delay: "{{ delay_time }}"
-          until: r_start_webmin is success
-      rescue:
-        - name: log_webmin_installation_failure
-          ansible.builtin.debug:
-            msg: "Failed to install or start Webmin: {{ ansible_failed_result.msg | default('Unknown error') }}"
-        - name: set_webmin_installation_failed
-          ansible.builtin.set_fact:
-            webmin_installation_failed: true
-        - name: fail_webmin_installation
-          ansible.builtin.fail:
-            msg: "Webmin installation failed after retries. Check logs for details."
-          when: set_webmin_installation_failed | default(true)
-
     - name: start_cockpit_block
       when: install_cockpit is defined and install_cockpit
       block:
@@ -257,92 +209,50 @@
           ansible.builtin.fail:
             msg: "Cockpit installation failed after retries. Check logs for details."
           when: cockpit_installation_failed | default(true)
-    # start neofetch block - requires changes from script to 'per option' settings
-    - name: start_neofetch_block
-      when: install_neofetch
+    # start fastfetch block - replaces the legacy neofetch setup
+    - name: start_fastfetch_block
+      when: install_fastfetch
       block:
-        - name: add_neofetch_repository
-          ansible.builtin.get_url:
-            url: "{{ item.url }}"
-            dest: "{{ item.dest }}"
-            mode: "0644"
-          register: r_neofetch_repository
-          retries: "{{ retries_count }}"
-          delay: "{{ delay_time }}"
-          loop: "{{ neofetch.repository }}"
-          until: r_neofetch_repository is success
-          notify: makecache
-          when: "(ansible_distribution_major_version | int < 8) and (ansible_distribution_major_version is defined)"
-        - name: install_nefoetch
+        - name: remove_neofetch_package
           ansible.builtin.package:
-            name: "{{ neofetch.package.name }}"
+            name: neofetch
+            state: absent
+          failed_when: false
+        - name: remove_neofetch_config_directory
+          ansible.builtin.file:
+            path: /etc/neofetch
+            state: absent
+        - name: install_fastfetch
+          ansible.builtin.package:
+            name: "{{ fastfetch.package.name }}"
             state: latest
           retries: "{{ retries_count }}"
           delay: "{{ delay_time }}"
-          register: r_install_neofetch_package
-          until: r_install_neofetch_package is success
-          when: r_neofetch_repository is success
-        - name: neofetch_first_run
-          ansible.builtin.command: neofetch
-          when: r_neofetch_repository is success
-          changed_when: false
-          #          ignore_errors: true
-          any_errors_fatal: false
-          failed_when: false
-        - name: create_config_folder
-          ansible.builtin.file:
-            path: /etc/neofetch
-            state: directory
-            mode: "0655"
-          retries: "{{ retries_count }}"
-          delay: "{{ delay_time }}"
-          register: r_create_config_folder
-          until: r_create_config_folder is success
-          when: r_neofetch_repository is success
-        - name: copy_config_to_etc
+          register: r_install_fastfetch_package
+          until: r_install_fastfetch_package is success
+        - name: copy_fastfetch_config
           ansible.builtin.copy:
-            src: /root/.config/neofetch/config.conf
-            dest: /etc/neofetch/config.conf
-            remote_src: true
-            mode: "0755"
-            force: false
+            src: "{{ playbook_dir }}/../files/gen2-linux/fastfetch.jsonc"
+            dest: /etc/fastfetch.jsonc
+            owner: root
+            group: root
+            mode: "0644"
           retries: "{{ retries_count }}"
           delay: "{{ delay_time }}"
-          register: r_copy_neofetch_config
-          until: r_copy_neofetch_config is success
-          when: r_create_config_folder is success
-        - name: check_for_prepare_neofetch
-          ansible.builtin.stat:
-            path: /tmp/prepare_neofetch.sh
-          register: r_check_for_prepare_neofetch
-        # download neofetch scripts and files that we didn't create - to be replaced by file content section
-        - name: get_extra_files
-          ansible.builtin.get_url:
-            url: "{{ item.url }}"
-            dest: "{{ item.dest }}"
-            mode: "{{ item.mode }}"
-          loop: "{{ remote_files }}"
-          register: r_get_extra_files
-          retries: "{{ retries_count }}"
-          delay: "{{ delay_time }}"
-          until: r_get_extra_files is success
-          when: (r_check_for_prepare_neofetch is defined) and (not r_check_for_prepare_neofetch.stat.exists)
-        # run neofetch script - to be replaced
-        - name: run_prepare_neofetch
-          ansible.builtin.shell: chmod +x /tmp/prepare_neofetch.sh; sh /tmp/prepare_neofetch.sh
-          when: install_neofetch and (r_install_neofetch_package is success and r_install_neofetch_package is defined)
-          changed_when: false
+          register: r_copy_fastfetch_config
+          until: r_copy_fastfetch_config is success
+          when: r_install_fastfetch_package is success
       rescue:
-        - name: log_neofetch_installation_failure
+        - name: log_fastfetch_installation_failure
           ansible.builtin.debug:
-            msg: "Failed to install or configure Neofetch: {{ ansible_failed_result.msg | default('Unknown error') }}"
-        - name: set_neofetch_installation_failed
+            msg: "Failed to install or configure fastfetch: {{ ansible_failed_result.msg | default('Unknown error') }}"
+        - name: set_fastfetch_installation_failed
           ansible.builtin.set_fact:
-            neofetch_installation_failed: true
-        - name: fail_neofetch_installation
+            fastfetch_installation_failed: true
+        - name: fail_fastfetch_installation
           ansible.builtin.fail:
-            msg: "Neofetch installation failed after retries. Check logs for details."
-          when: set_neofetch_installation_failed | default(true)
+            msg: "fastfetch installation failed after retries. Check logs for details."
+          when: set_fastfetch_installation_failed | default(true)
     - name: start_hyperv_block
       when: install_hyperv
       block:
@@ -467,7 +377,7 @@
             mode: "0755"
             content: "{{ motd }}"
             force: false
-          when: install_motd and (r_install_neofetch_package is success and r_install_neofetch_package is defined)
+          when: install_motd and (r_install_fastfetch_package is defined and r_install_fastfetch_package is success)
         - name: update_all_packages
           ansible.builtin.package:
             name: "*"
@@ -558,20 +468,6 @@
           until: r_add_rich_rules is success
           notify: reload_firewalld
           when: ansible_default_ipv4.interface is defined
-        - name: add_webmin_rich_rules
-          ansible.posix.firewalld:
-            rich_rule: "{{ item.rule }}"
-            zone: "{{ firewalld.default_zone }}"
-            immediate: true
-            state: enabled
-            permanent: true
-          loop: "{{ firewalld.webmin_rich_rules }}"
-          retries: "{{ retries_count }}"
-          delay: "{{ delay_time }}"
-          register: r_add_webmin_rich_rules
-          until: r_add_webmin_rich_rules is success
-          notify: reload_firewalld
-          when: ansible_default_ipv4.interface is defined and install_webmin
         - name: add_cockpit_rich_rules
           ansible.posix.firewalld:
             rich_rule: "{{ item.rule }}"

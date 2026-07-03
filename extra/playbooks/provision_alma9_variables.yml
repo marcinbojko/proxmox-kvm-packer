@@ -20,27 +20,17 @@ yum_extra_groups:
   - "@base"
   - "@core"
 yum_extra_packages:
-  - adcli
-  - firefox
   - gcc
   - hdparm
   - iotop
-  - krb5-workstation
   - make
   - nmap
   - chrony
   - dkms
-  - oddjob
-  - oddjob-mkhomedir
   - parted
   - patch
-  - realmd
-  - samba
-  - samba-common
   - screen
   - smartmontools
-  - sssd
-  - sssd-tools
   - telnet
   - tmux
   - xauth
@@ -50,7 +40,6 @@ yum_extra_packages:
 yum_extra_epel_packages:
   - atop
   - bmon
-  - gparted
   - htop
   - iftop
   - jq
@@ -62,33 +51,14 @@ epel_package:
   - epel-release
 selinux:
   state: disabled
-webmin:
-  - file: webmin
-    gpgkey: http://www.webmin.com/jcameron-key.asc
-    name: Webmin Distribution Neutral
-    timeout: 120
-    mirrorlist: http://download.webmin.com/download/yum/mirrorlist
-    enabled: 1
-neofetch:
-  # repository:
-  #   - url: https://copr.fedorainfracloud.org/coprs/konimex/neofetch/repo/epel-8/konimex-neofetch-epel-8.repo
-  #     dest: /etc/yum.repos.d/konimex-neofetch.repo
+fastfetch:
   package:
-    name: neofetch
-  options:
-    - option: (\s*[^#]info "Packages" packages).*
-      line: '    #info "Packages" packages'
+    name: fastfetch
 timezone: "UTC"
-remote_files:
-  - url: https://raw.githubusercontent.com/marcinbojko/hv-packer/master/extra/files/gen2-linux/prepare_neofetch.sh
-    dest: /tmp/prepare_neofetch.sh
-    mode: "0755"
 firewalld:
   default_zone: work
   rich_rules:
     - rule: 'rule family="ipv4" source address="0.0.0.0/0" port port="22" protocol="tcp" accept'
-  webmin_rich_rules:
-    - rule: 'rule family="ipv4" source address="0.0.0.0/0" port port="10000" protocol="tcp" accept'
   cockpit_rich_rules:
     - rule: 'rule family="ipv4" source address="0.0.0.0/0" port port="9090" protocol="tcp" accept'
   services_remove:
@@ -101,12 +71,6 @@ services:
     state: started
     enabled: true
   - name: sshd
-    state: started
-    enabled: true
-  - name: cockpit.socket
-    state: started
-    enabled: true
-  - name: pmlogger.service
     state: started
     enabled: true
 sysctl:
@@ -123,7 +87,7 @@ hyperv:
   - name: hypervvssd
 motd: |
   #!/bin/bash
-  neofetch --config /etc/neofetch/config.conf
+  fastfetch --config /etc/fastfetch.jsonc
   if [ -f ~/.Xauthority ]; then
     xauth merge ~/.Xauthority
   fi
