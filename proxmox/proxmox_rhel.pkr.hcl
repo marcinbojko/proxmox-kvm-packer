@@ -189,6 +189,16 @@ variable "use_efi" {
   default = false
 }
 
+variable "cloud_init" {
+  type    = bool
+  default = false
+}
+
+variable "cloud_init_storage_pool" {
+  type    = string
+  default = "local"
+}
+
 variable "machine" {
   type    = string
   default = "pc"
@@ -214,6 +224,8 @@ source "proxmox-iso" "linux" {
     iso_checksum = "none"
   }
   bios                      = "${var.bios}"
+  cloud_init                = "${var.cloud_init}"
+  cloud_init_storage_pool   = "${var.cloud_init_storage_pool}"
   cores                     = "${var.cores}"
   cpu_type                  = "${var.cpu_type}"
   disable_kvm               = "${var.disable_kvm}"
@@ -265,6 +277,8 @@ source "proxmox-iso" "linux-efi" {
   }
   boot_wait                 = "${var.boot_wait}"
   bios                      = "${var.bios}"
+  cloud_init                = "${var.cloud_init}"
+  cloud_init_storage_pool   = "${var.cloud_init_storage_pool}"
   cores                     = "${var.cores}"
   cpu_type                  = "${var.cpu_type}"
   disable_kvm               = "${var.disable_kvm}"
@@ -328,7 +342,7 @@ build {
 
   provisioner "shell" {
     execute_command = "chmod +x {{ .Path }}; {{ .Vars }} sudo -E sh '{{ .Path }}'"
-    inline          = ["dnf install -y cloud-init cloud-utils-growpart", "systemctl enable cloud-init-local.service", "systemctl enable cloud-init.service", "systemctl enable cloud-config.service", "systemctl enable cloud-final.service"]
+    inline          = ["dnf install -y cloud-init cloud-utils-growpart", "systemctl enable cloud-init-local.service", "systemctl enable cloud-init.service", "systemctl enable cloud-config.service", "systemctl enable cloud-final.service", "cloud-init clean --logs --seed"]
     inline_shebang  = "/bin/sh -x"
   }
 
