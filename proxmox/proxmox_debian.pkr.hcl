@@ -182,6 +182,16 @@ variable "use_efi" {
   default = false
 }
 
+variable "cloud_init" {
+  type    = bool
+  default = false
+}
+
+variable "cloud_init_storage_pool" {
+  type    = string
+  default = "local"
+}
+
 variable "machine" {
   type    = string
   default = "pc"
@@ -201,6 +211,8 @@ source "proxmox-iso" "linux" {
   boot_command              = ["${var.boot_command}"]
   boot_wait                 = "${var.boot_wait}"
   bios                      = "${var.bios}"
+  cloud_init                = "${var.cloud_init}"
+  cloud_init_storage_pool   = "${var.cloud_init_storage_pool}"
   cores                     = "${var.cores}"
   cpu_type                  = "${var.cpu_type}"
   disable_kvm               = "${var.disable_kvm}"
@@ -252,6 +264,8 @@ source "proxmox-iso" "linux-efi" {
   boot_command              = ["${var.boot_command}"]
   boot_wait                 = "${var.boot_wait}"
   bios                      = "${var.bios}"
+  cloud_init                = "${var.cloud_init}"
+  cloud_init_storage_pool   = "${var.cloud_init_storage_pool}"
   cores                     = "${var.cores}"
   cpu_type                  = "${var.cpu_type}"
   disable_kvm               = "${var.disable_kvm}"

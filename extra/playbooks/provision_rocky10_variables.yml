@@ -38,11 +38,17 @@ yum_extra_packages:
   - tuned-profiles-atomic
 yum_extra_epel_packages:
   #- atop
+  - bat
   - bmon
+  - btop
+  - duf
+  # - glances # not available in EPEL 10 yet
   - htop
   - iftop
+  - ioping
   - jq
   - ncdu
+  - nload
   # - nmon
   - pv
   # - rkhunter

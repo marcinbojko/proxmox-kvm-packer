@@ -18,6 +18,7 @@
   - [Proxmox](#proxmox)
     - [Proxmox requirements](#proxmox-requirements)
     - [Usage](#usage)
+    - [Cloud-init drive](#cloud-init-drive)
     - [Provisioning](#provisioning)
     - [Updates](#updates)
   - [KVM](#kvm)
@@ -114,110 +115,68 @@ Consider buying me a coffee if you like my work. All donations are appreciated. 
 
 - run `proxmox_generic` script with proper parameters for dedicated OS
 
-| Command                                                     | OS FullName and Version        | Boot Type |
-| ----------------------------------------------------------- | ------------------------------ | --------- |
-| ./proxmox_generic.sh -V almalinux88 -F rhel -U true         | AlmaLinux 8.8                  | UEFI      |
-| ./proxmox_generic.sh -V almalinux88 -F rhel -U false        | AlmaLinux 8.8                  | BIOS      |
-| ./proxmox_generic.sh -V almalinux89 -F rhel -U true         | AlmaLinux 8.9                  | UEFI      |
-| ./proxmox_generic.sh -V almalinux89 -F rhel -U false        | AlmaLinux 8.9                  | BIOS      |
-| ./proxmox_generic.sh -V almalinux810 -F rhel -U true        | AlmaLinux 8.10                 | UEFI      |
-| ./proxmox_generic.sh -V almalinux810 -F rhel -U false       | AlmaLinux 8.10                 | BIOS      |
-| ./proxmox_generic.sh -V almalinux92 -F rhel -U true         | AlmaLinux 9.2                  | UEFI      |
-| ./proxmox_generic.sh -V almalinux92 -F rhel -U false        | AlmaLinux 9.2                  | BIOS      |
-| ./proxmox_generic.sh -V almalinux93 -F rhel -U true         | AlmaLinux 9.3                  | UEFI      |
-| ./proxmox_generic.sh -V almalinux93 -F rhel -U false        | AlmaLinux 9.3                  | BIOS      |
-| ./proxmox_generic.sh -V almalinux94 -F rhel -U true         | AlmaLinux 9.4                  | UEFI      |
-| ./proxmox_generic.sh -V almalinux94 -F rhel -U false        | AlmaLinux 9.4                  | BIOS      |
-| ./proxmox_generic.sh -V almalinux95 -F rhel -U true         | AlmaLinux 9.5                  | UEFI      |
-| ./proxmox_generic.sh -V almalinux95 -F rhel -U false        | AlmaLinux 9.5                  | BIOS      |
-| ./proxmox_generic.sh -V almalinux96 -F rhel -U true         | AlmaLinux 9.6                  | UEFI      |
-| ./proxmox_generic.sh -V almalinux96 -F rhel -U false        | AlmaLinux 9.6                  | BIOS      |
-| ./proxmox_generic.sh -V almalinux97 -F rhel -U true         | AlmaLinux 9.7                  | UEFI      |
-| ./proxmox_generic.sh -V almalinux97 -F rhel -U false        | AlmaLinux 9.7                  | BIOS      |
-| ./proxmox_generic.sh -V almalinux98 -F rhel -U true         | AlmaLinux 9.8                  | UEFI      |
-| ./proxmox_generic.sh -V almalinux98 -F rhel -U false        | AlmaLinux 9.8                  | BIOS      |
-| ./proxmox_generic.sh -V almalinux10 -F rhel -U true         | AlmaLinux 10                   | UEFI      |
-| ./proxmox_generic.sh -V almalinux10 -F rhel -U false        | AlmaLinux 10                   | BIOS      |
-| ./proxmox_generic.sh -V almalinux101 -F rhel -U true        | AlmaLinux 10.1                 | UEFI      |
-| ./proxmox_generic.sh -V almalinux101 -F rhel -U false       | AlmaLinux 10.1                 | BIOS      |
-| ./proxmox_generic.sh -V almalinux102 -F rhel -U true        | AlmaLinux 10.2                 | UEFI      |
-| ./proxmox_generic.sh -V almalinux102 -F rhel -U false       | AlmaLinux 10.2                 | BIOS      |
-| ./proxmox_generic.sh -V debian12 -F debian -U true          | Debian 12                      | UEFI      |
-| ./proxmox_generic.sh -V debian12 -F debian -U false         | Debian 12                      | BIOS      |
-| ./proxmox_generic.sh -V debian13 -F debian -U true          | Debian 13                      | UEFI      |
-| ./proxmox_generic.sh -V debian13 -F debian -U false         | Debian 13                      | BIOS      |
-| ./proxmox_generic.sh -V opensuse_leap_15_5 -F sles -U true  | openSUSE Leap 15.5             | UEFI      |
-| ./proxmox_generic.sh -V opensuse_leap_15_5 -F sles -U false | openSUSE Leap 15.5             | BIOS      |
-| ./proxmox_generic.sh -V opensuse_leap_15_6 -F sles -U true  | openSUSE Leap 15.6             | UEFI      |
-| ./proxmox_generic.sh -V opensuse_leap_15_6 -F sles -U false | openSUSE Leap 15.6             | BIOS      |
-| ./proxmox_generic.sh -V oraclelinux810 -F rhel -U true      | Oracle Linux 8.10              | UEFI      |
-| ./proxmox_generic.sh -V oraclelinux810 -F rhel -U false     | Oracle Linux 8.10              | BIOS      |
-| ./proxmox_generic.sh -V oraclelinux88 -F rhel -U true       | Oracle Linux 8.8               | UEFI      |
-| ./proxmox_generic.sh -V oraclelinux88 -F rhel -U false      | Oracle Linux 8.8               | BIOS      |
-| ./proxmox_generic.sh -V oraclelinux89 -F rhel -U true       | Oracle Linux 8.9               | UEFI      |
-| ./proxmox_generic.sh -V oraclelinux89 -F rhel -U false      | Oracle Linux 8.9               | BIOS      |
-| ./proxmox_generic.sh -V oraclelinux92 -F rhel -U true       | Oracle Linux 9.2               | UEFI      |
-| ./proxmox_generic.sh -V oraclelinux92 -F rhel -U false      | Oracle Linux 9.2               | BIOS      |
-| ./proxmox_generic.sh -V oraclelinux93 -F rhel -U true       | Oracle Linux 9.3               | UEFI      |
-| ./proxmox_generic.sh -V oraclelinux93 -F rhel -U false      | Oracle Linux 9.3               | BIOS      |
-| ./proxmox_generic.sh -V oraclelinux94 -F rhel -U true       | Oracle Linux 9.4               | UEFI      |
-| ./proxmox_generic.sh -V oraclelinux94 -F rhel -U false      | Oracle Linux 9.4               | BIOS      |
-| ./proxmox_generic.sh -V oraclelinux95 -F rhel -U true       | Oracle Linux 9.5               | UEFI      |
-| ./proxmox_generic.sh -V oraclelinux95 -F rhel -U false      | Oracle Linux 9.5               | BIOS      |
-| ./proxmox_generic.sh -V oraclelinux96 -F rhel -U true       | Oracle Linux 9.6               | UEFI      |
-| ./proxmox_generic.sh -V oraclelinux96 -F rhel -U false      | Oracle Linux 9.6               | BIOS      |
-| ./proxmox_generic.sh -V oraclelinux97 -F rhel -U true       | Oracle Linux 9.7               | UEFI      |
-| ./proxmox_generic.sh -V oraclelinux97 -F rhel -U false      | Oracle Linux 9.7               | BIOS      |
-| ./proxmox_generic.sh -V oraclelinux98 -F rhel -U true       | Oracle Linux 9.8               | UEFI      |
-| ./proxmox_generic.sh -V oraclelinux98 -F rhel -U false      | Oracle Linux 9.8               | BIOS      |
-| ./proxmox_generic.sh -V oraclelinux10 -F rhel -U true       | Oracle Linux 10                | UEFI      |
-| ./proxmox_generic.sh -V oraclelinux10 -F rhel -U false      | Oracle Linux 10                | BIOS      |
-| ./proxmox_generic.sh -V oraclelinux101 -F rhel -U true      | Oracle Linux 10.1              | UEFI      |
-| ./proxmox_generic.sh -V oraclelinux101 -F rhel -U false     | Oracle Linux 10.1              | BIOS      |
-| ./proxmox_generic.sh -V rockylinux810 -F rhel -U true       | Rocky Linux 8.10               | UEFI      |
-| ./proxmox_generic.sh -V rockylinux810 -F rhel -U false      | Rocky Linux 8.10               | BIOS      |
-| ./proxmox_generic.sh -V rockylinux88 -F rhel -U true        | Rocky Linux 8.8                | UEFI      |
-| ./proxmox_generic.sh -V rockylinux88 -F rhel -U false       | Rocky Linux 8.8                | BIOS      |
-| ./proxmox_generic.sh -V rockylinux89 -F rhel -U true        | Rocky Linux 8.9                | UEFI      |
-| ./proxmox_generic.sh -V rockylinux89 -F rhel -U false       | Rocky Linux 8.9                | BIOS      |
-| ./proxmox_generic.sh -V rockylinux92 -F rhel -U true        | Rocky Linux 9.2                | UEFI      |
-| ./proxmox_generic.sh -V rockylinux92 -F rhel -U false       | Rocky Linux 9.2                | BIOS      |
-| ./proxmox_generic.sh -V rockylinux93 -F rhel -U true        | Rocky Linux 9.3                | UEFI      |
-| ./proxmox_generic.sh -V rockylinux93 -F rhel -U false       | Rocky Linux 9.3                | BIOS      |
-| ./proxmox_generic.sh -V rockylinux94 -F rhel -U true        | Rocky Linux 9.4                | UEFI      |
-| ./proxmox_generic.sh -V rockylinux94 -F rhel -U false       | Rocky Linux 9.4                | BIOS      |
-| ./proxmox_generic.sh -V rockylinux95 -F rhel -U true        | Rocky Linux 9.5                | UEFI      |
-| ./proxmox_generic.sh -V rockylinux95 -F rhel -U false       | Rocky Linux 9.5                | BIOS      |
-| ./proxmox_generic.sh -V rockylinux96 -F rhel -U true        | Rocky Linux 9.6                | UEFI      |
-| ./proxmox_generic.sh -V rockylinux96 -F rhel -U false       | Rocky Linux 9.6                | BIOS      |
-| ./proxmox_generic.sh -V rockylinux97 -F rhel -U true        | Rocky Linux 9.7                | UEFI      |
-| ./proxmox_generic.sh -V rockylinux97 -F rhel -U false       | Rocky Linux 9.7                | BIOS      |
-| ./proxmox_generic.sh -V rockylinux98 -F rhel -U true        | Rocky Linux 9.8                | UEFI      |
-| ./proxmox_generic.sh -V rockylinux98 -F rhel -U false       | Rocky Linux 9.8                | BIOS      |
-| ./proxmox_generic.sh -V rockylinux10 -F rhel -U true        | Rocky Linux 10                 | UEFI      |
-| ./proxmox_generic.sh -V rockylinux10 -F rhel -U false       | Rocky Linux 10                 | BIOS      |
-| ./proxmox_generic.sh -V rockylinux101 -F rhel -U true       | Rocky Linux 10.1               | UEFI      |
-| ./proxmox_generic.sh -V rockylinux101 -F rhel -U false      | Rocky Linux 10.1               | BIOS      |
-| ./proxmox_generic.sh -V rockylinux102 -F rhel -U true       | Rocky Linux 10.2               | UEFI      |
-| ./proxmox_generic.sh -V rockylinux102 -F rhel -U false      | Rocky Linux 10.2               | BIOS      |
-| ./proxmox_generic.sh -V ubuntu2204 -F ubuntu -U true        | Ubuntu 22.04                   | UEFI      |
-| ./proxmox_generic.sh -V ubuntu2204 -F ubuntu -U false       | Ubuntu 22.04                   | BIOS      |
-| ./proxmox_generic.sh -V ubuntu2304 -F ubuntu -U true        | Ubuntu 23.04                   | UEFI      |
-| ./proxmox_generic.sh -V ubuntu2304 -F ubuntu -U false       | Ubuntu 23.04                   | BIOS      |
-| ./proxmox_generic.sh -V ubuntu2404 -F ubuntu -U true        | Ubuntu 24.04                   | UEFI      |
-| ./proxmox_generic.sh -V ubuntu2404 -F ubuntu -U false       | Ubuntu 24.04                   | BIOS      |
-| ./proxmox_generic.sh -V windows2019-dc -F windows -U true   | Windows Server 2019 Datacenter | UEFI      |
-| ./proxmox_generic.sh -V windows2019-dc -F windows -U false  | Windows Server 2019 Datacenter | BIOS      |
-| ./proxmox_generic.sh -V windows2019-std -F windows -U true  | Windows Server 2019 Standard   | UEFI      |
-| ./proxmox_generic.sh -V windows2019-std -F windows -U false | Windows Server 2019 Standard   | BIOS      |
-| ./proxmox_generic.sh -V windows2022-dc -F windows -U true   | Windows Server 2022 Datacenter | UEFI      |
-| ./proxmox_generic.sh -V windows2022-dc -F windows -U false  | Windows Server 2022 Datacenter | BIOS      |
-| ./proxmox_generic.sh -V windows2022-std -F windows -U true  | Windows Server 2022 Standard   | UEFI      |
-| ./proxmox_generic.sh -V windows2022-std -F windows -U false | Windows Server 2022 Standard   | BIOS      |
-| ./proxmox_generic.sh -V windows2025-dc -F windows -U true   | Windows Server 2025 Datacenter | UEFI      |
-| ./proxmox_generic.sh -V windows2025-dc -F windows -U false  | Windows Server 2025 Datacenter | BIOS      |
-| ./proxmox_generic.sh -V windows2025-std -F windows -U true  | Windows Server 2025 Standard   | UEFI      |
-| ./proxmox_generic.sh -V windows2025-std -F windows -U false | Windows Server 2025 Standard   | BIOS      |
+  Script parameters:
+
+  | Parameter | Description                               | Valid Values                                  | Default              |
+  | --------- | ----------------------------------------- | --------------------------------------------- | -------------------- |
+  | `-v`      | Enable verbose mode (sets `PACKER_LOG=1`) | -                                             | off                  |
+  | `-s`      | Path to the secrets file                  | file path                                     | `secrets/proxmox.sh` |
+  | `-V`      | Version identifier                        | see supported versions below                  | `rockylinux810`      |
+  | `-F`      | OS family                                 | `rhel`, `debian`, `ubuntu`, `sles`, `windows` | `rhel`               |
+  | `-U`      | UEFI support                              | `true` or `false`                             | `false`              |
+  | `-C`      | Attach cloud-init drive to the template   | `true` or `false`                             | `false`              |
+
+  Example - Rocky Linux 10.2, UEFI, with a cloud-init drive:
+
+  ```bash
+  ./proxmox_generic.sh -V rockylinux102 -F rhel -U true -C true
+  ```
+
+  This sources `secrets/proxmox.sh`, picks the `proxmox/proxmox_rhel.pkr.hcl` template (`-F rhel`) with the variable packs `proxmox/variables_rockylinux102.pkvars.hcl` and `proxmox/variables_rockylinux102_uefi.pkvars.hcl` (`-V rockylinux102` + `-U true`), validates them, and builds the VM on your Proxmox node.
+  The result is a UEFI template named like `rockylinux10.2.20260721-1430` (name from the `template` variable in the pkvars file plus a build timestamp) with an empty cloud-init drive attached (`-C true`), ready for cloning.
+
+  Example - Ubuntu 24.04 with all defaults:
+
+  ```bash
+  ./proxmox_generic.sh -V ubuntu2404 -F ubuntu
+  ```
+
+  Same flow with the defaults filled in: BIOS boot (`-U false`), no cloud-init drive (`-C false`), secrets from `secrets/proxmox.sh`, and only the `proxmox/variables_ubuntu2404.pkvars.hcl` variable pack.
+
+  Supported version identifiers - each builds as BIOS (`-U false`, default) or UEFI (`-U true`):
+
+  | OS             | `-F` family | `-V` version identifiers                                                                                                                                                                                          |
+  | -------------- | ----------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+  | AlmaLinux      | `rhel`      | `almalinux88`, `almalinux89`, `almalinux810`, `almalinux92`, `almalinux93`, `almalinux94`, `almalinux95`, `almalinux96`, `almalinux97`, `almalinux98`, `almalinux10`, `almalinux101`, `almalinux102`              |
+  | Oracle Linux   | `rhel`      | `oraclelinux88`, `oraclelinux89`, `oraclelinux810`, `oraclelinux92`, `oraclelinux93`, `oraclelinux94`, `oraclelinux95`, `oraclelinux96`, `oraclelinux97`, `oraclelinux98`, `oraclelinux10`, `oraclelinux101`      |
+  | Rocky Linux    | `rhel`      | `rockylinux88`, `rockylinux89`, `rockylinux810`, `rockylinux92`, `rockylinux93`, `rockylinux94`, `rockylinux95`, `rockylinux96`, `rockylinux97`, `rockylinux98`, `rockylinux10`, `rockylinux101`, `rockylinux102` |
+  | Debian         | `debian`    | `debian12`, `debian13`                                                                                                                                                                                            |
+  | Ubuntu         | `ubuntu`    | `ubuntu2204`, `ubuntu2304`, `ubuntu2404`                                                                                                                                                                          |
+  | openSUSE Leap  | `sles`      | `opensuse_leap_15_5`, `opensuse_leap_15_6`                                                                                                                                                                        |
+  | Windows Server | `windows`   | `windows2019-std`, `windows2019-dc`, `windows2022-std`, `windows2022-dc`, `windows2025-std`, `windows2025-dc`                                                                                                     |
+
+### Cloud-init drive
+
+All Linux templates ship with `cloud-init` installed inside the guest and a base config in `/etc/cloud/cloud.cfg` (taken from `extra/files/cloud-init/`). Running the build with `-C true` additionally attaches an empty cloud-init drive to the finished template:
+
+```bash
+./proxmox_generic.sh -V rockylinux102 -F rhel -C true
+```
+
+- Supported families: `rhel`, `debian`, `ubuntu`. For `sles` and `windows` the script exits with an error, as those templates do not declare the `cloud_init` variable yet.
+- The drive is created on the `local` storage pool by default. Override it per OS with `cloud_init_storage_pool = "yourpool"` in the `pkvars` file, or ad hoc with `PKR_VAR_cloud_init_storage_pool=yourpool` before the command.
+- Already built templates do not need a rebuild - the same drive can be added on the Proxmox host with `qm set <templateid> --ide2 local:cloudinit`.
+
+The drive itself holds no configuration - Proxmox regenerates its content on every clone's first boot from that VM's own settings. Deployment options:
+
+- Simple (GUI only): clone the template, fill in user, SSH key and IP config on the VM's `Cloud-Init` tab, start the VM.
+- Custom config (users, packages, scripts): put a user-data YAML file on a snippets-enabled storage on the Proxmox host and point the clone (or the template, so all clones inherit it) at it:
+
+  ```bash
+  qm set <vmid> --cicustom "user=local:snippets/custom-config.yaml"
+  ```
+
+  Note: a `cicustom` user-data file completely replaces the user/password/SSH key fields from the `Cloud-Init` tab, so it must create a login user with an SSH key itself. The IP config fields still apply. Keep client-specific snippets in your private infrastructure repo, not in this one.
 
 ### Provisioning
 
