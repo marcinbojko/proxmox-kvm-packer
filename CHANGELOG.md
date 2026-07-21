@@ -1,5 +1,17 @@
 # Changelog
 
+## Version 1.2.1
+
+- [PROXMOX] Optional cloud-init drive attachment - new `cloud_init` and `cloud_init_storage_pool` variables (default `false`/`local`) in the `rhel`, `debian` and `ubuntu` templates; when enabled, the finished template gets an empty cloud-init drive ready for cloning
+- [PROXMOX] `proxmox_generic.sh` - new `-C true|false` flag (default `false`) to toggle the cloud-init drive; validates the value, rejects unsupported families (`sles`, `windows`) with a clear error, and passes the override after all `--var-file` arguments so the command line always wins
+- [PROXMOX] Added `cloud-init clean --logs --seed` to the `rhel` and `ubuntu` builds so clones always run a full first-boot cloud-init pass (`debian` already had it)
+- [EXTRA] Kickstarts for AlmaLinux/Oracle Linux/Rocky Linux 9 and 10 (all hypervisor variants) - added DVD-available baseline packages: `rsyslog`, `zip`, `unzip`, `tcpdump`, `lsof`, `bind-utils`, `net-tools`, `iperf3`
+- [EXTRA] Debian 12/13 preseeds (BIOS and UEFI) - added `rsyslog`, `iperf3`, `bat`, `btop`, `duf`, `glances`, `ioping`, `nload` to the `late_command` package install
+- [EXTRA] Removed `ssh_pwauth` from the generic cloud-init `cloud.cfg` files (`rhel`, `debian`, `ubuntu`, `suse`) so cloud-init no longer writes an `sshd_config.d` drop-in on first boot; `oci`/`alicloud` configs keep password auth disabled
+- [ANSIBLE] `provision_{alma,oracle,rocky}{9,10}_variables.yml` - added EPEL extras `bat`, `btop`, `duf`, `glances`, `ioping`, `nload` (`glances` commented out on the 10.x files - not yet available in EPEL 10)
+- [README] Documented `proxmox_generic.sh` parameters (including the new `-C` flag) and added a `Cloud-init drive` section covering storage pools, retrofitting existing templates with `qm set`, and `cicustom` snippet deployment
+- [README] Replaced the 104-row per-version command table with two explained usage examples and a compact supported-versions table
+
 ## Version 1.2.0
 
 - [BREAKING_CHANGE] Removed `Webmin` from all Linux provisioning - installation block, repository, package, service, and firewall rich-rules are gone; provisioned images no longer ship Webmin
