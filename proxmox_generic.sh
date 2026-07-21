@@ -97,7 +97,15 @@ fi
 # Pass cloud_init to packer only when enabled (not all family templates declare the variable)
 cloud_init_args=()
 if [ "$cloud_init" == "true" ]; then
-	cloud_init_args=(-var "cloud_init=true")
+	case "$family" in
+	rhel | debian | ubuntu)
+		cloud_init_args=(-var "cloud_init=true")
+		;;
+	*)
+		error "Cloud-init drive (-C true) is not supported for family '$family'. Supported families: rhel, debian, ubuntu."
+		exit 1
+		;;
+	esac
 fi
 
 # Load secrets file
@@ -138,7 +146,7 @@ packer init -upgrade .
 if [ "$uefi" == "true" ]; then
 	if [ -e "$uefi_var_file" ]; then
 		echo -e "${YELLOW}UEFI variables file '$uefi_var_file' found. Validating with Packer...${NC}"
-		packer validate "${cloud_init_args[@]}" --var-file="$var_file" --var-file="$uefi_var_file" "$template"
+		packer validate --var-file="$var_file" --var-file="$uefi_var_file" "${cloud_init_args[@]}" "$template"
 		rc=$?
 	else
 		echo -e "${RED}UEFI is enabled but the UEFI variables file '$uefi_var_file' not found. Exiting now.${NC}"
@@ -146,7 +154,7 @@ if [ "$uefi" == "true" ]; then
 	fi
 else
 	echo -e "${YELLOW}UEFI not enabled. Validating with Packer...${NC}"
-	packer validate "${cloud_init_args[@]}" --var-file="$var_file" "$template"
+	packer validate --var-file="$var_file" "${cloud_init_args[@]}" "$template"
 	rc=$?
 fi
 
@@ -157,10 +165,10 @@ else
 	echo -e "${GREEN}Packer template validation successful!${NC}"
 	if [ "$uefi" == "true" ] && [ -e "$uefi_var_file" ]; then
 		echo -e "${YELLOW}UEFI variables file found. Building with Packer...${NC}"
-		packer build --force "${cloud_init_args[@]}" --var-file="$var_file" --var-file="$uefi_var_file" "$template"
+		packer build --force --var-file="$var_file" --var-file="$uefi_var_file" "${cloud_init_args[@]}" "$template"
 	else
 		echo -e "${YELLOW}No UEFI variables file found or UEFI not enabled. Building with Packer...${NC}"
-		packer build --force "${cloud_init_args[@]}" --var-file="$var_file" "$template"
+		packer build --force --var-file="$var_file" "${cloud_init_args[@]}" "$template"
 	fi
 	rc=$?
 	echo $rc

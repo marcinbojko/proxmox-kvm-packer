@@ -132,7 +132,8 @@ Consider buying me a coffee if you like my work. All donations are appreciated. 
   ./proxmox_generic.sh -V rockylinux102 -F rhel -U true -C true
   ```
 
-  This sources `secrets/proxmox.sh`, picks the `proxmox/proxmox_rhel.pkr.hcl` template (`-F rhel`) with the variable packs `proxmox/variables_rockylinux102.pkvars.hcl` and `proxmox/variables_rockylinux102_uefi.pkvars.hcl` (`-V rockylinux102` + `-U true`), validates them, and builds the VM on your Proxmox node. The result is a UEFI template named like `rockylinux10.2.20260721-1430` (name from the `template` variable in the pkvars file plus a build timestamp) with an empty cloud-init drive attached (`-C true`), ready for cloning.
+  This sources `secrets/proxmox.sh`, picks the `proxmox/proxmox_rhel.pkr.hcl` template (`-F rhel`) with the variable packs `proxmox/variables_rockylinux102.pkvars.hcl` and `proxmox/variables_rockylinux102_uefi.pkvars.hcl` (`-V rockylinux102` + `-U true`), validates them, and builds the VM on your Proxmox node.
+  The result is a UEFI template named like `rockylinux10.2.20260721-1430` (name from the `template` variable in the pkvars file plus a build timestamp) with an empty cloud-init drive attached (`-C true`), ready for cloning.
 
   Example - Ubuntu 24.04 with all defaults:
 
@@ -162,7 +163,7 @@ All Linux templates ship with `cloud-init` installed inside the guest and a base
 ./proxmox_generic.sh -V rockylinux102 -F rhel -C true
 ```
 
-- Supported families: `rhel`, `debian`, `ubuntu`. For `sles` and `windows` the flag will fail validation, as those templates do not declare the `cloud_init` variable yet.
+- Supported families: `rhel`, `debian`, `ubuntu`. For `sles` and `windows` the script exits with an error, as those templates do not declare the `cloud_init` variable yet.
 - The drive is created on the `local` storage pool by default. Override it per OS with `cloud_init_storage_pool = "yourpool"` in the `pkvars` file, or ad hoc with `PKR_VAR_cloud_init_storage_pool=yourpool` before the command.
 - Already built templates do not need a rebuild - the same drive can be added on the Proxmox host with `qm set <templateid> --ide2 local:cloudinit`.
 
