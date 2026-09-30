@@ -3,8 +3,9 @@
 ## Version 1.2.2
 
 - [PROXMOX] Rocky Linux 9.8 Docker template - new variable packs `variables_rockylinux98_docker.pkvars.hcl` and `variables_rockylinux98_docker_uefi.pkvars.hcl` (`80G` OS disk plus a `140G` Docker disk, templates `rockylinux9.8.docker[.uefi]`, tag `docker`)
+- [PROXMOX] Rocky Linux 10.2 Docker template - new variable packs `variables_rockylinux102_docker.pkvars.hcl` and `variables_rockylinux102_docker_uefi.pkvars.hcl` (same disks as the 9.8 one, templates `rockylinux10.2.docker[.uefi]`, tag `docker`)
+- [EXTRA] AlmaLinux, Oracle Linux and Rocky Linux Proxmox kickstarts install only onto the OS disk (`ignoredisk --only-use=disk/by-id/scsi-0QEMU_QEMU_HARDDISK_drive-scsi0`), so an extra disk such as the Docker disk stays untouched; the Docker templates use the regular `ks.cfg`
 - [PROXMOX] `proxmox_rhel.pkr.hcl` - new optional `extra_disks` variable (default empty) to attach additional disks after the OS disk
-- [EXTRA] Added `extra/files/rockylinux/9/proxmox/ks-docker.cfg` - same as `ks.cfg`, but limited to the first disk (`disk/by-id/scsi-0QEMU_QEMU_HARDDISK_drive-scsi0`) with `ignoredisk` so the installer leaves the Docker disk untouched
 - [ANSIBLE] Reworked the `docker_prepare` block in `provision_rhel.yaml`:
   - the extra device gets one LVM partition with volume group `vg_docker`, split 30:70 into `containerd` (`/var/lib/containerd`) and `dockerdata` (`/var/lib/docker`), both ext4
   - names and sizes come from the new `docker_vg_name` and `docker_volumes` variables
@@ -26,13 +27,14 @@
 - [EXTRA] Debian `cloud.cfg` - added `apt: preserve_sources_list: true`; without a mirror set, cloud-init replaced the preseed's Debian sources with Ubuntu mirrors on first boot and `apt-get update` failed on every clone
 - [PROXMOX] AlmaLinux, Oracle Linux, Rocky Linux and openSUSE Leap - switched all disks from `virtio` (VirtIO Block, `/dev/vda`) to `scsi` (VirtIO SCSI, `/dev/sda`) in every variable pack and in the defaults of `proxmox_rhel.pkr.hcl`, `proxmox_rhel_blank.pkr.hcl` and `proxmox_sles.pkr.hcl`
 - [ANSIBLE] `docker_prepare` - `extra_device` now takes a kernel name (`sdb`) or a path relative to `/dev` (`disk/by-id/...`); the playbook resolves it to the real device before partitioning and names the partition correctly for NVMe (`p1`); the Docker pack passes the by-id name of Proxmox slot `scsi1`
-- [EXTRA] AlmaLinux, Oracle Linux and Rocky Linux 8/9/10 kickstarts (`ks.cfg`, `ks-docker.cfg`, `ks-lvm.cfg`) - separate `/var/log` 20 GiB (`ext4`, `nodev,nosuid,noexec`; a logical volume in `ks-lvm.cfg`); `/` stays the growing, last partition
+- [EXTRA] AlmaLinux, Oracle Linux and Rocky Linux 8/9/10 kickstarts (`ks.cfg`, `ks-lvm.cfg`) - separate `/var/log` 20 GiB (`ext4`, `nodev,nosuid,noexec`; a logical volume in `ks-lvm.cfg`); `/` stays the growing, last partition
 - [EXTRA] openSUSE Leap 15 AutoYaST (BIOS and UEFI):
   - partitions reordered so `/` is last and takes the rest of the disk (swap used to be last, and the BIOS profile gave `/` a fixed 47.5 GiB)
   - new `/var/log` 20 GiB partition (`ext4`, `nodev,nosuid,noexec`)
   - swap increased from 2 GiB to 8 GiB, matching the other templates
   - BIOS profile defines the BIOS boot partition explicitly as the first partition
 - [PROXMOX] AlmaLinux, Oracle Linux, Rocky Linux and openSUSE Leap - OS disk increased from `50G` to `80G` for the `/var/log` partition
+- [PROXMOX] [KVM] Bumped Packer plugin minimums in `config.pkr.hcl` to the current releases: `proxmox` 1.2.4, `qemu` 1.1.7, `alicloud` 1.2.0, `ansible` 1.1.6, `vagrant` 1.1.7, `windows-update` 0.18.5
 - [README] Documented the Docker template layout, the disk layout of the RHEL-family and Debian templates (including how to grow `/`), and the template cleanup - what the build removes and what every clone recreates on first boot
 
 ## Version 1.2.1
