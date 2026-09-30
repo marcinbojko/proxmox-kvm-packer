@@ -155,6 +155,20 @@ Consider buying me a coffee if you like my work. All donations are appreciated. 
   | openSUSE Leap  | `sles`      | `opensuse_leap_15_5`, `opensuse_leap_15_6`                                                                                                                                                                        |
   | Windows Server | `windows`   | `windows2019-std`, `windows2019-dc`, `windows2022-std`, `windows2022-dc`, `windows2025-std`, `windows2025-dc`                                                                                                     |
 
+### Disk layout
+
+Every template keeps `/` as the last partition on the OS disk, so it can be grown after the disk is resized in Proxmox.
+
+| Template                             | OS disk                     | Partitions, in disk order                                                    |
+| ------------------------------------ | --------------------------- | ---------------------------------------------------------------------------- |
+| AlmaLinux, Oracle Linux, Rocky Linux | `50G`, VirtIO Block (`vda`) | `/boot/efi` 400M, `/boot` 2G, swap 8G, `/` (rest)                            |
+| Debian 12, 13                        | `70G`, VirtIO SCSI (`sda`)  | `/boot/efi` 512M (UEFI only), swap 8G, `/var/log` 20G, `/` (rest, about 41G) |
+
+- All file systems are `ext4`.
+- Debian mounts `/var/log` with `nodev,nosuid,noexec` (as recommended by the CIS benchmarks), so a service flooding its logs fills `/var/log` instead of `/`. The systemd journal in `/var/log/journal` is limited by default to 10% of that partition (2G).
+- Debian partition sizes in `extra/files/debian/*/preseed.cfg` are written in decimal megabytes (`8590` = 8 GiB, `21475` = 20 GiB), because the Debian installer does not count in MiB.
+- Growing `/`: resize the disk in Proxmox and reboot the VM. With a cloud-init drive attached, cloud-init grows the partition and the file system on boot. Without one, run `growpart <disk> <partition number>` and `resize2fs <partition>` for the device shown by `findmnt -no SOURCE /`.
+
 ### Docker template
 
 `rockylinux98_docker` builds Rocky Linux 9.8 with a second disk prepared for Docker:
@@ -195,6 +209,23 @@ The drive itself holds no configuration - Proxmox regenerates its content on eve
   ```
 
   Note: a `cicustom` user-data file completely replaces the user/password/SSH key fields from the `Cloud-Init` tab, so it must create a login user with an SSH key itself. The IP config fields still apply. Keep client-specific snippets in your private infrastructure repo, not in this one.
+
+### Template cleanup
+
+The last build step removes everything that identifies the build VM, so every clone creates its own on first boot:
+
+| What                      | RHEL family (`rhel` template, KVM builds)                          | Debian                                                                                                           |
+| ------------------------- | ------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------- |
+| cloud-init state and logs | `cloud-init clean --logs --seed`                                   | `cloud-init clean --logs --seed`                                                                                 |
+| Machine ID                | `/etc/machine-id` emptied, `/var/lib/dbus/machine-id` removed      | `/etc/machine-id` emptied, `/var/lib/dbus/machine-id` removed                                                    |
+| Network profiles and DNS  | NetworkManager connections, `ifcfg-e*` scripts, `/etc/resolv.conf` | kept - `/etc/network/interfaces` only has a generic DHCP entry, and `dhcpcd` rewrites `/etc/resolv.conf` on boot |
+| DHCP client state         | NetworkManager and `dhclient` leases                               | `dhcpcd` DUID, IPv6 secret and leases; `dhclient` leases                                                         |
+| SSH host keys             | removed; `sshd-keygen` creates new ones on boot                    | Debian 13: removed; `sshd-keygen` creates new ones on boot. Debian 12: new keys generated during the build       |
+
+- A clone gets its new machine ID from its SMBIOS UUID, which Proxmox assigns uniquely to every VM. An empty `/etc/machine-id` is not treated by systemd as a "first boot", so services are not re-enabled from presets.
+- Debian's `sshd-keygen.service` normally only runs on a first boot. The build adds `/etc/systemd/system/sshd-keygen.service.d/every-boot.conf`, so missing keys are created on every boot, including clones without a cloud-init drive. Existing keys are never replaced.
+- With a cloud-init drive attached, cloud-init also replaces the SSH host keys (`ssh_deletekeys: true`) and writes the network config.
+- Debian's base `cloud.cfg` sets `apt: preserve_sources_list: true`. Without it, cloud-init replaces the Debian apt sources written by the preseed with Ubuntu mirrors on first boot and `apt-get update` fails. If your `cicustom` snippet has its own `apt:` section, keep this setting in it.
 
 ### Provisioning
 

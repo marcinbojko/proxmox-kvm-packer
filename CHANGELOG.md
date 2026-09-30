@@ -5,14 +5,26 @@
 - [PROXMOX] Rocky Linux 9.8 Docker template - new variable packs `variables_rockylinux98_docker.pkvars.hcl` and `variables_rockylinux98_docker_uefi.pkvars.hcl` (`50G` OS disk plus a `140G` Docker disk, templates `rockylinux9.8.docker[.uefi]`, tag `docker`)
 - [PROXMOX] `proxmox_rhel.pkr.hcl` - new optional `extra_disks` variable (default empty) to attach additional disks after the OS disk
 - [EXTRA] Added `extra/files/rockylinux/9/proxmox/ks-docker.cfg` - same as `ks.cfg`, but limited to `vda` with `ignoredisk` so the installer leaves the Docker disk untouched
-- [ANSIBLE] Reworked the `docker_prepare` block in `provision_rhel.yaml` - the extra device now gets one LVM partition with volume group `vg_docker`, split 30:70 into `containerd` (`/var/lib/containerd`) and `dockerdata` (`/var/lib/docker`), both ext4; names and sizes come from the new `docker_vg_name` and `docker_volumes` variables, and a missing device now fails the build instead of being skipped
-- [PROXMOX] [KVM] Extended the cloud-init step of the `rhel` builds with cleanup - after `cloud-init clean` (now also in the KVM build, which lacked it) it removes NetworkManager connection profiles, `/etc/resolv.conf`, `ifcfg-e*` scripts and DHCP leases, empties `/etc/machine-id` and deletes the SSH host keys, so clones no longer inherit the build machine's DNS servers or share one machine-id or SSH host keys
-- [EXTRA] Debian 12/13 preseeds (BIOS and UEFI) - replaced the built-in `atomic` partition recipe (swap after `/`) with a custom `root-last` recipe: EFI 512M (UEFI only), swap 8 GiB, separate `/var/log` 20 GiB (`nodev,nosuid,noexec`), and `/` last and filling the disk, so cloud-init `growpart` can grow `/` after a Proxmox disk resize; sizes are given in decimal MB (`8590`, `21475`) because partman does not count in MiB
+- [ANSIBLE] Reworked the `docker_prepare` block in `provision_rhel.yaml`:
+  - the extra device gets one LVM partition with volume group `vg_docker`, split 30:70 into `containerd` (`/var/lib/containerd`) and `dockerdata` (`/var/lib/docker`), both ext4
+  - names and sizes come from the new `docker_vg_name` and `docker_volumes` variables
+  - a missing device now fails the build instead of being skipped
+- [PROXMOX] [KVM] Extended the cloud-init step of the `rhel` builds with cleanup, so clones no longer inherit the build machine's DNS servers or share one machine-id or SSH host keys:
+  - `cloud-init clean --logs --seed` (now also in the KVM build, which lacked it)
+  - removes NetworkManager connection profiles, `/etc/resolv.conf`, `ifcfg-e*` scripts and DHCP leases
+  - empties `/etc/machine-id` and deletes the SSH host keys
+- [EXTRA] Debian 12/13 preseeds (BIOS and UEFI) - replaced the built-in `atomic` partition recipe (swap after `/`) with a custom `root-last` recipe, so cloud-init `growpart` can grow `/` after a Proxmox disk resize:
+  - EFI 512M (UEFI only), swap 8 GiB, separate `/var/log` 20 GiB (`nodev,nosuid,noexec`), `/` last and filling the disk
+  - sizes are given in decimal MB (`8590`, `21475`) because partman does not count in MiB
 - [PROXMOX] Debian 12/13 - OS disk increased from `50G` to `70G` to make room for the `/var/log` partition
 - [PROXMOX] Debian 12/13 - switched the OS disk from `virtio` (VirtIO Block, `/dev/vda`) to `scsi` (VirtIO SCSI, `/dev/sda`) in the variable packs and the `proxmox_debian.pkr.hcl` default; BIOS preseeds now install GRUB with `grub-installer/bootdev string default` instead of the hardcoded `/dev/vda`
-- [PROXMOX] Debian 12/13 - end-of-build cleanup: empties `/etc/machine-id` (each clone gets a new one from its Proxmox SMBIOS UUID), removes `/var/lib/dbus/machine-id` and DHCP client state (`/var/lib/dhcpcd/*` - DUID and IPv6 secret, `/var/lib/dhcp/*.leases`), so clones no longer share a machine-id or DHCP identity; on Debian 13 the SSH host keys are no longer generated during the build - a drop-in makes `sshd-keygen.service` run on every boot (not only on first boot) and create missing keys, also on clones without a cloud-init drive; Debian 12 keeps `ssh-keygen -A` at build time
+- [PROXMOX] Debian 12/13 - end-of-build cleanup, so clones no longer share a machine-id, DHCP identity or SSH host keys:
+  - empties `/etc/machine-id` (each clone gets a new one from its Proxmox SMBIOS UUID) and removes `/var/lib/dbus/machine-id`
+  - removes DHCP client state (`/var/lib/dhcpcd/*` - DUID and IPv6 secret, `/var/lib/dhcp/*.leases`)
+  - Debian 13: SSH host keys are no longer generated during the build - a drop-in makes `sshd-keygen.service` run on every boot (not only on first boot) and create missing keys, also on clones without a cloud-init drive
+  - Debian 12 keeps `ssh-keygen -A` at build time
 - [EXTRA] Debian `cloud.cfg` - added `apt: preserve_sources_list: true`; without a mirror set, cloud-init replaced the preseed's Debian sources with Ubuntu mirrors on first boot and `apt-get update` failed on every clone
-- [README] Documented the Docker template layout
+- [README] Documented the Docker template layout, the disk layout of the RHEL-family and Debian templates (including how to grow `/`), and the template cleanup - what the build removes and what every clone recreates on first boot
 
 ## Version 1.2.1
 
