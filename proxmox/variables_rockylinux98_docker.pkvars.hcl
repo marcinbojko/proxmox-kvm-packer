@@ -1,5 +1,5 @@
 
-ansible_extra_args        = ["-e", "@extra/playbooks/provision_rocky9_variables.yml", "-e", "@variables/rockylinux9.yml", "-e", "{\"docker_prepare\": true, \"extra_device\": \"vdb\"}", "--scp-extra-args", "'-O'"]
+ansible_extra_args        = ["-e", "@extra/playbooks/provision_rocky9_variables.yml", "-e", "@variables/rockylinux9.yml", "-e", "{\"docker_prepare\": true, \"extra_device\": \"disk/by-id/scsi-0QEMU_QEMU_HARDDISK_drive-scsi1\"}", "--scp-extra-args", "'-O'"]
 ansible_verbosity         = ["-v"]
 ballooning_minimum        = "0"
 boot_command              = "<tab> text inst.ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/rockylinux/9/proxmox/ks-docker.cfg<enter><wait10><esc><wait30><esc>"
@@ -10,9 +10,9 @@ cpu_type                  = "host"
 disable_kvm               = false
 disks = {
     cache_mode            = "none"
-    disk_size             = "50G"
+    disk_size             = "80G"
     format                = "raw"
-    type                  = "virtio"
+    type                  = "scsi"
     storage_pool          = "zfs"
     io_thread             = true
     discard               = true
@@ -22,7 +22,7 @@ extra_disks = [
     cache_mode            = "none"
     disk_size             = "140G"
     format                = "raw"
-    type                  = "virtio"
+    type                  = "scsi"
     storage_pool          = "zfs"
     io_thread             = true
     discard               = true

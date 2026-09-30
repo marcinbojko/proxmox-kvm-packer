@@ -159,15 +159,17 @@ Consider buying me a coffee if you like my work. All donations are appreciated. 
 
 Every template keeps `/` as the last partition on the OS disk, so it can be grown after the disk is resized in Proxmox.
 
-| Template                             | OS disk                     | Partitions, in disk order                                                    |
-| ------------------------------------ | --------------------------- | ---------------------------------------------------------------------------- |
-| AlmaLinux, Oracle Linux, Rocky Linux | `50G`, VirtIO Block (`vda`) | `/boot/efi` 400M, `/boot` 2G, swap 8G, `/` (rest)                            |
-| Debian 12, 13                        | `70G`, VirtIO SCSI (`sda`)  | `/boot/efi` 512M (UEFI only), swap 8G, `/var/log` 20G, `/` (rest, about 41G) |
+| Template                             | OS disk                    | Partitions, in disk order                                                                            |
+| ------------------------------------ | -------------------------- | ---------------------------------------------------------------------------------------------------- |
+| AlmaLinux, Oracle Linux, Rocky Linux | `80G`, VirtIO SCSI (`sda`) | `/boot/efi` 400M, `/boot` 2G, swap 8G, `/var/log` 20G, `/` (rest, about 49G)                         |
+| openSUSE Leap 15                     | `80G`, VirtIO SCSI (`sda`) | `/boot/efi` 512M (UEFI) or BIOS boot 8M (BIOS), swap 8G, `/var/log` 20G, `/` btrfs (rest, about 51G) |
+| Debian 12, 13                        | `80G`, VirtIO SCSI (`sda`) | `/boot/efi` 512M (UEFI only), swap 8G, `/var/log` 20G, `/` (rest, about 51G)                         |
 
-- All file systems are `ext4`.
-- Debian mounts `/var/log` with `nodev,nosuid,noexec` (as recommended by the CIS benchmarks), so a service flooding its logs fills `/var/log` instead of `/`. The systemd journal in `/var/log/journal` is limited by default to 10% of that partition (2G).
+- All file systems are `ext4`, except `/` on openSUSE, which is `btrfs` with subvolumes.
+- Every template has a separate `/var/log`, mounted with `nodev,nosuid,noexec` (as recommended by the CIS benchmarks), so a service flooding its logs fills `/var/log` instead of `/`. The systemd journal in `/var/log/journal` is limited by default to 10% of that partition (2G).
 - Debian partition sizes in `extra/files/debian/*/preseed.cfg` are written in decimal megabytes (`8590` = 8 GiB, `21475` = 20 GiB), because the Debian installer does not count in MiB.
 - Growing `/`: resize the disk in Proxmox and reboot the VM. With a cloud-init drive attached, cloud-init grows the partition and the file system on boot. Without one, run `growpart <disk> <partition number>` and `resize2fs <partition>` for the device shown by `findmnt -no SOURCE /`.
+- BIOS builds of AlmaLinux, Oracle Linux and Rocky Linux 8/9 use an MBR partition table, which holds only 4 primary partitions. The installer puts the remaining partitions, including `/`, into an extended partition, so growing `/` needs the extended partition grown first. Use the UEFI builds (GPT) for templates you plan to resize.
 
 ### Docker template
 
@@ -177,8 +179,8 @@ Every template keeps `/` as the last partition on the OS disk, so it can be grow
 ./proxmox_generic.sh -V rockylinux98_docker -F rhel -U true
 ```
 
-- OS disk (`vda`, `50G`) - same layout as the regular template, installed by `extra/files/rockylinux/9/proxmox/ks-docker.cfg`, which only differs from `ks.cfg` by limiting the installer to `vda`.
-- Docker disk (`vdb`, `140G`, set with `extra_disks` in the `pkvars` file) - prepared by the Ansible `docker_prepare` block: one LVM partition, volume group `vg_docker`, split 30:70:
+- OS disk (Proxmox slot `scsi0`, `sda`, `80G`) - same layout as the regular template, installed by `extra/files/rockylinux/9/proxmox/ks-docker.cfg`, which only differs from `ks.cfg` by limiting the installer to `/dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_drive-scsi0`.
+- Docker disk (Proxmox slot `scsi1`, `sdb`, `140G`, set with `extra_disks` in the `pkvars` file) - prepared by the Ansible `docker_prepare` block: one LVM partition, volume group `vg_docker`, split 30:70:
 
 | Mount point           | Device                      | Size               |
 | --------------------- | --------------------------- | ------------------ |
@@ -186,6 +188,8 @@ Every template keeps `/` as the last partition on the OS disk, so it can be grow
 | `/var/lib/docker`     | `/dev/vg_docker/dockerdata` | the rest (~70%)    |
 
 Docker Engine itself is not installed - the template only prepares the storage.
+
+Both disks are referenced by their `/dev/disk/by-id/` names, because Linux does not guarantee that SCSI disks get the same `sda`/`sdb` order on every boot. `extra_device` in the Ansible variables takes either a kernel name (`sdb`) or a path relative to `/dev` (`disk/by-id/scsi-0QEMU_QEMU_HARDDISK_drive-scsi1`).
 
 ### Cloud-init drive
 
