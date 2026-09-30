@@ -13,10 +13,18 @@
     install_extra_groups: false
     docker_prepare: false
     extra_device: ""
+    docker_vg_name: vg_docker
+    docker_volumes:
+      - name: containerd
+        size: 30%VG
+        path: /var/lib/containerd
+      - name: dockerdata
+        size: 100%FREE
+        path: /var/lib/docker
     delay_time: 15
     retries_count: 2
     reboot_server: false
-    playbook_version: "20260720"
+    playbook_version: "20260929"
   become: true
   gather_facts: false
   pre_tasks:
@@ -289,6 +297,8 @@
           ansible.builtin.fail:
             msg: "Hyper-V installation failed after retries. Check logs for details."
           when: hyperv_installation_failed | default(true)
+    # docker storage on the extra device: one LVM partition, vg_docker split
+    # 30:70 into containerd (/var/lib/containerd) and dockerdata (/var/lib/docker)
     - name: start_extra_device_block
       when: docker_prepare
       block:
@@ -296,50 +306,52 @@
           ansible.builtin.stat:
             path: "/dev/{{ extra_device }}"
           register: r_check_for_extra_device
+        - name: fail_when_extra_device_is_missing
+          ansible.builtin.fail:
+            msg: "Extra device /dev/{{ extra_device }} not found"
+          when: not r_check_for_extra_device.stat.exists
+        - name: install_lvm_packages
+          ansible.builtin.package:
+            name:
+              - lvm2
+              - parted
+            state: present
+          retries: "{{ retries_count }}"
+          delay: "{{ delay_time }}"
+          register: r_install_lvm_packages
+          until: r_install_lvm_packages is success
         - name: partition_docker_volume
           community.general.parted:
             device: "/dev/{{ extra_device }}"
             number: 1
             label: gpt
+            flags: [lvm]
             part_end: 100%
             state: present
-          when: r_check_for_extra_device.stat.exists and r_check_for_extra_device is defined
-          register: r_partition_docker_volume
-        - name: display_info
-          ansible.builtin.debug:
-            var: r_partition_docker_volume
-        - name: create_docker_filesystem
+        - name: create_docker_volume_group
+          community.general.lvg:
+            vg: "{{ docker_vg_name }}"
+            pvs: "/dev/{{ extra_device }}1"
+        - name: create_docker_logical_volumes
+          community.general.lvol:
+            vg: "{{ docker_vg_name }}"
+            lv: "{{ item.name }}"
+            size: "{{ item.size }}"
+            shrink: false
+          loop: "{{ docker_volumes }}"
+        - name: create_docker_filesystems
           community.general.filesystem:
             fstype: ext4
-            dev: "/dev/{{ extra_device }}1"
-            state: present
-            resizefs: true
-            opts: -L docker
-          register: r_create_docker_filesystem
-          when: (r_partition_docker_volume is defined and r_partition_docker_volume is success) and (r_check_for_extra_device.stat.exists and r_check_for_extra_device is defined)
-        - name: rerun_setup
-          ansible.builtin.setup:
-            gather_timeout: 30
-          retries: "{{ retries_count }}"
-          delay: "{{ delay_time }}"
-          register: setup_status
-          until: setup_status is success
-          changed_when: false
-        - name: prepare_docker_folder
-          ansible.builtin.file:
-            name: /var/lib/docker
-            state: directory
-            mode: "0644"
-          when: (r_create_docker_filesystem is defined and r_create_docker_filesystem is success)
-        - name: mount_extra_volume
+            dev: "/dev/{{ docker_vg_name }}/{{ item.name }}"
+          loop: "{{ docker_volumes }}"
+        - name: mount_docker_volumes
           ansible.posix.mount:
-            path: /var/lib/docker
-            src: "UUID={{ ansible_devices[extra_device].partitions[extra_device + '1'].uuid }}"
+            path: "{{ item.path }}"
+            src: "/dev/{{ docker_vg_name }}/{{ item.name }}"
             fstype: ext4
             opts: defaults
             state: mounted
-            boot: true
-          when: (ansible_devices[extra_device].partitions[extra_device + '1'].uuid | length > 5) and (r_partition_docker_volume is success and r_partition_docker_volume is defined)
+          loop: "{{ docker_volumes }}"
       rescue:
         - name: log_docker_device_preparation_failure
           ansible.builtin.debug:

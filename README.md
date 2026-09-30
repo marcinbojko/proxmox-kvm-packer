@@ -155,6 +155,24 @@ Consider buying me a coffee if you like my work. All donations are appreciated. 
   | openSUSE Leap  | `sles`      | `opensuse_leap_15_5`, `opensuse_leap_15_6`                                                                                                                                                                        |
   | Windows Server | `windows`   | `windows2019-std`, `windows2019-dc`, `windows2022-std`, `windows2022-dc`, `windows2025-std`, `windows2025-dc`                                                                                                     |
 
+### Docker template
+
+`rockylinux98_docker` builds Rocky Linux 9.8 with a second disk prepared for Docker:
+
+```bash
+./proxmox_generic.sh -V rockylinux98_docker -F rhel -U true
+```
+
+- OS disk (`vda`, `50G`) - same layout as the regular template, installed by `extra/files/rockylinux/9/proxmox/ks-docker.cfg`, which only differs from `ks.cfg` by limiting the installer to `vda`.
+- Docker disk (`vdb`, `140G`, set with `extra_disks` in the `pkvars` file) - prepared by the Ansible `docker_prepare` block: one LVM partition, volume group `vg_docker`, split 30:70:
+
+| Mount point           | Device                      | Size               |
+| --------------------- | --------------------------- | ------------------ |
+| `/var/lib/containerd` | `/dev/vg_docker/containerd` | 30% of `vg_docker` |
+| `/var/lib/docker`     | `/dev/vg_docker/dockerdata` | the rest (~70%)    |
+
+Docker Engine itself is not installed - the template only prepares the storage.
+
 ### Cloud-init drive
 
 All Linux templates ship with `cloud-init` installed inside the guest and a base config in `/etc/cloud/cloud.cfg` (taken from `extra/files/cloud-init/`). Running the build with `-C true` additionally attaches an empty cloud-init drive to the finished template:

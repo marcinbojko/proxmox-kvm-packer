@@ -104,7 +104,7 @@ build {
 
   provisioner "shell" {
     execute_command = "chmod +x {{ .Path }}; {{ .Vars }} sudo -E sh '{{ .Path }}'"
-    inline          = ["dnf install -y cloud-init cloud-utils-growpart", "systemctl enable cloud-init-local.service", "systemctl enable cloud-init.service", "systemctl enable cloud-config.service", "systemctl enable cloud-final.service"]
+    inline          = ["dnf install -y cloud-init cloud-utils-growpart", "systemctl enable cloud-init-local.service", "systemctl enable cloud-init.service", "systemctl enable cloud-config.service", "systemctl enable cloud-final.service", "cloud-init clean --logs --seed", "rm -f /etc/NetworkManager/system-connections/* /etc/resolv.conf", "rm -f /etc/sysconfig/network-scripts/ifcfg-e*", "rm -rf /var/lib/NetworkManager/*.lease /var/lib/dhclient/*", "truncate -s 0 /etc/machine-id", "rm -f /var/lib/dbus/machine-id", "rm -f /etc/ssh/ssh_host_*"]
     inline_shebang  = "/bin/sh -x"
   }
 

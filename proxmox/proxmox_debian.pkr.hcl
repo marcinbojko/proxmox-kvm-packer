@@ -69,7 +69,7 @@ variable "disks" {
     disk_size    = "50G"
     format       = "raw"
     storage_pool = "local"
-    type         = "virtio"
+    type         = "scsi"
     io_thread    = true
     discard      = true
   }
@@ -334,9 +334,12 @@ build {
       "systemctl enable qemu-guest-agent.service --now",
       "systemctl enable cloud-init.service cloud-init-local.service cloud-config.service cloud-final.service",
       "/bin/rm -f /etc/ssh/ssh_host_*",
-      "/usr/bin/ssh-keygen -A",
+      "if [ -f /usr/lib/systemd/system/sshd-keygen.service ]; then mkdir -p /etc/systemd/system/sshd-keygen.service.d && printf '[Unit]\\nConditionFirstBoot=\\n' > /etc/systemd/system/sshd-keygen.service.d/every-boot.conf; else /usr/bin/ssh-keygen -A; fi",
       "/bin/rm -rf /tmp/*",
-      "/usr/bin/cloud-init clean --logs --seed"
+      "/usr/bin/cloud-init clean --logs --seed",
+      "/bin/rm -f /var/lib/dhcpcd/* /var/lib/dhcp/*.leases",
+      "truncate -s 0 /etc/machine-id",
+      "/bin/rm -f /var/lib/dbus/machine-id"
     ]
     inline_shebang = "/bin/sh -x"
   }
