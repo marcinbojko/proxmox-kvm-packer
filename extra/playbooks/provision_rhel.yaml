@@ -7,6 +7,8 @@
     install_hyperv: false
     install_cockpit: false
     install_kernel_parameters: true
+    disable_kdump: true
+    dnf_max_parallel_downloads: 10
     install_motd: false
     install_fastfetch: false
     install_updates: true
@@ -73,9 +75,19 @@
           - "Install MOTD                   :{{ install_motd | lower }}"
           - "Install Fastfetch              :{{ install_fastfetch | lower }}"
           - "Install kernel parameters      :{{ install_kernel_parameters | lower }}"
+          - "Disable kdump                  :{{ disable_kdump | lower }}"
           - "Install updates                :{{ install_updates | lower }}"
           - "Reboot server                  :{{ reboot_server | lower }}"
           - "Playbook version               :{{ playbook_version }}"
+    # download several packages at once (dnf default is 3) - speeds up the updates
+    - name: set_dnf_parallel_downloads
+      community.general.ini_file:
+        path: /etc/dnf/dnf.conf
+        section: main
+        option: max_parallel_downloads
+        value: "{{ dnf_max_parallel_downloads }}"
+        no_extra_spaces: true
+        mode: "0644"
     # initial cleaning and refreshing metadata for packages
     - name: Initial GPG Keys update
       ansible.builtin.rpm_key:
@@ -567,6 +579,40 @@
           ansible.builtin.fail:
             msg: "Kernel preparation failed after retries."
           when: fail_on_kernel_error | default(true)
+
+    # kdump off: kdump-utils (EL10) / kexec-tools arrive with the package groups, the
+    # systemd preset enables kdump.service and it reserves crash kernel memory
+    # (crashkernel=) on every installed kernel - runs after all package and kernel updates
+    - name: disable_kdump_block
+      when: disable_kdump
+      block:
+        - name: disable_kdump_service
+          ansible.builtin.systemd:
+            name: kdump.service
+            enabled: false
+            state: stopped
+          failed_when: false
+        - name: check_for_kdump_config
+          ansible.builtin.stat:
+            path: /etc/kdump.conf
+          register: r_kdump_conf
+        - name: stop_kdump_from_resetting_crashkernel
+          ansible.builtin.lineinfile:
+            path: /etc/kdump.conf
+            regexp: '^#?\s*auto_reset_crashkernel'
+            line: auto_reset_crashkernel no
+          when: r_kdump_conf.stat.exists
+        - name: remove_crashkernel_from_all_kernels
+          ansible.builtin.command: grubby --update-kernel=ALL --remove-args=crashkernel
+          changed_when: false
+      rescue:
+        - name: log_kdump_failure
+          ansible.builtin.debug:
+            msg: "Failed to disable kdump: {{ ansible_failed_result.msg | default('Unknown error') }}"
+        - name: fail_kdump_preparation
+          ansible.builtin.fail:
+            msg: "Disabling kdump failed."
+          when: fail_on_kdump_error | default(true)
 
     # last touch and cleaning block
     - name: last_touch_and_cleaning_block

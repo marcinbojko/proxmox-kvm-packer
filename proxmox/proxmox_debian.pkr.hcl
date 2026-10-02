@@ -333,6 +333,7 @@ build {
     inline = [
       "systemctl enable qemu-guest-agent.service --now",
       "systemctl enable cloud-init.service cloud-init-local.service cloud-config.service cloud-final.service",
+      "systemctl enable fstrim.timer",
       "/bin/rm -f /etc/ssh/ssh_host_*",
       "if [ -f /usr/lib/systemd/system/sshd-keygen.service ]; then mkdir -p /etc/systemd/system/sshd-keygen.service.d && printf '[Unit]\\nConditionFirstBoot=\\nConditionPathIsReadWrite=/etc/ssh\\nConditionPathIsSymbolicLink=!/etc/ssh\\n' > /etc/systemd/system/sshd-keygen.service.d/every-boot.conf; else /usr/bin/ssh-keygen -A; fi",
       "/bin/rm -rf /tmp/*",

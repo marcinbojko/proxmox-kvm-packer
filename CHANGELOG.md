@@ -35,6 +35,13 @@
   - BIOS profile defines the BIOS boot partition explicitly as the first partition
 - [PROXMOX] AlmaLinux, Oracle Linux, Rocky Linux and openSUSE Leap - OS disk increased from `50G` to `80G` for the `/var/log` partition
 - [PROXMOX] [KVM] Bumped Packer plugin minimums in `config.pkr.hcl` to the current releases: `proxmox` 1.2.4, `qemu` 1.1.7, `alicloud` 1.2.0, `ansible` 1.1.6, `vagrant` 1.1.7, `windows-update` 0.18.5
+- [PROXMOX] [KVM] All Linux builds (`rhel`, `debian`, `ubuntu`, `sles` and the KVM `rhel` build) enable `fstrim.timer`, so guests trim unused blocks weekly and freed space goes back to thin-provisioned storage (the Packer plugin cannot set the Proxmox `fstrim_cloned_disks` agent option)
+- [ANSIBLE] `provision_rhel.yaml` - new `disable_kdump` block (default `true`), run after all package and kernel updates:
+  - disables `kdump.service`, sets `auto_reset_crashkernel no` and removes `crashkernel=` from all kernels
+  - the package groups pull in `kdump-utils` (EL10) after the installer's `com_redhat_kdump --disable`, so templates booted with kdump armed, 256 MB of RAM reserved and about 23 s added to every boot
+- [ANSIBLE] `provision_rhel.yaml` - sets `max_parallel_downloads=10` in `/etc/dnf/dnf.conf` (new `dnf_max_parallel_downloads` variable) before any package task; dnf downloads 3 packages at a time by default, which slowed down the full update
+- [EXTRA] AlmaLinux, Oracle Linux and Rocky Linux kickstarts install `cloud-init` and `cloud-utils-growpart` from the DVD; `proxmox_rhel.pkr.hcl` no longer runs a separate network `dnf install` for them after Ansible
+- [PROXMOX] `proxmox_rhel.pkr.hcl` - enables the Ansible `ansible.posix.profile_tasks` callback, so the build output shows how long every provisioning task took
 - [README] Documented the Docker template layout, the disk layout of the RHEL-family and Debian templates (including how to grow `/`), and the template cleanup - what the build removes and what every clone recreates on first boot
 
 ## Version 1.2.1

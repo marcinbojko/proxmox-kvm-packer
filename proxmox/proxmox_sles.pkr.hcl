@@ -322,7 +322,7 @@ build {
 
   provisioner "shell" {
     execute_command = "chmod +x {{ .Path }}; {{ .Vars }} sudo -E sh '{{ .Path }}'"
-    inline          = ["systemctl enable qemu-guest-agent.service --now"]
+    inline          = ["systemctl enable qemu-guest-agent.service --now", "systemctl enable fstrim.timer"]
     inline_shebang  = "/bin/sh -x"
   }
 }
