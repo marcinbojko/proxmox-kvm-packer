@@ -76,10 +76,23 @@ variable "disks" {
     disk_size    = "50G"
     format       = "qcow2"
     storage_pool = "local"
-    type         = "virtio"
+    type         = "scsi"
     io_thread    = true
     discard      = true
   }
+}
+
+variable "extra_disks" {
+  type = list(object({
+    cache_mode   = string
+    disk_size    = string
+    format       = string
+    storage_pool = string
+    type         = string
+    io_thread    = bool
+    discard      = bool
+  }))
+  default = []
 }
 
 variable "boot_wait" {
@@ -238,6 +251,18 @@ source "proxmox-iso" "linux" {
     io_thread               = "${var.disks.io_thread}"
     discard                 = "${var.disks.discard}"
   }
+  dynamic "disks" {
+    for_each = var.extra_disks
+    content {
+      cache_mode            = disks.value.cache_mode
+      disk_size             = disks.value.disk_size
+      format                = disks.value.format
+      storage_pool          = disks.value.storage_pool
+      type                  = disks.value.type
+      io_thread             = disks.value.io_thread
+      discard               = disks.value.discard
+    }
+  }
   http_directory            = "${path.cwd}/extra/files"
   insecure_skip_tls_verify  = true
   machine                   = "${var.machine}"
@@ -291,6 +316,18 @@ source "proxmox-iso" "linux-efi" {
     io_thread               = "${var.disks.io_thread}"
     discard                 = "${var.disks.discard}"
   }
+  dynamic "disks" {
+    for_each = var.extra_disks
+    content {
+      cache_mode            = disks.value.cache_mode
+      disk_size             = disks.value.disk_size
+      format                = disks.value.format
+      storage_pool          = disks.value.storage_pool
+      type                  = disks.value.type
+      io_thread             = disks.value.io_thread
+      discard               = disks.value.discard
+    }
+  }
   efi_config {
     efi_storage_pool          = "${var.efi_storage_pool}"
     efi_type                  = "${var.efi_type}"
@@ -336,13 +373,14 @@ build {
   }
 
   provisioner "ansible" {
+    ansible_env_vars = ["ANSIBLE_CALLBACKS_ENABLED=ansible.posix.profile_tasks"]
     extra_arguments = concat("${var.ansible_extra_args}","${var.ansible_verbosity}")
     playbook_file   = "extra/playbooks/provision_rhel.yaml"
   }
 
   provisioner "shell" {
     execute_command = "chmod +x {{ .Path }}; {{ .Vars }} sudo -E sh '{{ .Path }}'"
-    inline          = ["dnf install -y cloud-init cloud-utils-growpart", "systemctl enable cloud-init-local.service", "systemctl enable cloud-init.service", "systemctl enable cloud-config.service", "systemctl enable cloud-final.service", "cloud-init clean --logs --seed"]
+    inline          = ["systemctl enable cloud-init-local.service", "systemctl enable cloud-init.service", "systemctl enable cloud-config.service", "systemctl enable cloud-final.service", "systemctl enable fstrim.timer", "cloud-init clean --logs --seed", "rm -f /etc/NetworkManager/system-connections/* /etc/resolv.conf", "rm -f /etc/sysconfig/network-scripts/ifcfg-e*", "rm -rf /var/lib/NetworkManager/*.lease /var/lib/dhclient/*", "truncate -s 0 /etc/machine-id", "rm -f /var/lib/dbus/machine-id", "rm -f /etc/ssh/ssh_host_*"]
     inline_shebang  = "/bin/sh -x"
   }
 

@@ -1,5 +1,49 @@
 # Changelog
 
+## Version 1.2.2
+
+- [PROXMOX] Rocky Linux 9.8 Docker template - new variable packs `variables_rockylinux98_docker.pkvars.hcl` and `variables_rockylinux98_docker_uefi.pkvars.hcl` (`80G` OS disk plus a `140G` Docker disk, templates `rockylinux9.8.docker[.uefi]`, tag `docker`)
+- [PROXMOX] Rocky Linux 10.2 Docker template - new variable packs `variables_rockylinux102_docker.pkvars.hcl` and `variables_rockylinux102_docker_uefi.pkvars.hcl` (same disks as the 9.8 one, templates `rockylinux10.2.docker[.uefi]`, tag `docker`)
+- [EXTRA] AlmaLinux, Oracle Linux and Rocky Linux Proxmox kickstarts install only onto the OS disk (`ignoredisk --only-use=disk/by-id/scsi-0QEMU_QEMU_HARDDISK_drive-scsi0`), so an extra disk such as the Docker disk stays untouched; the Docker templates use the regular `ks.cfg`
+- [PROXMOX] `proxmox_rhel.pkr.hcl` - new optional `extra_disks` variable (default empty) to attach additional disks after the OS disk
+- [ANSIBLE] Reworked the `docker_prepare` block in `provision_rhel.yaml`:
+  - the extra device gets one LVM partition with volume group `vg_docker`, split 30:70 into `containerd` (`/var/lib/containerd`) and `dockerdata` (`/var/lib/docker`), both ext4
+  - names and sizes come from the new `docker_vg_name` and `docker_volumes` variables
+  - a missing device now fails the build instead of being skipped
+- [PROXMOX] [KVM] Extended the cloud-init step of the `rhel` builds with cleanup, so clones no longer inherit the build machine's DNS servers or share one machine-id or SSH host keys:
+  - `cloud-init clean --logs --seed` (now also in the KVM build, which lacked it)
+  - removes NetworkManager connection profiles, `/etc/resolv.conf`, `ifcfg-e*` scripts and DHCP leases
+  - empties `/etc/machine-id` and deletes the SSH host keys
+- [EXTRA] Debian 12/13 preseeds (BIOS and UEFI) - replaced the built-in `atomic` partition recipe (swap after `/`) with a custom `root-last` recipe, so cloud-init `growpart` can grow `/` after a Proxmox disk resize:
+  - EFI 512M (UEFI only), swap 8 GiB, separate `/var/log` 20 GiB (`nodev,nosuid,noexec`), `/` last and filling the disk
+  - sizes are given in decimal MB (`8590`, `21475`) because partman does not count in MiB
+- [PROXMOX] Debian 12/13 - OS disk increased from `50G` to `80G` to make room for the `/var/log` partition
+- [PROXMOX] Debian 12/13 - switched the OS disk from `virtio` (VirtIO Block, `/dev/vda`) to `scsi` (VirtIO SCSI, `/dev/sda`) in the variable packs and the `proxmox_debian.pkr.hcl` default; BIOS preseeds now install GRUB with `grub-installer/bootdev string default` instead of the hardcoded `/dev/vda`
+- [PROXMOX] Debian 12/13 - end-of-build cleanup, so clones no longer share a machine-id, DHCP identity or SSH host keys:
+  - empties `/etc/machine-id` (each clone gets a new one from its Proxmox SMBIOS UUID) and removes `/var/lib/dbus/machine-id`
+  - removes DHCP client state (`/var/lib/dhcpcd/*` - DUID and IPv6 secret, `/var/lib/dhcp/*.leases`)
+  - Debian 13: SSH host keys are no longer generated during the build - a drop-in makes `sshd-keygen.service` run on every boot (not only on first boot) and create missing keys, also on clones without a cloud-init drive
+  - Debian 12 keeps `ssh-keygen -A` at build time
+- [EXTRA] Debian `cloud.cfg` - added `apt: preserve_sources_list: true`; without a mirror set, cloud-init replaced the preseed's Debian sources with Ubuntu mirrors on first boot and `apt-get update` failed on every clone
+- [PROXMOX] AlmaLinux, Oracle Linux, Rocky Linux and openSUSE Leap - switched all disks from `virtio` (VirtIO Block, `/dev/vda`) to `scsi` (VirtIO SCSI, `/dev/sda`) in every variable pack and in the defaults of `proxmox_rhel.pkr.hcl`, `proxmox_rhel_blank.pkr.hcl` and `proxmox_sles.pkr.hcl`
+- [ANSIBLE] `docker_prepare` - `extra_device` now takes a kernel name (`sdb`) or a path relative to `/dev` (`disk/by-id/...`); the playbook resolves it to the real device before partitioning and names the partition correctly for NVMe (`p1`); the Docker pack passes the by-id name of Proxmox slot `scsi1`
+- [EXTRA] AlmaLinux, Oracle Linux and Rocky Linux 8/9/10 kickstarts (`ks.cfg`, `ks-lvm.cfg`) - separate `/var/log` 20 GiB (`ext4`, `nodev,nosuid,noexec`; a logical volume in `ks-lvm.cfg`); `/` stays the growing, last partition
+- [EXTRA] openSUSE Leap 15 AutoYaST (BIOS and UEFI):
+  - partitions reordered so `/` is last and takes the rest of the disk (swap used to be last, and the BIOS profile gave `/` a fixed 47.5 GiB)
+  - new `/var/log` 20 GiB partition (`ext4`, `nodev,nosuid,noexec`)
+  - swap increased from 2 GiB to 8 GiB, matching the other templates
+  - BIOS profile defines the BIOS boot partition explicitly as the first partition
+- [PROXMOX] AlmaLinux, Oracle Linux, Rocky Linux and openSUSE Leap - OS disk increased from `50G` to `80G` for the `/var/log` partition
+- [PROXMOX] [KVM] Bumped Packer plugin minimums in `config.pkr.hcl` to the current releases: `proxmox` 1.2.4, `qemu` 1.1.7, `alicloud` 1.2.0, `ansible` 1.1.6, `vagrant` 1.1.7, `windows-update` 0.18.5
+- [PROXMOX] [KVM] All Linux builds (`rhel`, `debian`, `ubuntu`, `sles` and the KVM `rhel` build) enable `fstrim.timer`, so guests trim unused blocks weekly and freed space goes back to thin-provisioned storage (the Packer plugin cannot set the Proxmox `fstrim_cloned_disks` agent option)
+- [ANSIBLE] `provision_rhel.yaml` - new `disable_kdump` block (default `true`), run after all package and kernel updates:
+  - disables `kdump.service`, sets `auto_reset_crashkernel no` and removes `crashkernel=` from all kernels
+  - the package groups pull in `kdump-utils` (EL10) after the installer's `com_redhat_kdump --disable`, so templates booted with kdump armed, 256 MB of RAM reserved and about 23 s added to every boot
+- [ANSIBLE] `provision_rhel.yaml` - sets `max_parallel_downloads=10` in `/etc/dnf/dnf.conf` (new `dnf_max_parallel_downloads` variable) before any package task; dnf downloads 3 packages at a time by default, which slowed down the full update
+- [EXTRA] AlmaLinux, Oracle Linux and Rocky Linux kickstarts install `cloud-init` and `cloud-utils-growpart` from the DVD; `proxmox_rhel.pkr.hcl` no longer runs a separate network `dnf install` for them after Ansible
+- [PROXMOX] `proxmox_rhel.pkr.hcl` - enables the Ansible `ansible.posix.profile_tasks` callback, so the build output shows how long every provisioning task took
+- [README] Documented the Docker template layout, the disk layout of the RHEL-family and Debian templates (including how to grow `/`), and the template cleanup - what the build removes and what every clone recreates on first boot
+
 ## Version 1.2.1
 
 - [PROXMOX] Optional cloud-init drive attachment - new `cloud_init` and `cloud_init_storage_pool` variables (default `false`/`local`) in the `rhel`, `debian` and `ubuntu` templates; when enabled, the finished template gets an empty cloud-init drive ready for cloning

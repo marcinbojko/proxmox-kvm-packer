@@ -383,6 +383,7 @@ build {
       "chmod +x /tmp/zeroing.sh",
       "/tmp/prepare_fastfetch.sh",
       "/tmp/zeroing.sh",
+      "systemctl enable fstrim.timer",
       "/usr/bin/cloud-init clean --logs --seed",
       "/bin/rm -rfv /tmp/*",
       "/bin/rm -f /etc/ssh/*key*",

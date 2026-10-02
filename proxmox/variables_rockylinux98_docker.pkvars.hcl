@@ -1,8 +1,8 @@
 
-ansible_extra_args        = ["-e", "@extra/playbooks/provision_alma10_variables.yml", "-e", "@variables/almalinux10.yml","--scp-extra-args", "'-O'"]
+ansible_extra_args        = ["-e", "@extra/playbooks/provision_rocky9_variables.yml", "-e", "@variables/rockylinux9.yml", "-e", "{\"docker_prepare\": true, \"extra_device\": \"disk/by-id/scsi-0QEMU_QEMU_HARDDISK_drive-scsi1\"}", "--scp-extra-args", "'-O'"]
 ansible_verbosity         = ["-v"]
 ballooning_minimum        = "0"
-boot_command              = "<tab> text inst.ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/almalinux/10/proxmox/ks.cfg<enter><wait10><esc><wait60><esc>"
+boot_command              = "<tab> text inst.ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/rockylinux/9/proxmox/ks.cfg<enter><wait10><esc><wait30><esc>"
 boot_wait                 = "15s"
 cloud-init_path           = "extra/files/cloud-init/rhel/generic/cloud.cfg"
 cores                     = "4"
@@ -17,8 +17,19 @@ disks = {
     io_thread             = true
     discard               = true
 }
+extra_disks = [
+  {
+    cache_mode            = "none"
+    disk_size             = "140G"
+    format                = "raw"
+    type                  = "scsi"
+    storage_pool          = "zfs"
+    io_thread             = true
+    discard               = true
+  }
+]
 insecure_skip_tls_verify  = true
-iso_file                  = "images:iso/AlmaLinux-10.1-x86_64-dvd.iso"
+iso_file                  = "images:iso/Rocky-9.8-x86_64-dvd.iso"
 memory                    = "4096"
 network_adapters = {
     bridge                = "vmbr0"
@@ -34,5 +45,6 @@ sockets                   = "1"
 ssh_password              = "password"
 ssh_username              = "root"
 task_timeout              = "20m"
-template                  = "almalinux10.1"
+template                  = "rockylinux9.8.docker"
 unmount_iso               = true
+tags                      = "bios;template;docker"

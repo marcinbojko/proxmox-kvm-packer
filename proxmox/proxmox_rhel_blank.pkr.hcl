@@ -74,7 +74,7 @@ variable "disks" {
     disk_size    = "50G"
     format       = "qcow2"
     storage_pool = "local"
-    type         = "virtio"
+    type         = "scsi"
   }
 }
 
